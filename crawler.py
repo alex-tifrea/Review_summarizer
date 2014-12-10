@@ -3,12 +3,97 @@ import sys
 import os
 from lxml import html
 from lxml import etree
+import xml.etree.ElementTree as ET
+import shutil
+import xml.dom.minidom
 
-def process_review(url, output_file): # primeste url-ul unui review si extrage
-                                      # informatii despre el
-    print "ceva"
+def process_review(review_info, output_file, count, city, hotel_name):
+        # primeste div-ul ce contine un review si extrage informatii despre el
+        username = review_info.xpath('//*[contains(concat(" ", \
+                normalize-space(@class), " "), " username ")]')[0].text
+        userInfo = review_info.xpath('//*[@class="memberBadging"]')[0]
 
-def process_hotel(url, count_reviews): # primeste url-ul unui hotel
+        quote = review_info.xpath('//*[@class="quote"]')[0].text
+        # elimin ghilimelele
+        quote = quote[1:]
+        quote = quote[:-1]
+
+        rating = review_info.xpath('//*[contains(concat(" ", \
+                 normalize-space(@class), " "), " rating ")]')[0].\
+                 xpath('span/img')[0].xpath('attribute::alt')[0]
+        entry = review_info.xpath('//*[@class="entry"]')[0]
+#         roomtip = entry.xpath('div')
+#         if (len(roomtip) > 0):
+#             roomtip = etree.tostring(roomtip[0])
+#             roomtip = roomtip.split("<>")[0]
+#         else:
+#             roomtip = None
+#         print roomtip
+        entry = entry.xpath('p')[0].text[1:]
+
+        recommend_title = review_info.xpath('//*[@class="recommend"]')[0]. \
+                          xpath('li/span')[0].text
+        detailed_ratings = review_info.xpath('//*[@class="recommend-answer"]')
+        # TODO: aici, in loc sa ia doar ratingurile pentru reviewul curent
+        # le ia pe toate nu stiu de ce
+        print "am lungimea egala cu "+str(len(detailed_ratings))
+        list_ratings = []
+        print "new"
+        for rate in detailed_ratings:
+            value = rate.xpath('span/img')[0].xpath('attribute::alt')[0]
+            key = rate.xpath('child::*')[0]
+#             print etree.tostring(rate)
+            key = etree.tostring(rate).split(">\n")
+            key = key[len(key)-2][:-4]
+            key = key.lower()
+            key = key.replace(" ", "")
+            tmp = (key, value)
+            print tmp
+            list_ratings.append(tmp)
+
+        # generam fisierul xml
+        root = ET.Element("root")
+        root.set("id",str(count))
+
+        info = ET.SubElement(root, "general_info")
+        city_elem = ET.SubElement(info, "city")
+        city_elem.text = city
+        hotel_name_elem = ET.SubElement(info, "hotel")
+        hotel_name_elem.text = hotel_name
+
+        reviewer = ET.SubElement(root, "reviewer")
+        username_elem = ET.SubElement(reviewer, "username")
+        username_elem.text = username
+        """ TODO
+        userInfo_elem = ET.SubElement(reviewer, "user_info")
+        userInfo_elem.text = userInfo
+        """
+
+        review = ET.SubElement(root, "review")
+        quote_elem = ET.SubElement(review, "quote")
+        quote_elem.text = quote
+        rating_elem = ET.SubElement(review, "general_rating")
+        rating_elem.text = rating
+        entry_elem = ET.SubElement(review, "entry")
+        entry_elem.text = entry
+#         if not roomtip is None:
+#             roomtip_elem = ET.SubElement(entry_elem, "roomtip")
+#             roomtip_elem.text = roomtip
+        recommend_title_elem = ET.SubElement(review, "recommend_title")
+        recommend_title_elem.text = recommend_title
+        detailed_rating_elem = ET.SubElement(review, "detailed_rating")
+        for rate in list_ratings:
+            detailed_rating_elem.set(rate[0], rate[1][0])
+
+        tree = ET.ElementTree(root)
+        tree.write(output_file.name)
+        xmlstr = ET.tostring(root, encoding='utf8', method='xml')
+
+        pretty_xml = xml.dom.minidom.parseString(xmlstr)
+        output_file.write(pretty_xml.toprettyxml())
+
+
+def process_hotel(url, count_reviews, city, hotel_name): # primeste url-ul unui hotel
     page = requests.get("http://www.tripadvisor.com"+url)
     tree = html.fromstring(page.text)
     # extrage url-urile review-urilor din pagina curenta
@@ -21,8 +106,11 @@ def process_hotel(url, count_reviews): # primeste url-ul unui hotel
         tree_rev = html.fromstring(page_rev.text)
         rev_info = tree_rev.xpath('//*[contains(concat(" ", \
                 normalize-space(@class), " "), " review ")]')[0]
-        output_file = open("review"+str(count_reviews)+".out", 'w+')
-        output_file.write(etree.tostring(rev_info))
+        output_file = open("review"+str(count_reviews)+".xml", 'w+')
+        filename = "review"+str(count_reviews)+".xml"
+#         output_file.write(etree.tostring(rev_info))
+        process_review(rev_info, output_file, count_reviews, city, hotel_name)
+        output_file.close()
         count_reviews = count_reviews + 1
 
     # trecem la pagina urmatoare
@@ -33,7 +121,7 @@ def process_hotel(url, count_reviews): # primeste url-ul unui hotel
 
     nextPageURL = nextPage[0].xpath('attribute::href')[0]
 
-    process_hotel(url, count_reviews)
+    process_hotel(url, count_reviews, city, hotel_name)
 
 def parse_hotels(input_file): # pentru fiecare hotel, face bucatarie
     all_hotels = input_file.readlines()
@@ -41,12 +129,16 @@ def parse_hotels(input_file): # pentru fiecare hotel, face bucatarie
         tokens = hotel.split('-')
         if (len(tokens) <= 1):
             continue
-        print tokens[4] + " " + tokens[5][:-6]
-        dir_name = "Reviews_" + tokens[5][:-6] + "_" + tokens[4]
+        city = tokens[5][:-6]
+        hotel_name = tokens[4]
+        dir_name = "Reviews_" + city + "_" + hotel_name
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
+        else:
+            shutil.rmtree(dir_name)
+            os.makedirs(dir_name)
         os.chdir(dir_name)
-        process_hotel(hotel, 0)
+        process_hotel(hotel, 0, city, hotel_name)
         os.chdir("..")
         # TODO: remove the return
         return
