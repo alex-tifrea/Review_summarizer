@@ -10,7 +10,8 @@ import xml.dom.minidom
 def process_review(review_info, output_file, count, city, hotel_name):
         # primeste div-ul ce contine un review si extrage informatii despre el
         username = review_info.xpath('//*[contains(concat(" ", \
-                normalize-space(@class), " "), " username ")]')[0].text
+                normalize-space(@class), " "), " username ")]')[0]. \
+                xpath('span')[0].text
         userInfo = review_info.xpath('//*[@class="memberBadging"]')[0]
 
         quote = review_info.xpath('//*[@class="quote"]')[0].text
@@ -33,22 +34,17 @@ def process_review(review_info, output_file, count, city, hotel_name):
 
         recommend_title = review_info.xpath('//*[@class="recommend"]')[0]. \
                           xpath('li/span')[0].text
-        detailed_ratings = review_info.xpath('//*[@class="recommend-answer"]')
-        # TODO: aici, in loc sa ia doar ratingurile pentru reviewul curent
-        # le ia pe toate nu stiu de ce
-        print "am lungimea egala cu "+str(len(detailed_ratings))
+        detailed_ratings = review_info.xpath('//*[@class="recommend"]')[0]. \
+                           xpath('li')[0].xpath('descendant::li')
         list_ratings = []
-        print "new"
         for rate in detailed_ratings:
             value = rate.xpath('span/img')[0].xpath('attribute::alt')[0]
             key = rate.xpath('child::*')[0]
-#             print etree.tostring(rate)
             key = etree.tostring(rate).split(">\n")
             key = key[len(key)-2][:-4]
             key = key.lower()
             key = key.replace(" ", "")
             tmp = (key, value)
-            print tmp
             list_ratings.append(tmp)
 
         # generam fisierul xml
