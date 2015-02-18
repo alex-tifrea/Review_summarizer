@@ -7,6 +7,10 @@ IO::IO(std::string _in_name, std::string _out_name) {
   this->out_name = _out_name;
 }
 
+IO::IO(IO _io) {
+  this->in_name = _io.in_name;
+  this->out_name = _io.out_name;
+}
 
 void IO::readReviews(std::map<std::string, int> frequency,
                      std::vector<std::vector<std::string> > reviews) {
