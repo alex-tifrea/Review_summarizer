@@ -7,17 +7,20 @@ IO::IO(std::string _in_name, std::string _out_name) {
   this->out_name = _out_name;
 }
 
-IO::IO(IO _io) {
-  this->in_name = _io.in_name;
-  this->out_name = _io.out_name;
+
+IO::IO(IO *_io) {
+  this->in_name = _io->in_name;
+  this->out_name = _io->out_name;
 }
 
-void IO::readReviews(std::map<std::string, int> frequency,
+void IO::readReviews(std::map<std::string, int> &frequency,
                      std::vector<std::vector<std::string> > reviews) {
   int nr_reviews, i = 0;
-  this->in >> nr_reviews;
+  //this->in >> nr_reviews;
+  std::cin >> nr_reviews;
   std::string line;
-  while (i < nr_reviews && std::getline(this->in, line)) {
+  //am modificat this->in cu std::cin
+  while (i < nr_reviews && std::getline(std::cin, line)) {
     // Separator between two consecutive reviews
     if (line.compare("-----") == 0) {
       i++;
@@ -34,6 +37,6 @@ void IO::readReviews(std::map<std::string, int> frequency,
     }
 
     // Update the array
-    reviews[i].insert(reviews[i].end(), newWords.begin(), newWords.end());
+    //reviews[i].insert(reviews[i].end(), newWords.begin(), newWords.end());
   }
 }

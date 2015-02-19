@@ -29,3 +29,8 @@ void NgramEntry::computeScores() {
   // TODO: complete this function
   this->readability = this->representativeness = 0;
 }
+
+std::pair<float, float> NgramEntry::getScore ()
+{
+  return std::make_pair(this->readability, this->representativeness);
+}

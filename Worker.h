@@ -2,11 +2,13 @@
 #define __WORKER_H__
 
 #include <string>
+#include <algorithm>
 #include <vector>
 #include "NgramEntry.h"
 #include "IO.h"
 #include <map>
 #include <queue>
+using namespace std;
 
 // XXX: vezi ca metodele deocamdata nu primesc niciun argument; nu m-am gandit
 // foarte bine ce ar trebui sa primeasca; feel free to make any changes :)
@@ -29,13 +31,13 @@ private:
   // element of the vector is a word of the original review (or a '\n' if
   // necessary). We need this to compute the representativeness of a given
   // n-gram.
-  std::vector<string> original_review;
+  std::vector<std::string> original_review;
 
   // Reads the input and writes back the output.
   IO *io;
 
 public:
-  Worker(IO);
+  Worker(IO*);
   ~Worker();
 
   // Initializes the members of the | Worker | class.

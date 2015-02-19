@@ -13,11 +13,14 @@ public:
   NgramEntry(std::vector<std::string>);
   ~NgramEntry();
 
-  // Returns true is merging is possible, and false otherwise.
+  // Returns true if merging is possible, and false otherwise.
   bool mergeNgrams(std::vector<std::string>);
 
   // Computes the readability and representativeness scores.
-  void computeScores();
+  void computeScores(); 
+
+  // Returns the readability and representativeness score.
+  std::pair<float, float> getScore();
 };
 
 #endif // __NGRAMENTRY_H__
