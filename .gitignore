@@ -1,0 +1,6 @@
+Reviews_*
+Papers
+*out
+.*
+!.lvimrc
+!.gitignore
