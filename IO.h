@@ -10,8 +10,8 @@
 class IO {
 private:
   std::string in_name, out_name;
-  std::ifstream in;
-  std::ofstream out;
+  std::fstream in;
+  std::fstream out;
 
 public:
   IO(std::string _in_name, std::string _out_name);
