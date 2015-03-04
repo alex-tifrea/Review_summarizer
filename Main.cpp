@@ -1,6 +1,7 @@
 #include <iostream>
 #include "IO.h"
 #include "Worker.h"
+#include "Interogate.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -19,11 +20,13 @@ struct comp_frequencies
 
 int main ()
 {
+    Interogate::Init();
   string _in_name = "input_example";
   string _out_name = "output_example";
   IO *init_io = new IO(_in_name, _out_name);
   Worker *work = new Worker(init_io);
   work->init();
   work->initBigrams();
+    Interogate::Finalize();
   return 0;
 }

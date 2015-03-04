@@ -1,4 +1,5 @@
 #include "NgramEntry.h"
+#include "Interogate.h"
 #include <string>
 #include <vector>
 
@@ -26,8 +27,9 @@ bool NgramEntry::mergeNgrams(std::vector<std::string> bigram) {
 }
 
 void NgramEntry::computeScores() {
-  // TODO: complete this function
-  this->readability = this->representativeness = 0;
+    this->readability = Interogate::getJointProbability(this->ngram);
+    // TODO: complete this function
+    this->representativeness = 0;
 }
 
 std::pair<float, float> NgramEntry::getScore ()
