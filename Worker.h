@@ -8,7 +8,7 @@
 #include "NgramEntry.h"
 #include "IO.h"
 #include <map>
-#include <queue>
+#include <deque>
 
 #define SIGMA_REP 0 //TODO: change this
 #define SIGMA_READ 0.001

@@ -5,7 +5,7 @@ import sys
 import io
 import time
 
-E_VALUE = 2.71
+E_VALUE = 2.71828
 
 lookup = MicrosoftNgram.LookupService()
 
