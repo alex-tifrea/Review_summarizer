@@ -21,8 +21,8 @@ public:
 
     //receives multiple ngrams as an array of
     //strings (each with multiple words)
-    static std::vector<float> getJointProbabilities(std::vector<std::string> phrase);
-    
+    static std::vector<float> getJointProbabilities(std::vector<std::string> phrases);
+
     static void Init();
     static void Finalize();
 private:

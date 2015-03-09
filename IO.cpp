@@ -17,6 +17,11 @@ IO::IO(IO *_io) {
     out.open (this->out_name.c_str(), std::fstream::out);
 }
 
+IO::~IO() {
+    in.close();
+    out.close();
+}
+
 void IO::readReviews(std::map<std::string, int> &frequency,
                      std::vector<std::vector<std::string> > reviews) {
     int nr_reviews, i = 0;

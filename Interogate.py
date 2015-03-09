@@ -23,7 +23,7 @@ while (1):
             out.close()
             exit(0)
         result = str(lookup.GetJointProbability(line))
-        print 'am calculat rezultatul ' + result + ' pentru ' + line
+        print 'am calculat rezultatul ' + str(2.71**(float(result))) + ' pentru ' + line
         out.write(result + '\n')
         out.flush()
     else:

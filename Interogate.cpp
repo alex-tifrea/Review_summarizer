@@ -5,12 +5,14 @@
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
-#include <python2.7/Python.h>
+#include <Python.h>
 
 //mkfifo
 #include <sys/types.h>
 #include <sys/stat.h>
 using namespace std;
+
+#define PATHSIZE 255
 
 FILE* Interogate::resultPipe;
 FILE* Interogate::requestPipe;
@@ -18,7 +20,7 @@ FILE* Interogate::requestPipe;
 float Interogate::getJointProbability(std::vector<std::string> phrase)
 {
     std::string strPhrase = "";
-    for(int i = 0; i < phrase.size() - 1; i++)
+    for(unsigned int i = 0; i < phrase.size() - 1; i++)
     {
         strPhrase += phrase[i] + " ";
     }
@@ -33,22 +35,21 @@ float Interogate::getJointProbability(std::string phrase)
     phrase += "\n";
     fputs(phrase.c_str(), requestPipe);
     fflush(requestPipe);
-   
+
     //primesc rezultatul
     char buffer[20];
     fgets(buffer, 20, resultPipe);
     //puts(buffer);
-    
+
     float result = atof(buffer);
     return result;
 }
 
-std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> phrase)
+std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> phrases)
 {
-    //TODO
-    
-    std::vector<float> result;
-    
+    // TODO
+    std::vector<float> result = std::vector<float>();
+
     return result;
 }
 
@@ -64,13 +65,16 @@ void Interogate::Init()
     //printf("2 pid %d\n", pid);
     if(pid != pidParent)
     {
-        int ret = execlp("/home/mihai/git/Review_summarizer/Interogate.py", "Interogate.py", NULL);
+        char *path = (char*) malloc(PATHSIZE*sizeof(char));
+        getcwd(path, PATHSIZE);
+        strcat(path, "/Interogate.py");
+        int ret = execlp(path, "Interogate.py", NULL);
         //printf("execlp a returnat %d\n", ret);
     }
     //printf("init 2\n");
-    requestPipe = fopen("/tmp/ngramfiforeq", "w"); 
+    requestPipe = fopen("/tmp/ngramfiforeq", "w");
     //printf("init 3\n");
-    resultPipe = fopen("/tmp/ngramfifo", "r"); 
+    resultPipe = fopen("/tmp/ngramfifo", "r");
     //printf("init 4\n");
 }
 

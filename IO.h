@@ -17,7 +17,7 @@ public:
     IO(std::string _in_name, std::string _out_name);
     IO(IO*);
 
-    ~IO() {}
+    ~IO();
 
     /*
      * Read reviews from file.
