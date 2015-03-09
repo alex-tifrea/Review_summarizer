@@ -36,3 +36,14 @@ std::pair<float, float> NgramEntry::getScore ()
 {
     return std::make_pair(this->readability, this->representativeness);
 }
+
+std::ostream &operator<<(std::ostream &out, const NgramEntry &ne) {
+    out << "[";
+    std::vector<std::string> _ngram = ne.getNgram();
+    for (unsigned int i = 0; i < _ngram.size()-1; i++) {
+        out << _ngram[i] << " ";
+    }
+    out << _ngram[_ngram.size()-1] << ", ";
+    out << ne.getReadability() << ", " << ne.getRepresentativeness() << "] ";
+    return out;
+}

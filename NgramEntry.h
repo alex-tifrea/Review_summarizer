@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 class NgramEntry {
 private:
@@ -21,6 +22,20 @@ public:
 
     // Returns the readability and representativeness score.
     std::pair<float, float> getScore();
+
+    float getReadability() const {
+        return readability;
+    }
+
+    float getRepresentativeness() const {
+        return representativeness;
+    }
+
+    std::vector<std::string> getNgram() const {
+        return ngram;
+    }
+
+    friend std::ostream &operator<<(std::ostream&, const NgramEntry&);
 };
 
 #endif // __NGRAMENTRY_H__

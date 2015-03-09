@@ -23,7 +23,7 @@ IO::~IO() {
 }
 
 void IO::readReviews(std::map<std::string, int> &frequency,
-                     std::vector<std::vector<std::string> > reviews) {
+                     std::vector<std::vector<std::string> > &reviews) {
     int nr_reviews, i = 0;
     this->in >> nr_reviews;
     std::string line;

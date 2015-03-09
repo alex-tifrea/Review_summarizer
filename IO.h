@@ -23,7 +23,7 @@ public:
      * Read reviews from file.
      */
     void readReviews(std::map<std::string, int> &frequency,
-                     std::vector<std::vector<std::string> > reviews);
+                     std::vector<std::vector<std::string> > &reviews);
 };
 
 #endif // __IO_H__

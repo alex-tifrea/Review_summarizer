@@ -9,7 +9,7 @@
 using namespace std;
 
 template <typename T1, typename T2>
-struct comp_frequencies 
+struct comp_frequencies
 {
     typedef pair <T1, T2> type;
     bool operator ()(type const& a, type const& b) const
@@ -27,6 +27,7 @@ int main ()
     Worker *work = new Worker(init_io);
     work->init();
     work->initBigrams();
+    work->printNgrams();
     Interogate::Finalize();
     return 0;
 }

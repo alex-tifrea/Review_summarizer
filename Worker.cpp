@@ -18,8 +18,8 @@ struct comp_frequencies
 
 void Worker::init() {
     // TODO: use IO::readReviews to populate frequency and original_review;
-    vector<vector<string> > reviews;
-    io->readReviews(this->frequency, reviews);
+    io->readReviews(this->frequency, all_reviews);
+    current_review = 0;
 }
 
 void Worker::initBigrams() {
@@ -56,23 +56,28 @@ void Worker::initBigrams() {
     for (int i = 0; i < (int)frequency_copy.size(); i++)
     {
         for (int j = 0; j < (int)frequency_copy.size(); j++)
+        {
             if (i != j)
             {
-                vector <string> bigram;
-                bigram.push_back (frequency_copy[i].first);
-                bigram.push_back (frequency_copy[j].first);
-                NgramEntry *new_bigram = new NgramEntry(bigram);
-                pair<float, float> rd_rep = new_bigram->getScore();
+                vector <string> bigram_text;
+                bigram_text.push_back(frequency_copy[i].first);
+                bigram_text.push_back(frequency_copy[j].first);
+                NgramEntry *new_bigram = new NgramEntry(bigram_text);
+                pair<float, float> read_rep = new_bigram->getScore();
                 // Check the readability and the representativeness score.
-                if (rd_rep.first == 0 && rd_rep.second == 0)
+                if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
                 {
                     this->bigrams.push_back(new_bigram);
                 }
             }
+        }
     }
 
     // TODO: when done with ^, copy the | bigrams | vector into the | ngrams |
     // vector (because initially the n-grams are the bigrams);
+    for (unsigned int i = 0; i < bigrams.size(); i++) {
+        ngrams.push_back(bigrams[i]);
+    }
 }
 
 void Worker::generateCandidate() {
@@ -80,4 +85,12 @@ void Worker::generateCandidate() {
     // bigram that starts with the last word of n (this test is done by
     // NgramEntry::mergeNgrams); merge the two and push the newly created
     // (n+1)-gram at the and of the queue.
+}
+
+void Worker::printNgrams() {
+    std::cout << ngrams.size() << std::endl;
+    for (unsigned int i = 0; i < ngrams.size(); i++) {
+        std::cout << *(ngrams[i]) << " ";
+    }
+    std::cout << std::endl;
 }
