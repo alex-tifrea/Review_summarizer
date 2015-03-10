@@ -5,6 +5,9 @@
 #include <vector>
 #include <iostream>
 
+#define SIGMA_REP 0 //TODO: change this
+#define SIGMA_READ 0.0005
+
 class NgramEntry {
 private:
     std::vector<std::string> ngram;
@@ -15,7 +18,7 @@ public:
     ~NgramEntry();
 
     // Returns true if merging is possible, and false otherwise.
-    bool mergeNgrams(std::vector<std::string>);
+    NgramEntry* mergeNgrams(NgramEntry*);
 
     // Computes the readability and representativeness scores.
     void computeScores();

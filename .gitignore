@@ -1,6 +1,7 @@
 Reviews_*
 Papers
 *out
+!hotels_urls.out
 .*
 !.lvimrc
 !.gitignore

@@ -28,6 +28,8 @@ int main ()
     work->init();
     work->initBigrams();
     work->printNgrams();
+    work->generateLoop();
+    work->printNgrams();
     Interogate::Finalize();
     return 0;
 }

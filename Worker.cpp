@@ -17,15 +17,15 @@ struct comp_frequencies
 };
 
 void Worker::init() {
-    // TODO: use IO::readReviews to populate frequency and original_review;
+    // use IO::readReviews to populate frequency and original_review;
     io->readReviews(this->frequency, all_reviews);
     current_review = 0;
 }
 
 void Worker::initBigrams() {
-    // TODO: convert frequency to a std::vector<std::pair<std::string, int> >;
+    // convert frequency to a std::vector<std::pair<std::string, int> >;
     // sort the resulting vector and then use either the first half or the first
-    // 500 (?) (depending on which is the least) to generate all the possible
+    // MIN_BIGRAM_NUMBER (?) (depending on which is the least) to generate all the possible
     // bigrams. Keep a bigram only if it meets the readability and
     // representativeness requirements and if there is no other bigram similar to
     // the newly created one.
@@ -34,7 +34,7 @@ void Worker::initBigrams() {
     sort (frequency_copy.begin(), frequency_copy.end(), comp_frequencies<string,int>());
     int remove_from = ((int)frequency_copy.size() >> 1) + 1;
 
-    if (remove_from < 500)
+    if (remove_from < MIN_BIGRAM_NUMBER)
     {
         float last_value = frequency_copy[remove_from-1].second;
         while (remove_from < (int)frequency_copy.size() &&
@@ -47,7 +47,7 @@ void Worker::initBigrams() {
     }
     else
     {
-        frequency_copy.erase(frequency_copy.begin()+500, frequency_copy.end());
+        frequency_copy.erase(frequency_copy.begin()+MIN_BIGRAM_NUMBER, frequency_copy.end());
     }
     this->frequency.clear();
     for (int i = 0; i < (int)frequency_copy.size(); i++)
@@ -73,7 +73,11 @@ void Worker::initBigrams() {
         }
     }
 
-    // TODO: when done with ^, copy the | bigrams | vector into the | ngrams |
+    // TODO: sort bigrams alphabetically after the first word so that we can use
+    // binary search when looking for a certain bigram in
+    // Worker::generateCandidate
+
+    // when done with bigrams, copy the | bigrams | vector into the | ngrams |
     // vector (because initially the n-grams are the bigrams);
     for (unsigned int i = 0; i < bigrams.size(); i++) {
         ngrams.push_back(bigrams[i]);
@@ -85,6 +89,33 @@ void Worker::generateCandidate() {
     // bigram that starts with the last word of n (this test is done by
     // NgramEntry::mergeNgrams); merge the two and push the newly created
     // (n+1)-gram at the and of the queue.
+    NgramEntry *curr_ngram = ngrams.front();
+    ngrams.pop_front();
+
+    // TODO: here use Worker::binarySearch instead
+    for (unsigned int i = 0; i < bigrams.size(); i++) {
+
+        std::vector<std::string> bigram_text = bigrams[i]->getNgram(),
+                                 ngram_text  = curr_ngram->getNgram();
+        std::cout << "About to merge " << bigram_text[0] << " " <<
+                     ngram_text[ngram_text.size()-1] << std::endl;
+        if (bigram_text[0] == ngram_text[ngram_text.size()-1]) {
+            NgramEntry *new_ngram = curr_ngram->mergeNgrams(bigrams[i]);
+            if (!new_ngram) {
+                std::cerr << "Merge did not go smoothly." << std::endl;
+            } else {
+                // Add the newly created (n+1)-gram to the deque
+                std::cout << "Adaug ngrama " << new_ngram << std::endl;
+                ngrams.push_back(new_ngram);
+            }
+        }
+    }
+}
+
+void Worker::generateLoop() {
+    while (NGRAM_COUNT_LIMIT < this->ngrams.size()) {
+        generateCandidate();
+    }
 }
 
 void Worker::printNgrams() {

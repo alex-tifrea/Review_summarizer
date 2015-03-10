@@ -10,12 +10,10 @@
 #include <map>
 #include <deque>
 
-#define SIGMA_REP 0 //TODO: change this
-#define SIGMA_READ 0.001
-
+#define MIN_BIGRAM_NUMBER 500 // TODO: maybe change this
+#define NGRAM_COUNT_LIMIT 8
 
 using namespace std;
-
 
 // XXX: vezi ca metodele deocamdata nu primesc niciun argument; nu m-am gandit
 // foarte bine ce ar trebui sa primeasca; feel free to make any changes :)
@@ -57,8 +55,15 @@ public:
   // summary).
   void initBigrams();
 
+  // TODO: searches for the bigrams that start with the last word of the given
+  // bigram
+  std::vector<int> binarySearch(NgramEntry*);
+
   // Used to traverse the solution space in a DFS manner.
   void generateCandidate();
+
+  // Calls generateCandidate until we have reached the desired limit
+  void generateLoop();
 
   void printNgrams();
 };
