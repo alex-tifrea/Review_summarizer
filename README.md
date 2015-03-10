@@ -23,3 +23,6 @@ You can delete some annotators:
 ```bash
 java -cp "*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos -file input.txt
 ```
+
+More information about corenlp here:
+http://nlp.stanford.edu/software/corenlp.shtml
