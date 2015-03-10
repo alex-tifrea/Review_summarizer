@@ -123,6 +123,8 @@ void Worker::generateCandidate() {
     }
 }
 
+// D
+// A
 void Worker::generateInteractiveLoop() {
     std::string s;
     while (s != "gata") {
