@@ -6,7 +6,8 @@
 #include <iostream>
 
 #define SIGMA_REP 0 //TODO: change this
-#define SIGMA_READ 0.00001
+#define SIGMA_READ 0.0005
+#define MAX_NGRAM_LENGTH 7
 
 class NgramEntry {
 private:
