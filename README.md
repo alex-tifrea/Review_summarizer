@@ -13,3 +13,13 @@ export NGRAM_TOKEN=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 More information about MicrosoftNgram here:
 http://weblm.research.microsoft.com/info/
+
+
+To run corenlp with input.txt run:
+'''bash
+java -cp "*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file input.txt
+'''
+You can delete some annotators:
+'''bash
+java -cp "*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos -file input.txt
+'''
