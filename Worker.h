@@ -65,6 +65,9 @@ public:
   // Calls generateCandidate until we have reached the desired limit
   void generateLoop();
 
+  // Calls generateCandidate until the user hits space key
+  void generateInteractiveLoop();
+
   void printNgrams();
 };
 

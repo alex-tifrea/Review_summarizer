@@ -112,6 +112,14 @@ void Worker::generateCandidate() {
     }
 }
 
+void Worker::generateInteractiveLoop() {
+    char c = 'a';
+    while (c != ' ') {
+        generateCandidate();
+        c = fgetc(stdin);
+    }
+}
+
 void Worker::generateLoop() {
     while (NGRAM_COUNT_LIMIT < this->ngrams.size()) {
         generateCandidate();
