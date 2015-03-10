@@ -113,10 +113,10 @@ void Worker::generateCandidate() {
 }
 
 void Worker::generateInteractiveLoop() {
-    char c = 'a';
-    while (c != ' ') {
+    std::string s;
+    while (s != "gata") {
         generateCandidate();
-        c = fgetc(stdin);
+        std::cin >> s;
     }
 }
 

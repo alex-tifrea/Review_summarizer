@@ -28,7 +28,7 @@ int main ()
     work->init();
     work->initBigrams();
     work->printNgrams();
-    work->generateLoop();
+    work->generateInteractiveLoop();
     work->printNgrams();
     Interogate::Finalize();
     return 0;

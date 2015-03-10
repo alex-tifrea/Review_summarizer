@@ -6,7 +6,7 @@
 #include <iostream>
 
 #define SIGMA_REP 0 //TODO: change this
-#define SIGMA_READ 0.0001
+#define SIGMA_READ 0.00001
 
 class NgramEntry {
 private:
