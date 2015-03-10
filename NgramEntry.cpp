@@ -30,6 +30,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     new_ngram_text.push_back(bigram_text[1]);
 
     NgramEntry *ret = new NgramEntry(new_ngram_text);
+
     if (ret->getReadability() < SIGMA_READ ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
@@ -39,6 +40,34 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     }
 
     return ret;
+}
+
+// Use Jaccard distance to compute the similarity
+float NgramEntry::computeSimilarity(NgramEntry *ne) {
+    std::vector<std::string> ne_text = ne->getNgram();
+    unsigned int intersection_count = 0;
+    // It's ok to use for's because NgramEntry.ngram.size() is MAX_NGRAM_LENGTH
+    // at most.
+    for (unsigned int i = 0; i < ne_text.size(); i++) {
+        for (unsigned int j = 0; j < this->ngram.size(); j++) {
+            if (ne_text[i] == this->ngram[j]) {
+                intersection_count++;
+            }
+        }
+    }
+
+    // the distance between the two ngrams is:
+    // d = |intersection(A, B)| / |union(A, B)|, where |N| = card(N)
+    float dist = 1; // if both ngrams have 0 words, then the distance is 1
+    if (ne_text.size() + this->ngram.size() != 0) {
+        dist = (float) intersection_count / (intersection_count +
+                                             ne_text.size() +
+                                             this->ngram.size());
+    }
+
+    std::cout << "SIMILARITATE " << dist << std::endl;
+
+    return dist;
 }
 
 void NgramEntry::computeScores() {

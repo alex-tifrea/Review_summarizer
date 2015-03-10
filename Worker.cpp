@@ -102,11 +102,22 @@ void Worker::generateCandidate() {
         if (bigram_text[0] == ngram_text[ngram_text.size()-1]) {
             NgramEntry *new_ngram = curr_ngram->mergeNgrams(bigrams[i]);
             if (!new_ngram) {
-                std::cerr << "Merge did not go smoothly." << std::endl;
+//                 std::cerr << "Merge did not go smoothly." << std::endl;
             } else {
-                // Add the newly created (n+1)-gram to the deque
-                std::cout << "Adaug ngrama " << new_ngram << std::endl;
-                ngrams.push_back(new_ngram);
+                // Check if the newly created ngram is similar to any of the
+                // other ngrams
+                bool is_unique = true;
+                for (unsigned int i = 0; i < ngrams.size(); i++) {
+                    if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
+                        is_unique = false;
+                        break;
+                    }
+                }
+
+                if (is_unique) {
+                    // Add the newly created (n+1)-gram to the deque
+                    ngrams.push_back(new_ngram);
+                }
             }
         }
     }

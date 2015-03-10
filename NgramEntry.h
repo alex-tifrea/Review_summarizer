@@ -5,8 +5,11 @@
 #include <vector>
 #include <iostream>
 
+// threshholds used to prune undesired ngrams
 #define SIGMA_REP 0 //TODO: change this
 #define SIGMA_READ 0.0005
+#define SIGMA_SIM 0.5 // TODO: maybe change this
+
 #define MAX_NGRAM_LENGTH 7
 
 class NgramEntry {
@@ -23,6 +26,10 @@ public:
 
     // Computes the readability and representativeness scores.
     void computeScores();
+
+    // Computes similarity between the two given ngrams using the Jaccard
+    // distance
+    float computeSimilarity(NgramEntry*);
 
     // Returns the readability and representativeness score.
     std::pair<float, float> getScore();
