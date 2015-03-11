@@ -47,9 +47,19 @@ float Interogate::getJointProbability(std::string phrase)
 
 std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> phrases)
 {
-    // TODO
     std::vector<float> result = std::vector<float>();
 
+    /* Protocol:
+     * send a unique string: "Interogate please start buffering\n"
+     * send all ngrams separated by "\n"
+     * send a unique string: "Interogate please send queries"
+     */
+    fputs("Interogate please start buffering\n", requestPipe);
+    for(int i = 0; i < phrases.size(); i++)
+        fputs(phrases[i].c_str(), requestPipe);
+    fputs("Interogate please send queries\n", requestPipe);
+    
+    //TODO add results receiving protocol
     return result;
 }
 
