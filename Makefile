@@ -11,7 +11,7 @@ $(EXE): $(OBJ)
 	$(CC) $(OBJ) -o $(EXE)
 
 %.o: %.cpp $(HEADERS)
-	$(CC) $(CFLAGS) -c $^
+	$(CC) $(CFLAGS) -c $<
 
 run: $(EXE)
 	./main
