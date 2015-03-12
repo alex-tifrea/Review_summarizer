@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <signal.h>
 using namespace std;
 
 template <typename T1, typename T2>
@@ -18,9 +19,24 @@ struct comp_frequencies
     }
 };
 
+void signal_callback_handler(int signum)
+{
+    std::cout<<"Caught signal "<<signum;
+    std::cout<<"\nExiting ..."<<std::endl;
+    
+    // Cleanup and close up stuff here
+    Interogate::Finalize();
+
+    // Terminate program
+    exit(signum);
+}
+
 int main ()
 {
     Interogate::Init();
+    // Register signal and signal handler
+    signal(SIGINT, signal_callback_handler);
+
     string _in_name = "input_example";
     string _out_name = "output_example";
     IO *init_io = new IO(_in_name, _out_name);
