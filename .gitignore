@@ -1,3 +1,5 @@
+CoreNLP
+*.pyc
 Reviews_*
 Papers
 *out
