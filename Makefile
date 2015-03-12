@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS=-Wall -g -I/usr/include/python2.7
+CFLAGS=-Wall -g
 SRC = Interogate.cpp IO.cpp Main.cpp NgramEntry.cpp Worker.cpp
 HEADERS = Interogate.h IO.h NgramEntry.h Worker.h
 OBJ = Interogate.o IO.o Main.o NgramEntry.o Worker.o
