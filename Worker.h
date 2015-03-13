@@ -51,6 +51,12 @@ class Worker {
         // Reads the input and writes back the output.
         IO *io;
 
+        // TODO We need to find the total number of sentences in the reviews in
+        // order to find the corresponding joint probability, which is the 
+        // number of times two words are in the same sentence over the total
+        // number of sentences. This variable will be 5 for the moment.
+        int NO_sentences;
+
     public:
         Worker(IO*);
         ~Worker();

@@ -1,4 +1,5 @@
 #include "Worker.h"
+#include <math.h>
 
 Worker::Worker(IO *_io) {
     io = new IO(_io);
@@ -29,6 +30,7 @@ void Worker::init() {
         cout << endl;
     }
     current_review = 0;
+    NO_sentences = 5;
 }
 
 void Worker::initBigrams() {
@@ -151,16 +153,67 @@ void Worker::generateLoop() {
 }
 
 void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
-    //int srep = 0;
+    float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
-    // aici calculez pmi pentru fiecare cuvant din ngrama
     for (unsigned int i = 0; i < ngram.size(); i++)
     {
-        //int pmi_local = 0;
-        for (unsigned int j = i; j < ngram.size(); j++)
+        float pmi_local = 0;
+        string end_word = ".";
+        vector <word_pos> current_word_pos = frequency_and_pos[ngram[i]];
+        vector <float> mutual_p(ngram.size()-i-1, 0);
+        vector <float> mutual_c(ngram.size()-i-1, 0);
+        for (unsigned int j = 0; j < current_word_pos.size(); j++)
         {
+            bool over_C = false;
+            int review_number = current_word_pos[j].review_nr;
+            int current_pos = current_word_pos[j].word_nr - 1;
+            while (current_pos > 0 && 
+                    all_reviews[review_number][current_pos].compare(end_word) != 0)
+            {
+                for (unsigned int k = i+1; k < ngram.size(); k++)
+                {
+                    if (!over_C && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                    {
+                        mutual_c[k-i-1]++;
+                        mutual_p[k-i-1]++;
+                    }
+                    else if (all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                        mutual_p[k-i-1]++;
+                    current_pos--;
+                    if (!over_C && current_word_pos[j].word_nr - current_pos > C)
+                        over_C = true;
+                }
+            }
+            current_pos = current_word_pos[j].word_nr + 1;
+            over_C = false;
+            while (current_pos < (int)all_reviews[review_number].size() && 
+                    all_reviews[review_number][current_pos].compare(end_word) != 0)
+            {
+                for (unsigned int k = i+1; k < ngram.size(); k++)
+                {
+                    if (!over_C && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                    {
+                        mutual_c[k-i-1]++;
+                        mutual_p[k-i-1]++;
+                    }
+                    else if (all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                        mutual_p[k-i-1]++;
+                    current_pos++;
+                    if (!over_C && current_pos - current_word_pos[j].word_nr > C)
+                        over_C = true;
+                }
+            }
         }
+        for (unsigned int k = i+1; k < ngram.size(); k++)
+        {
+            // It might also require the multiplication with NO_sentences
+            pmi_local += log2((float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
+                        (float)((float)frequency_and_pos[ngram[k]].size() * 
+                            (float)frequency_and_pos[ngram[i]].size()));
+        }
+        srep += (pmi_local / (2 * C));
     }
+    current_ngram->setRepresentativeness ((float)(srep / ngram.size()));
 }
 
 void Worker::printNgrams() {

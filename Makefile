@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS=-Wall -g
+CFLAGS=-Wall -g -lm
 SRC = Interogate.cpp IO.cpp main.cpp NgramEntry.cpp Worker.cpp InterogateCoreNLP.cpp
 HEADERS = Interogate.h IO.h NgramEntry.h Worker.h InterogateCoreNLP.h
 OBJ = Interogate.o IO.o main.o NgramEntry.o Worker.o InterogateCoreNLP.o
