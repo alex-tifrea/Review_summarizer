@@ -42,6 +42,10 @@ public:
         return representativeness;
     }
 
+    void setRepresentativeness(float rep_value){
+        representativeness = rep_value;
+    }
+
     std::vector<std::string> getNgram() const {
         return ngram;
     }

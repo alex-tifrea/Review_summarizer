@@ -123,8 +123,6 @@ void Worker::generateCandidate() {
     }
 }
 
-// D
-// A
 void Worker::generateInteractiveLoop() {
     std::string s;
     while (s != "gata") {
@@ -136,6 +134,19 @@ void Worker::generateInteractiveLoop() {
 void Worker::generateLoop() {
     while (NGRAM_COUNT_LIMIT < this->ngrams.size()) {
         generateCandidate();
+    }
+}
+
+void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
+    int srep = 0;
+    vector<string> ngram = current_ngram->getNgram();
+    // aici calculez pmi pentru fiecare cuvant din ngrama
+    for (unsigned int i = 0; i < ngram.size(); i++)
+    {
+        int pmi_local = 0;
+        for (unsigned int j = i; j < ngram.size(); j++)
+        {
+        }
     }
 }
 
