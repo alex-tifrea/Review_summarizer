@@ -4,6 +4,9 @@ import argparse
 from os import listdir
 from os.path import isfile, join, exists
 
+# Script that parses the output produced by crawler.py and formats it so that it
+# can be read by IO.cpp
+
 def main():
     logging.basicConfig(level=logging.ERROR,)
 
@@ -19,10 +22,10 @@ def main():
 
     files = [ f for f in listdir(dirPath) if isfile(join(dirPath, f)) ]
 
-    with open("reviews.out", "w") as out_file:
+    with open("reviews.in", "w") as out_file:
         out_file.write(str(len(files)))
         out_file.write('\n')
-        
+
         for fname in files:
             if not fname.endswith(".xml"):
                 logging.error("found an non xml file")
