@@ -38,6 +38,7 @@ void IO::readReviews(std::map<std::string, int> &frequency,
         std::istringstream iss(line);
         std::string word;
         std::vector<std::string> newWords;
+
         while (iss >> word) {
             frequency[word]++;
             newWords.push_back(word);

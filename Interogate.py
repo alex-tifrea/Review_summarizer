@@ -9,8 +9,16 @@ E_VALUE = 2.71828
 
 lookup = MicrosoftNgram.LookupService()
 
+fdreq = int(sys.argv[1])
+fdres = int(sys.argv[2])
+print 'am primit fd-urile pipurilor anonime: ' + str(fdreq) + ' ' + str(fdres)
+
+#input = fdopen(fdreq, "r");
+#out = fdopen(fdres, "w");
+
 out_deb = open("Interogate.out", "w", 0);
 out_deb.write('am deschis iesirea\n')
+print 'am deschis iesirea\n'
 
 input = open("/tmp/ngramfiforeq", "r")
 out_deb.write('am deschis input\n')

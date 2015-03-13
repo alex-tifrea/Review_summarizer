@@ -56,7 +56,8 @@ std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> &p
      * send all ngrams separated by "\n"
      * send a unique string: "Interogate please send queries"
      */
-    fputs("Interogate please start buffering\n", requestPipe);
+    sprintf(buffer, "Interogate please start buffering\n");
+    fputs(buffer, requestPipe);
     printf("am trimis interogate pls start\n");
     for(unsigned int i = 0; i < phrases.size(); i++)
     {
@@ -66,7 +67,7 @@ std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> &p
     }
     fputs("Interogate please send queries\n", requestPipe);
     printf("am trimis interogate pls send\n");
-    
+
     result.clear();
     for(unsigned int i = 0; i < phrases.size(); i++)
     {
@@ -112,17 +113,24 @@ void Interogate::Init()
         strcat(path, "/Interogate.py");
         int ret = execlp(path, "Interogate.py", NULL);
         */
-        int ret = execlp("python", "python", "Interogate.py", NULL);
+        close(preq[0]);
+        close(pres[1]);
+        char spreq[10], spres[10];
+        sprintf(spreq, "%d", preq[1]);
+        sprintf(spres, "%d", pres[0]);
+        int ret = execlp("python", "python", "Interogate.py", spreq, spres, NULL);
         printf("execlp a returnat %d\n", ret);
     }
     //printf("init 2\n");
     requestPipe = fopen("/tmp/ngramfiforeq", "w");
+    //requestPipe = fdopen(preq[0], "w");
     if(requestPipe == NULL)
     {
         printf("ERROR opening request pipe\n");
     }
     //printf("init 3\n");
     resultPipe = fopen("/tmp/ngramfifo", "r");
+    //resultPipe = fdopen(pres[1], "r");
     if(resultPipe == NULL)
     {
         printf("ERROR opening result pipe\n");

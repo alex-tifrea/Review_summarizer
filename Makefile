@@ -1,8 +1,8 @@
 CC = g++
 CFLAGS=-Wall -g
-SRC = Interogate.cpp IO.cpp main.cpp NgramEntry.cpp Worker.cpp
-HEADERS = Interogate.h IO.h NgramEntry.h Worker.h
-OBJ = Interogate.o IO.o main.o NgramEntry.o Worker.o
+SRC = Interogate.cpp IO.cpp main.cpp NgramEntry.cpp Worker.cpp InterogateCoreNLP.cpp
+HEADERS = Interogate.h IO.h NgramEntry.h Worker.h InterogateCoreNLP.h
+OBJ = Interogate.o IO.o main.o NgramEntry.o Worker.o InterogateCoreNLP.o
 EXE = main
 
 build: $(SRC) $(EXE)
