@@ -71,7 +71,7 @@ float NgramEntry::computeSimilarity(NgramEntry *ne) {
 }
 
 void NgramEntry::computeScores() {
-    this->readability = Interogate::getJointProbability(this->ngram);
+    // this->readability = Interogate::getJointProbability(this->ngram);
     // TODO: complete this function
     // On it
     this->representativeness = 0;

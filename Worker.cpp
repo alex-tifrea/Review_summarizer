@@ -18,7 +18,16 @@ struct comp_frequencies
 
 void Worker::init() {
     // use IO::readReviews to populate frequency and original_review;
-    io->readReviews(this->frequency, all_reviews);
+
+    io->readReviews(this->frequency, all_reviews, frequency_and_pos);
+    map<string, vector<word_pos> >::iterator it;
+    for (it = frequency_and_pos.begin(); it != frequency_and_pos.end(); ++it)
+    {
+        cout << it->first << " ";
+        for (unsigned int i = 0; i < it->second.size(); i++)
+            cout << all_reviews[it->second[i].review_nr][it->second[i].word_nr] << " ";
+        cout << endl;
+    }
     current_review = 0;
 }
 
@@ -29,6 +38,10 @@ void Worker::initBigrams() {
     // bigrams. Keep a bigram only if it meets the readability and
     // representativeness requirements and if there is no other bigram similar to
     // the newly created one.
+
+    // TODO: Find the most frequent words in the text from the frequency_and_pos
+    // map (the frequency map is redundant since we can find the frequency from 
+    // the frequency_and_pos map)
     vector <pair <string, int> > frequency_copy(this->frequency.begin(),
         this->frequency.end());
     sort (frequency_copy.begin(), frequency_copy.end(), comp_frequencies<string,int>());
@@ -138,12 +151,12 @@ void Worker::generateLoop() {
 }
 
 void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
-    int srep = 0;
+    //int srep = 0;
     vector<string> ngram = current_ngram->getNgram();
     // aici calculez pmi pentru fiecare cuvant din ngrama
     for (unsigned int i = 0; i < ngram.size(); i++)
     {
-        int pmi_local = 0;
+        //int pmi_local = 0;
         for (unsigned int j = i; j < ngram.size(); j++)
         {
         }

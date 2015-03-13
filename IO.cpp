@@ -52,3 +52,38 @@ void IO::readReviews(std::map<std::string, int> &frequency,
             reviews[i].insert(reviews[i].end(), newWords.begin(), newWords.end());
     }
 }
+
+void IO::readReviews(std::map<std::string, int> &frequency,
+                     std::vector<std::vector<std::string> > &reviews,
+                     std::map<std::string, std::vector<word_pos> > &word_positions) {
+    int nr_reviews, i = 0, k = 0;
+    this->in >> nr_reviews;
+    std::string line;
+    while (i < nr_reviews && std::getline(this->in, line)) {
+        // Separator between two consecutive reviews
+        if (line.compare("-----") == 0) {
+            i++;
+            k = 0;
+            continue;
+        }
+
+        // Update hashtable
+        std::istringstream iss(line);
+        std::string word;
+        std::vector<std::string> newWords;
+
+        while (iss >> word) {
+            frequency[word]++;
+            word_positions[word].push_back(word_pos(i, k));
+            newWords.push_back(word);
+            k++;
+        }
+
+        // Update the array
+        // If there are any empty reviews this will be a problem
+        if (i == (int)reviews.size())
+            reviews.push_back(newWords);
+        else
+            reviews[i].insert(reviews[i].end(), newWords.begin(), newWords.end());
+    }
+}
