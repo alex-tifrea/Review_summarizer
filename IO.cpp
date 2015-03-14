@@ -40,10 +40,19 @@ void IO::readReviews(std::map<std::string, int> &frequency,
         std::vector<std::string> newWords;
 
         while (iss >> word) {
-            // TODO: check if it is a word (it can be a , or : or something
-            // else). However, if it is . ? ! then put it in the reviews vector
-            frequency[word]++;
-            newWords.push_back(word);
+            // Check if it is a word (it can't be a "," or ":" or something
+            // else because we deleted those characters when formatting the
+            // input). However, it can still be ".", "?", "!" or "-". If it is
+            // ".", "?" or "!", then put it in the reviews vector.
+            if (word.compare("-") != 0 &&
+                word.compare(".") != 0 &&
+                word.compare("?") != 0 &&
+                word.compare("!") != 0) {
+                frequency[word]++;
+            }
+            if (word.compare("-") != 0) {
+                newWords.push_back(word);
+            }
         }
 
         // Update the array
@@ -75,10 +84,21 @@ void IO::readReviews(std::map<std::string, int> &frequency,
         std::vector<std::string> newWords;
 
         while (iss >> word) {
-            frequency[word]++;
-            word_positions[word].push_back(word_pos(i, k));
-            newWords.push_back(word);
-            k++;
+            // Check if it is a word (it can't be a "," or ":" or something
+            // else because we deleted those characters when formatting the
+            // input). However, it can still be ".", "?", "!" or "-". If it is
+            // ".", "?" or "!", then put it in the reviews vector.
+            if (word.compare("-") != 0 &&
+                word.compare(".") != 0 &&
+                word.compare("?") != 0 &&
+                word.compare("!") != 0) {
+                frequency[word]++;
+            }
+            if (word.compare("-") != 0) {
+                newWords.push_back(word);
+                word_positions[word].push_back(word_pos(i, k));
+                k++;
+            }
         }
 
         // Update the array

@@ -42,7 +42,7 @@ void Worker::initBigrams() {
     // the newly created one.
 
     // TODO: Find the most frequent words in the text from the frequency_and_pos
-    // map (the frequency map is redundant since we can find the frequency from 
+    // map (the frequency map is redundant since we can find the frequency from
     // the frequency_and_pos map)
     vector <pair <string, int> > frequency_copy(this->frequency.begin(),
         this->frequency.end());
@@ -167,7 +167,7 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
             bool over_C = false;
             int review_number = current_word_pos[j].review_nr;
             int current_pos = current_word_pos[j].word_nr - 1;
-            while (current_pos > 0 && 
+            while (current_pos > 0 &&
                     all_reviews[review_number][current_pos].compare(end_word) != 0)
             {
                 for (unsigned int k = i+1; k < ngram.size(); k++)
@@ -186,7 +186,7 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
             }
             current_pos = current_word_pos[j].word_nr + 1;
             over_C = false;
-            while (current_pos < (int)all_reviews[review_number].size() && 
+            while (current_pos < (int)all_reviews[review_number].size() &&
                     all_reviews[review_number][current_pos].compare(end_word) != 0)
             {
                 for (unsigned int k = i+1; k < ngram.size(); k++)
@@ -208,7 +208,7 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
         {
             // It might also require the multiplication with NO_sentences
             pmi_local += log2((float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
-                        (float)((float)frequency_and_pos[ngram[k]].size() * 
+                        (float)((float)frequency_and_pos[ngram[k]].size() *
                             (float)frequency_and_pos[ngram[i]].size()));
         }
         srep += (pmi_local / (2 * C));
