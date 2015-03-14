@@ -24,6 +24,9 @@ You can delete some annotators:
 java -cp "*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos -file input.txt
 ```
 
+In order for make run to work, you need to have CoreNLP installed and the environment variable CORENLP_PATH set to the folder where the CoreNLP sources can be found (it should look something like "..."/stanford-corenlp-full-...)
+
+
 More information about corenlp here:
 http://nlp.stanford.edu/software/corenlp.shtml
 
