@@ -26,3 +26,8 @@ java -cp "*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokeni
 
 More information about corenlp here:
 http://nlp.stanford.edu/software/corenlp.shtml
+
+Stats for 401 reviews:
+    - Total number of words:        35498
+    - Number of unique word:        376
+    - Aprox. number of sentences:   2403
