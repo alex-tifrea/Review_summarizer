@@ -1,3 +1,4 @@
+import unicodedata
 import requests
 import sys
 import os
@@ -7,47 +8,74 @@ import xml.etree.ElementTree as ET
 import shutil
 import xml.dom.minidom
 
+# TODO: when given --get flag, get the review list in hotels_urls.out
+# TODO: when given --save flag, save the reviews that are listed in
+# hotels_urls.out
+# TODO: when given the --roomtip flag, get the roomtip advice too
+
+enable_roomtip = False
+
+# @args the div that contains a review
+# extracts information about the given review
 def process_review(review_info, output_file, count, city, hotel_name):
-        # primeste div-ul ce contine un review si extrage informatii despre el
+        global enable_roomtip
+
+        # get info about the user that submitted the review
         username = review_info.xpath('//*[contains(concat(" ", \
                 normalize-space(@class), " "), " username ")]')[0]. \
                 xpath('span')[0].text
         userInfo = review_info.xpath('//*[@class="memberBadging"]')[0]
 
+        # get the title of the review
         quote = review_info.xpath('//*[@class="quote"]')[0].text
-        # elimin ghilimelele
+        # get rid of quotes
         quote = quote[1:]
         quote = quote[:-1]
 
+        # get the rating
         rating = review_info.xpath('//*[contains(concat(" ", \
                  normalize-space(@class), " "), " rating ")]')[0].\
                  xpath('span/img')[0].xpath('attribute::alt')[0]
+
+        # get the text of the review
         entry = review_info.xpath('//*[@class="entry"]')[0]
-#         roomtip = entry.xpath('div')
-#         if (len(roomtip) > 0):
-#             roomtip = etree.tostring(roomtip[0])
-#             roomtip = roomtip.split("<>")[0]
-#         else:
-#             roomtip = None
-#         print roomtip
-        entry = entry.xpath('p')[0].text[1:]
 
+        # get roomtip info if the --roomtip flag was given
+        if enable_roomtip:
+            roomtip = entry.xpath('div')
+            if (len(roomtip) > 0):
+                roomtip = etree.tostring(roomtip[0])
+                roomtip = roomtip.split("<>")[0]
+            else:
+                roomtip = None
+            print roomtip
+        entry = unicode(entry.xpath('p')[0].text[1:])
+
+        # convert entry to ASCII in case it has glyph characters
+        entry = unicodedata.normalize('NFKD',entry).encode('ascii', 'ignore')
+
+        # get the detailed rating (i.e. for location, cleanliness, service etc.)
         recommend_title = review_info.xpath('//*[@class="recommend"]')[0]. \
-                          xpath('li/span')[0].text
-        detailed_ratings = review_info.xpath('//*[@class="recommend"]')[0]. \
-                           xpath('li')[0].xpath('descendant::li')
-        list_ratings = []
-        for rate in detailed_ratings:
-            value = rate.xpath('span/img')[0].xpath('attribute::alt')[0]
-            key = rate.xpath('child::*')[0]
-            key = etree.tostring(rate).split(">\n")
-            key = key[len(key)-2][:-4]
-            key = key.lower()
-            key = key.replace(" ", "")
-            tmp = (key, value)
-            list_ratings.append(tmp)
+                          xpath('li/span')
 
-        # generam fisierul xml
+        # if recommend_title is not empty then proceed to gettin the detailed
+        # ratings
+        list_ratings = []
+        if recommend_title:
+            recommend_title = recommend_title[0].text
+            detailed_ratings = review_info.xpath('//*[@class="recommend"]')[0]. \
+                               xpath('li')[0].xpath('descendant::li')
+            for rate in detailed_ratings:
+                value = rate.xpath('span/img')[0].xpath('attribute::alt')[0]
+                key = rate.xpath('child::*')[0]
+                key = etree.tostring(rate).split(">\n")
+                key = key[len(key)-2][:-4]
+                key = key.lower()
+                key = key.replace(" ", "")
+                tmp = (key, value)
+                list_ratings.append(tmp)
+
+        # generate the xml file
         root = ET.Element("root")
         root.set("id",str(count))
 
@@ -72,32 +100,46 @@ def process_review(review_info, output_file, count, city, hotel_name):
         rating_elem.text = rating
         entry_elem = ET.SubElement(review, "entry")
         entry_elem.text = entry
-#         if not roomtip is None:
-#             roomtip_elem = ET.SubElement(entry_elem, "roomtip")
-#             roomtip_elem.text = roomtip
+
+        if enable_roomtip:
+            if not roomtip is None:
+                roomtip_elem = ET.SubElement(entry_elem, "roomtip")
+                roomtip_elem.text = roomtip
+
         recommend_title_elem = ET.SubElement(review, "recommend_title")
         recommend_title_elem.text = recommend_title
-        detailed_rating_elem = ET.SubElement(review, "detailed_rating")
-        for rate in list_ratings:
-            detailed_rating_elem.set(rate[0], rate[1][0])
+
+        # if there were any detailed ratings
+        if list_ratings:
+            detailed_rating_elem = ET.SubElement(review, "detailed_rating")
+            for rate in list_ratings:
+                detailed_rating_elem.set(rate[0], rate[1][0])
 
         tree = ET.ElementTree(root)
         tree.write(output_file.name)
         xmlstr = ET.tostring(root, encoding='utf8', method='xml')
 
+        output_file.write(xmlstr)
         pretty_xml = xml.dom.minidom.parseString(xmlstr)
         output_file.write(pretty_xml.toprettyxml())
 
-
-def process_hotel(url, count_reviews, city, hotel_name): # primeste url-ul unui hotel
+# @args the url of a hotel
+# extracts the reviews for the given hotel and calls process_review to create
+# the coresponding xml file
+def process_hotel(url, count_reviews, city, hotel_name):
     page = requests.get("http://www.tripadvisor.com"+url)
     tree = html.fromstring(page.text)
-    # extrage url-urile review-urilor din pagina curenta
+
+    # extract urls for the reviews in the current page
     reviews = tree.xpath('//*[@id="REVIEWS"]')[0]
-    reviews = reviews.xpath('//*[@class="quote"]')
+
+    reviews = reviews.xpath('//*[contains(concat(" ", \
+            normalize-space(@class), " "), " quote ")]')
 
     for myiter in reviews:
         url_rev = myiter.xpath('child::a')[0].xpath('attribute::href')[0]
+        sys.stdout.write('.')
+        sys.stdout.flush()
         page_rev = requests.get("http://www.tripadvisor.com"+url_rev)
         tree_rev = html.fromstring(page_rev.text)
         rev_info = tree_rev.xpath('//*[contains(concat(" ", \
@@ -109,19 +151,23 @@ def process_hotel(url, count_reviews, city, hotel_name): # primeste url-ul unui 
         output_file.close()
         count_reviews = count_reviews + 1
 
-    # trecem la pagina urmatoare
+    # move on to the next page
     nextPage = tree_rev.xpath('//*[contains(concat(" ", \
             normalize-space(@class), " "), " sprite-pageNext ")]')
     if (len(nextPage) == 0): # am ajuns la ultima pagina
         return
 
     nextPageURL = nextPage[0].xpath('attribute::href')[0]
-
     process_hotel(url, count_reviews, city, hotel_name)
 
-def parse_hotels(input_file): # pentru fiecare hotel, face bucatarie
+
+# @args the file that contains all the hotels that are about to be crawled
+# the file name is usually hotels_urls.out
+def parse_hotels(input_file):
+    print input_file
     all_hotels = input_file.readlines()
     for hotel in all_hotels:
+        print "Current hotel is:",hotel
         tokens = hotel.split('-')
         if (len(tokens) <= 1):
             continue
@@ -139,7 +185,8 @@ def parse_hotels(input_file): # pentru fiecare hotel, face bucatarie
         # TODO: remove the return
         return
 
-def get_hotel_urls(url, page_no, output_file): # extrage toate url-urile hotelurilor
+# extracts all hotels' urls and saves them to a file (i.e. hotels_urls.out)
+def get_hotel_urls(url, page_no, output_file):
     sys.stdout.write('.\n')
     """
     sys.stdout.flush()
@@ -167,8 +214,7 @@ def get_hotel_urls(url, page_no, output_file): # extrage toate url-urile hotelur
         """
 
 if __name__ == '__main__':
-    # aici ar trebui sa gasim un mod
-    # generic de a obtine URL-ul pentru prima pagina
+    # URL for hotels in Bucharest
     init = "/Hotels-g294458-Bucharest-Hotels.html"
 
     #TODO: aceasta e linia corecta:
