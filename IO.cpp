@@ -40,6 +40,8 @@ void IO::readReviews(std::map<std::string, int> &frequency,
         std::vector<std::string> newWords;
 
         while (iss >> word) {
+            // TODO: check if it is a word (it can be a , or : or something
+            // else). However, if it is . ? ! then put it in the reviews vector
             frequency[word]++;
             newWords.push_back(word);
         }
