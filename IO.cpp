@@ -1,6 +1,5 @@
 #include <sstream>
 #include "IO.h"
-#include <string>
 
 IO::IO(std::string _in_name, std::string _out_name) {
     this->in_name = _in_name;
@@ -22,7 +21,7 @@ IO::~IO() {
     out.close();
 }
 
-void IO::readReviews(std::map<std::string, int> &frequency,
+void IO::readReviews(std::map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews) {
     int nr_reviews, i = 0;
     this->in >> nr_reviews;
@@ -48,7 +47,7 @@ void IO::readReviews(std::map<std::string, int> &frequency,
                 word.compare(".") != 0 &&
                 word.compare("?") != 0 &&
                 word.compare("!") != 0) {
-                frequency[word]++;
+                wordInfo[word].frequency++;
             }
             if (word.compare("-") != 0) {
                 newWords.push_back(word);
@@ -64,7 +63,7 @@ void IO::readReviews(std::map<std::string, int> &frequency,
     }
 }
 
-void IO::readReviews(std::map<std::string, int> &frequency,
+void IO::readReviews(std::map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews,
                      std::map<std::string, std::vector<WordPosition> > &word_positions) {
     int nr_reviews, i = 0, k = 0;
@@ -92,7 +91,7 @@ void IO::readReviews(std::map<std::string, int> &frequency,
                 word.compare(".") != 0 &&
                 word.compare("?") != 0 &&
                 word.compare("!") != 0) {
-                frequency[word]++;
+                wordInfo[word].frequency++;
             }
             if (word.compare("-") != 0) {
                 newWords.push_back(word);

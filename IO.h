@@ -7,6 +7,12 @@
 #include <vector>
 #include <map>
 
+struct WordInfo_t {
+    unsigned int frequency;
+    std::string partOfSpeech;
+};
+typedef struct WordInfo_t WordInfo;
+
 struct WordPosition{
     int review_nr, word_nr;
     WordPosition(int a, int b)
@@ -31,10 +37,10 @@ public:
     /*
      * Read reviews from file.
      */
-    void readReviews(std::map<std::string, int> &frequency,
+    void readReviews(std::map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews);
 
-    void readReviews(std::map<std::string, int> &frequency,
+    void readReviews(std::map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews,
                      std::map<std::string, std::vector<WordPosition> > &word_positions);
 };

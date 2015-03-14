@@ -7,30 +7,47 @@ Worker::Worker(IO *_io) {
 
 Worker::~Worker() {}
 
-template <typename T1, typename T2>
 struct comp_frequencies
 {
-    typedef pair <T1, T2> type;
-    bool operator ()(type const& a, type const& b) const
+    typedef pair <string, WordInfo> type;
+    bool operator()(type const& a, type const& b) const
     {
-        return a.second > b.second;
+        return a.second.frequency > b.second.frequency;
     }
 };
 
 void Worker::init() {
-    // use IO::readReviews to populate frequency and original_review;
+    // use IO::readReviews to populate wordInfo.frequency and original_review;
 
-    io->readReviews(this->frequency, all_reviews, frequency_and_pos);
+    io->readReviews(this->wordInfo, all_reviews, wordPos);
     map<string, vector<WordPosition> >::iterator it;
-    for (it = frequency_and_pos.begin(); it != frequency_and_pos.end(); ++it)
+    for (it = wordPos.begin(); it != wordPos.end(); ++it)
     {
         cout << it->first << " ";
         for (unsigned int i = 0; i < it->second.size(); i++)
             cout << all_reviews[it->second[i].review_nr][it->second[i].word_nr] << " ";
         cout << endl;
     }
+
+    // Start aquiring part-of-speech information for all the words in the
+    // reviews, using CoreNLP
+    InterogateCoreNLP::init(this->wordInfo);
+    InterogateCoreNLP::getPartOfSpeech(this->wordInfo);
+    InterogateCoreNLP::finalize();
+    // At this point, this->wordInfo should be contain both the frequency and
+    // the part-of-speech of each word appearing in the reviews.
+
+    fstream words;
+    words.open("wordInfo.out", std::fstream::out);
+    std::map<std::string, WordInfo>::iterator iter;
+    for (iter = wordInfo.begin(); iter != wordInfo.end(); ++iter) {
+        words << iter->first << " " << iter->second.frequency << " " <<
+                 iter->second.partOfSpeech << std::endl;
+    }
+    words.close();
+
     current_review = 0;
-    NO_sentences = 5;
+    sentences_count= 5;
 }
 
 void Worker::initBigrams() {
@@ -41,42 +58,40 @@ void Worker::initBigrams() {
     // representativeness requirements and if there is no other bigram similar to
     // the newly created one.
 
-    // TODO: Find the most frequent words in the text from the frequency_and_pos
-    // map (the frequency map is redundant since we can find the frequency from
-    // the frequency_and_pos map)
-    vector <pair <string, int> > frequency_copy(this->frequency.begin(),
-        this->frequency.end());
-    sort (frequency_copy.begin(), frequency_copy.end(), comp_frequencies<string,int>());
-    int remove_from = ((int)frequency_copy.size() >> 1) + 1;
+    vector <pair <string, WordInfo> > wordInfo_copy(this->wordInfo.begin(),
+        this->wordInfo.end());
+    sort (wordInfo_copy.begin(), wordInfo_copy.end(), comp_frequencies());
+    int remove_from = ((int)wordInfo_copy.size() >> 1) + 1;
 
     if (remove_from < MIN_BIGRAM_NUMBER)
     {
-        float last_value = frequency_copy[remove_from-1].second;
-        while (remove_from < (int)frequency_copy.size() &&
-               frequency_copy[remove_from].second == last_value)
+        unsigned int last_value = wordInfo_copy[remove_from-1].second.frequency;
+        while (remove_from < (int)wordInfo_copy.size() &&
+               wordInfo_copy[remove_from].second.frequency == last_value)
         {
             remove_from++;
         }
-        frequency_copy.erase(frequency_copy.begin()+remove_from,
-                frequency_copy.end());
+        wordInfo_copy.erase(wordInfo_copy.begin()+remove_from,
+                wordInfo_copy.end());
     }
     else
     {
-        frequency_copy.erase(frequency_copy.begin()+MIN_BIGRAM_NUMBER, frequency_copy.end());
+        wordInfo_copy.erase(wordInfo_copy.begin()+MIN_BIGRAM_NUMBER, wordInfo_copy.end());
     }
-    this->frequency.clear();
-    for (int i = 0; i < (int)frequency_copy.size(); i++)
-        this->frequency[frequency_copy[i].first] = frequency_copy[i].second;
 
-    for (int i = 0; i < (int)frequency_copy.size(); i++)
+    this->wordInfo.clear();
+    for (int i = 0; i < (int)wordInfo_copy.size(); i++)
+        this->wordInfo[wordInfo_copy[i].first] = wordInfo_copy[i].second;
+
+    for (int i = 0; i < (int)wordInfo_copy.size(); i++)
     {
-        for (int j = 0; j < (int)frequency_copy.size(); j++)
+        for (int j = 0; j < (int)wordInfo_copy.size(); j++)
         {
             if (i != j)
             {
                 vector <string> bigram_text;
-                bigram_text.push_back(frequency_copy[i].first);
-                bigram_text.push_back(frequency_copy[j].first);
+                bigram_text.push_back(wordInfo_copy[i].first);
+                bigram_text.push_back(wordInfo_copy[j].first);
                 NgramEntry *new_bigram = new NgramEntry(bigram_text);
                 pair<float, float> read_rep = new_bigram->getScore();
                 // Check the readability and the representativeness score.
@@ -122,6 +137,8 @@ void Worker::generateCandidate() {
                 // Check if the newly created ngram is similar to any of the
                 // other ngrams
                 bool is_unique = true;
+                // TODO: this might need to be changed. I think it may slow us
+                // down
                 for (unsigned int i = 0; i < ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
                         is_unique = false;
@@ -159,7 +176,7 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
     {
         float pmi_local = 0;
         string end_word = ".";
-        vector <WordPosition> current_word_pos = frequency_and_pos[ngram[i]];
+        vector <WordPosition> current_word_pos = wordPos[ngram[i]];
         vector <float> mutual_p(ngram.size()-i-1, 0);
         vector <float> mutual_c(ngram.size()-i-1, 0);
         for (unsigned int j = 0; j < current_word_pos.size(); j++)
@@ -206,10 +223,10 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
         }
         for (unsigned int k = i+1; k < ngram.size(); k++)
         {
-            // It might also require the multiplication with NO_sentences
+            // It might also require the multiplication with sentences_count
             pmi_local += log2((float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
-                        (float)((float)frequency_and_pos[ngram[k]].size() *
-                            (float)frequency_and_pos[ngram[i]].size()));
+                        (float)((float)wordPos[ngram[k]].size() *
+                            (float)wordPos[ngram[i]].size()));
         }
         srep += (pmi_local / (2 * C));
     }
