@@ -83,6 +83,9 @@ void Worker::initBigrams() {
     for (int i = 0; i < (int)wordInfo_copy.size(); i++)
         this->wordInfo[wordInfo_copy[i].first] = wordInfo_copy[i].second;
 
+    // newBigrams is used to store all the possible bigrams, until we can decide
+    // which ones we want to keep
+    std::vector<NgramEntry*> newBigrams;
     for (int i = 0; i < (int)wordInfo_copy.size(); i++)
     {
         for (int j = 0; j < (int)wordInfo_copy.size(); j++)
@@ -92,14 +95,21 @@ void Worker::initBigrams() {
                 vector <string> bigram_text;
                 bigram_text.push_back(wordInfo_copy[i].first);
                 bigram_text.push_back(wordInfo_copy[j].first);
-                NgramEntry *new_bigram = new NgramEntry(bigram_text);
-                pair<float, float> read_rep = new_bigram->getScore();
-                // Check the readability and the representativeness score.
-                if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
-                {
-                    this->bigrams.push_back(new_bigram);
-                }
+                newBigrams.push_back(new NgramEntry(bigram_text));
             }
+        }
+    }
+
+    // TODO: here we should call getJointProbabilities for all the bigrams at
+    // once
+
+    for (unsigned int i = 0; i < newBigrams.size(); i++)
+    {
+        pair<float, float> read_rep = newBigrams[i]->getScore();
+        // Check the readability and the representativeness score.
+        if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
+        {
+            this->bigrams.push_back(newBigrams[i]);
         }
     }
 
