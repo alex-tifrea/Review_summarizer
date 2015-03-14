@@ -66,7 +66,7 @@ void IO::readReviews(std::map<std::string, int> &frequency,
 
 void IO::readReviews(std::map<std::string, int> &frequency,
                      std::vector<std::vector<std::string> > &reviews,
-                     std::map<std::string, std::vector<word_pos> > &word_positions) {
+                     std::map<std::string, std::vector<WordPosition> > &word_positions) {
     int nr_reviews, i = 0, k = 0;
     this->in >> nr_reviews;
     std::string line;
@@ -96,7 +96,7 @@ void IO::readReviews(std::map<std::string, int> &frequency,
             }
             if (word.compare("-") != 0) {
                 newWords.push_back(word);
-                word_positions[word].push_back(word_pos(i, k));
+                word_positions[word].push_back(WordPosition(i, k));
                 k++;
             }
         }

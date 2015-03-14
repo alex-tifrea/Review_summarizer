@@ -7,9 +7,9 @@
 #include <vector>
 #include <map>
 
-struct word_pos{
+struct WordPosition{
     int review_nr, word_nr;
-    word_pos(int a, int b)
+    WordPosition(int a, int b)
     {
         review_nr = a;
         word_nr = b;
@@ -36,7 +36,7 @@ public:
 
     void readReviews(std::map<std::string, int> &frequency,
                      std::vector<std::vector<std::string> > &reviews,
-                     std::map<std::string, std::vector<word_pos> > &word_positions);
+                     std::map<std::string, std::vector<WordPosition> > &word_positions);
 };
 
 #endif // __IO_H__

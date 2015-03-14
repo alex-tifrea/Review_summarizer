@@ -24,11 +24,11 @@ class Worker {
         std::map<std::string, int> frequency;
 
         // A hashtable in which the key is a word and the value is a vector in
-        // which we have both the review in which we can find that word and at 
+        // which we have both the review in which we can find that word and at
         // which position the word is in the review. The frequency of the word
-        // in the text can also be found in this data structure by evaluating 
+        // in the text can also be found in this data structure by evaluating
         // the size of the vector associated with a word.
-        std::map<std::string, std::vector<word_pos> > frequency_and_pos;
+        std::map<std::string, std::vector<WordPosition> > frequency_and_pos;
 
         // The n-grams at a given time. Initially they are all bigrams. At each step,
         // we try to merge an n-gram with a bigram to obtain an (n+1)-gram.
@@ -52,7 +52,7 @@ class Worker {
         IO *io;
 
         // TODO We need to find the total number of sentences in the reviews in
-        // order to find the corresponding joint probability, which is the 
+        // order to find the corresponding joint probability, which is the
         // number of times two words are in the same sentence over the total
         // number of sentences. This variable will be 5 for the moment.
         int NO_sentences;

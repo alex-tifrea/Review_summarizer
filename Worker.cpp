@@ -21,7 +21,7 @@ void Worker::init() {
     // use IO::readReviews to populate frequency and original_review;
 
     io->readReviews(this->frequency, all_reviews, frequency_and_pos);
-    map<string, vector<word_pos> >::iterator it;
+    map<string, vector<WordPosition> >::iterator it;
     for (it = frequency_and_pos.begin(); it != frequency_and_pos.end(); ++it)
     {
         cout << it->first << " ";
@@ -159,7 +159,7 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
     {
         float pmi_local = 0;
         string end_word = ".";
-        vector <word_pos> current_word_pos = frequency_and_pos[ngram[i]];
+        vector <WordPosition> current_word_pos = frequency_and_pos[ngram[i]];
         vector <float> mutual_p(ngram.size()-i-1, 0);
         vector <float> mutual_c(ngram.size()-i-1, 0);
         for (unsigned int j = 0; j < current_word_pos.size(); j++)
