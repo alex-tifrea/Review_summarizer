@@ -1,4 +1,6 @@
 CoreNLP
+*.o
+main
 *.pyc
 Reviews_*
 Papers
