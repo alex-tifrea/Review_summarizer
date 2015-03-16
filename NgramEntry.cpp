@@ -1,5 +1,5 @@
 #include "NgramEntry.h"
-#include "Interogate.h"
+#include "InterogateNGRAM.h"
 #include <string>
 #include <vector>
 

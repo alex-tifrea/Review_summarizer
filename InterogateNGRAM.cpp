@@ -1,4 +1,4 @@
-#include "Interogate.h"
+#include "InterogateNGRAM.h"
 
 #include <vector>
 #include <string>
@@ -13,7 +13,9 @@
 #include <sys/stat.h>
 using namespace std;
 
-#define PATHSIZE 255
+//if you run this program on a very busy machine
+//consider incresing this value
+#define FD_SIZE 5
 
 FILE* Interogate::resultPipe;
 FILE* Interogate::requestPipe;
@@ -56,25 +58,31 @@ std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> &p
      * send all ngrams separated by "\n"
      * send a unique string: "Interogate please send queries"
      */
-    sprintf(buffer, "Interogate please start buffering\n");
-    fputs(buffer, requestPipe);
-    printf("am trimis interogate pls start\n");
+    fputs("Interogate please start buffering\n", requestPipe);
+    //printf("am trimis interogate pls start\n");
     for(unsigned int i = 0; i < phrases.size(); i++)
     {
         strcpy(buffer, (phrases[i] + "\n").c_str());
-        printf("sending %s\n", buffer);
+        //printf("sending %s\n", buffer);
         fputs(buffer, requestPipe);
+        //
+        //  ATTENTION
+        //
+        //if Interogate.py locks on readline
+        //you should decomment this line
+        //fflush(requestPipe);
     }
     fputs("Interogate please send queries\n", requestPipe);
-    printf("am trimis interogate pls send\n");
+    fflush(requestPipe);
+    //printf("am trimis interogate pls send\n");
 
     result.clear();
     for(unsigned int i = 0; i < phrases.size(); i++)
     {
-        printf("incep fgets\n");
+        //printf("incep fgets\n");
         fgets(buffer, 100, resultPipe);
-        printf("termin fgets\n");
-        printf("deb %s\n", buffer);
+        //printf("termin fgets\n");
+        //printf("deb %s\n", buffer);
         result.push_back(atof(buffer));
     }
 
@@ -84,21 +92,25 @@ std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> &p
 void Interogate::Init()
 {
     //printf("init 1\n");
-    mkfifo("/tmp/ngramfifo", 0666);
-    mkfifo("/tmp/ngramfiforeq", 0666);
-    //pid_t pidParent = getpid();
-    //printf("1 pid %d\n", pidParent);
-    pid_t pid = fork();
-    //pid_t pid = getpid();
-    //printf("2 pid %d\n", pid);
-    //if(pid != pidParent)
+    //mkfifo("/tmp/ngramfifo", 0666);
+    //mkfifo("/tmp/ngramfiforeq", 0666);
 
     //unnamed pipes
     //each pipe is: input | output
-    int preq[2], pres[2];
-    pipe(preq);
-    pipe(pres);
+    int requestPipeFd[2], resultPipeFd[2];
+    if(pipe(requestPipeFd) == -1)
+    {
+        printf("ERROR creating the annonymus request pipe\n");
+        exit(0);
+    }
+    if(pipe(resultPipeFd) == -1)
+    {
+        printf("ERROR creating the annonymus result pipe\n");
+        exit(0);
+    }
+    //printf("pipe: am creat pipe-urile: %d %d %d %d\n", requestPipeFd[0], requestPipeFd[1], resultPipeFd[0], resultPipeFd[1]);
 
+    pid_t pid = fork();
     if(pid == -1)
     {
         printf("ERROR starting the Interogate.py process\n");
@@ -107,30 +119,30 @@ void Interogate::Init()
     if(pid == 0)
     {
         //child process
-        /*
-        char *path = (char*) malloc(PATHSIZE*sizeof(char));
-        getcwd(path, PATHSIZE);
-        strcat(path, "/Interogate.py");
-        int ret = execlp(path, "Interogate.py", NULL);
-        */
-        close(preq[0]);
-        close(pres[1]);
-        char spreq[10], spres[10];
-        sprintf(spreq, "%d", preq[1]);
-        sprintf(spres, "%d", pres[0]);
-        int ret = execlp("python", "python", "Interogate.py", spreq, spres, NULL);
-        printf("execlp a returnat %d\n", ret);
+        close(requestPipeFd[1]);
+        close(resultPipeFd[0]);
+        char requestPipeFdStr[FD_SIZE], resultPipeFdStr[FD_SIZE];
+        sprintf(requestPipeFdStr, "%d", requestPipeFd[0]);
+        sprintf(resultPipeFdStr, "%d", resultPipeFd[1]);
+        int ret = execlp("python", "python", "InterogateNGRAM.py", requestPipeFdStr, resultPipeFdStr, NULL);
+        if(ret == -1)
+        {
+            printf("ERROR at execlp\n");
+        }
     }
+    //parent process
     //printf("init 2\n");
-    requestPipe = fopen("/tmp/ngramfiforeq", "w");
-    //requestPipe = fdopen(preq[0], "w");
+    close(requestPipeFd[0]);
+    close(resultPipeFd[1]);
+    //requestPipe = fopen("/tmp/ngramfiforeq", "w");
+    requestPipe = fdopen(requestPipeFd[1], "w");
     if(requestPipe == NULL)
     {
         printf("ERROR opening request pipe\n");
     }
     //printf("init 3\n");
-    resultPipe = fopen("/tmp/ngramfifo", "r");
-    //resultPipe = fdopen(pres[1], "r");
+    //resultPipe = fopen("/tmp/ngramfifo", "r");
+    resultPipe = fdopen(resultPipeFd[0], "r");
     if(resultPipe == NULL)
     {
         printf("ERROR opening result pipe\n");

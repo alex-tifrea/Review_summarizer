@@ -1,7 +1,7 @@
 #include <iostream>
 #include "IO.h"
 #include "Worker.h"
-#include "Interogate.h"
+#include "InterogateNGRAM.h"
 #include <string>
 #include <vector>
 #include <map>
