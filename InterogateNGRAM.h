@@ -1,5 +1,5 @@
-#ifndef __INTEROGATE_H__
-#define __INTEROGATE_H__
+#ifndef __INTEROGATE_NGRAM_H__
+#define __INTEROGATE_NGRAM_H__
 
 #include <vector>
 #include <string>
@@ -11,7 +11,7 @@
 //set in the NGRAM_TOKEN environment variable
 //
 
-class Interogate
+class InterogateNGRAM
 {
 public:
     //receives one ngram as an array of words
@@ -31,4 +31,4 @@ private:
 
 };
 
-#endif // __INTEROGATE_H__
+#endif // __INTEROGATE_NGRAM_H__

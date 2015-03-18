@@ -15,7 +15,7 @@ requestInput = os.fdopen(fdreq, "r")
 resultOutput = os.fdopen(fdres, "w")
 #print 'py am deschis fd-urile'
 
-out_deb = open("Interogate.out", "w", 0)
+out_deb = open("InterogateNGRAM.out", "w", 0)
 out_deb.write('am deschis iesirea\n')
 #print 'py am deschis iesirea\n'
 

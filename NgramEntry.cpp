@@ -14,7 +14,7 @@ NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
         this->computeReadability();
         this->computeRepresent();
     } else {
-        this->computeReadability();
+        this->readability = 0;
         this->computeRepresent();
     }
 }
@@ -82,7 +82,7 @@ float NgramEntry::computeSimilarity(NgramEntry *ne) {
 }
 
 void NgramEntry::computeReadability() {
-    this->readability = Interogate::getJointProbability(this->ngram);
+    this->readability = InterogateNGRAM::getJointProbability(this->ngram);
 }
 
 void NgramEntry::computeRepresent() {

@@ -25,7 +25,7 @@ void signal_callback_handler(int signum)
     std::cout<<"\nExiting ..."<<std::endl;
 
     // Cleanup and close up stuff here
-    Interogate::Finalize();
+    InterogateNGRAM::Finalize();
 
     // Terminate program
     exit(signum);
@@ -33,7 +33,7 @@ void signal_callback_handler(int signum)
 
 int main ()
 {
-    Interogate::Init();
+    InterogateNGRAM::Init();
     // Register signal and signal handler
     signal(SIGINT, signal_callback_handler);
 
@@ -47,6 +47,6 @@ int main ()
 //     work->generateInteractiveLoop();
     work->generateLoop();
     work->printNgrams();
-    Interogate::Finalize();
+    InterogateNGRAM::Finalize();
     return 0;
 }

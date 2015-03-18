@@ -11,6 +11,7 @@
 #include "NgramEntry.h"
 #include "IO.h"
 #include "InterogateCoreNLP.h"
+#include "InterogateNGRAM.h"
 
 #define MIN_BIGRAM_NUMBER 500 // TODO: maybe change this
 #define NGRAM_COUNT_LIMIT 8

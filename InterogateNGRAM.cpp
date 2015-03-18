@@ -17,10 +17,10 @@ using namespace std;
 //consider incresing this value
 #define FD_SIZE 5
 
-FILE* Interogate::resultPipe;
-FILE* Interogate::requestPipe;
+FILE* InterogateNGRAM::resultPipe;
+FILE* InterogateNGRAM::requestPipe;
 
-float Interogate::getJointProbability(std::vector<std::string> &phrase)
+float InterogateNGRAM::getJointProbability(std::vector<std::string> &phrase)
 {
     std::string strPhrase = "";
     for(unsigned int i = 0; i < phrase.size() - 1; i++)
@@ -29,10 +29,10 @@ float Interogate::getJointProbability(std::vector<std::string> &phrase)
     }
     strPhrase += phrase[phrase.size() - 1];
 
-    return Interogate::getJointProbability(strPhrase);
+    return InterogateNGRAM::getJointProbability(strPhrase);
 }
 
-float Interogate::getJointProbability(std::string phrase)
+float InterogateNGRAM::getJointProbability(std::string phrase)
 {
     //trimit request
     phrase += "\n";
@@ -48,7 +48,7 @@ float Interogate::getJointProbability(std::string phrase)
     return result;
 }
 
-std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> &phrases)
+std::vector<float> InterogateNGRAM::getJointProbabilities(std::vector<std::string> &phrases)
 {
     std::vector<float> result;
     char buffer[100];
@@ -68,7 +68,7 @@ std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> &p
         //
         //  ATTENTION
         //
-        //if Interogate.py locks on readline
+        //if InterogateNGRAM.py locks on readline
         //you should decomment this line
         //fflush(requestPipe);
     }
@@ -89,7 +89,7 @@ std::vector<float> Interogate::getJointProbabilities(std::vector<std::string> &p
     return result;
 }
 
-void Interogate::Init()
+void InterogateNGRAM::Init()
 {
     //printf("init 1\n");
     //mkfifo("/tmp/ngramfifo", 0666);
@@ -113,7 +113,7 @@ void Interogate::Init()
     pid_t pid = fork();
     if(pid == -1)
     {
-        printf("ERROR starting the Interogate.py process\n");
+        printf("ERROR starting the InterogateNGRAM.py process\n");
         exit(0);
     }
     if(pid == 0)
@@ -150,7 +150,7 @@ void Interogate::Init()
     //printf("init 4\n");
 }
 
-void Interogate::Finalize()
+void InterogateNGRAM::Finalize()
 {
     fputs("Interogate please exit\n", requestPipe);
     fclose(resultPipe);
