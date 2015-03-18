@@ -186,10 +186,9 @@ void Worker::generateLoop() {
 
 float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     // TODO: remove this line when the code below works
-    return 0;
     float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
-    for (unsigned int i = 0; i < ngram.size(); i++)
+    for (unsigned int i = 0; i < ngram.size()-1; i++)
     {
         float pmi_local = 0;
         string end_word = ".";
@@ -206,6 +205,8 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             {
                 for (unsigned int k = i+1; k < ngram.size(); k++)
                 {
+                    if (current_pos <= 0)
+                        break;
                     if (!over_WindowSize && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
                     {
                         mutual_c[k-i-1]++;
@@ -220,11 +221,13 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             }
             current_pos = current_word_pos[j].word_nr + 1;
             over_WindowSize = false;
-            while (current_pos < (int)all_reviews[review_number].size() &&
+            while ((current_pos < (int)all_reviews[review_number].size()) &&
                     all_reviews[review_number][current_pos].compare(end_word) != 0)
             {
                 for (unsigned int k = i+1; k < ngram.size(); k++)
                 {
+                    if (current_pos >= (int)all_reviews[review_number].size())
+                        break;
                     if (!over_WindowSize && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
                     {
                         mutual_c[k-i-1]++;
@@ -241,9 +244,9 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
         for (unsigned int k = i+1; k < ngram.size(); k++)
         {
             // It might also require the multiplication with sentences_count
-            pmi_local += log2((float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
+            pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
                         (float)((float)wordPos[ngram[k]].size() *
-                            (float)wordPos[ngram[i]].size()));
+                            (float)wordPos[ngram[i]].size());
         }
         srep += (pmi_local / (2 * WINDOW_SIZE));
     }
