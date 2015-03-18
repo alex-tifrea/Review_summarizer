@@ -14,6 +14,9 @@
 
 #define MIN_BIGRAM_NUMBER 500 // TODO: maybe change this
 #define NGRAM_COUNT_LIMIT 8
+#define WINDOW_SIZE 10
+
+class NgramEntry;
 
 using namespace std;
 
@@ -81,7 +84,7 @@ class Worker {
         void generateInteractiveLoop();
 
         // Computes the representativeness of this ngram
-        void computeRepresentativeness(NgramEntry *current_ngram, int C);
+        float computeRepresentativeness(NgramEntry *current_ngram);
 
         void printNgrams();
 };

@@ -95,7 +95,7 @@ void Worker::initBigrams() {
                 vector <string> bigram_text;
                 bigram_text.push_back(wordInfo_copy[i].first);
                 bigram_text.push_back(wordInfo_copy[j].first);
-                newBigrams.push_back(new NgramEntry(bigram_text));
+                newBigrams.push_back(new NgramEntry(bigram_text, this));
             }
         }
     }
@@ -179,7 +179,9 @@ void Worker::generateLoop() {
     }
 }
 
-void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
+float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
+    // TODO: remove this line when the code below works
+    return 0;
     float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
     for (unsigned int i = 0; i < ngram.size(); i++)
@@ -191,7 +193,7 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
         vector <float> mutual_c(ngram.size()-i-1, 0);
         for (unsigned int j = 0; j < current_word_pos.size(); j++)
         {
-            bool over_C = false;
+            bool over_WindowSize = false;
             int review_number = current_word_pos[j].review_nr;
             int current_pos = current_word_pos[j].word_nr - 1;
             while (current_pos > 0 &&
@@ -199,7 +201,7 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
             {
                 for (unsigned int k = i+1; k < ngram.size(); k++)
                 {
-                    if (!over_C && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                    if (!over_WindowSize && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
                     {
                         mutual_c[k-i-1]++;
                         mutual_p[k-i-1]++;
@@ -207,18 +209,18 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
                     else if (all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
                         mutual_p[k-i-1]++;
                     current_pos--;
-                    if (!over_C && current_word_pos[j].word_nr - current_pos > C)
-                        over_C = true;
+                    if (!over_WindowSize && current_word_pos[j].word_nr - current_pos > WINDOW_SIZE)
+                        over_WindowSize = true;
                 }
             }
             current_pos = current_word_pos[j].word_nr + 1;
-            over_C = false;
+            over_WindowSize = false;
             while (current_pos < (int)all_reviews[review_number].size() &&
                     all_reviews[review_number][current_pos].compare(end_word) != 0)
             {
                 for (unsigned int k = i+1; k < ngram.size(); k++)
                 {
-                    if (!over_C && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                    if (!over_WindowSize && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
                     {
                         mutual_c[k-i-1]++;
                         mutual_p[k-i-1]++;
@@ -226,8 +228,8 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
                     else if (all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
                         mutual_p[k-i-1]++;
                     current_pos++;
-                    if (!over_C && current_pos - current_word_pos[j].word_nr > C)
-                        over_C = true;
+                    if (!over_WindowSize && current_pos - current_word_pos[j].word_nr > WINDOW_SIZE)
+                        over_WindowSize = true;
                 }
             }
         }
@@ -238,9 +240,9 @@ void Worker::computeRepresentativeness(NgramEntry *current_ngram, int C) {
                         (float)((float)wordPos[ngram[k]].size() *
                             (float)wordPos[ngram[i]].size()));
         }
-        srep += (pmi_local / (2 * C));
+        srep += (pmi_local / (2 * WINDOW_SIZE));
     }
-    current_ngram->setRepresentativeness ((float)(srep / ngram.size()));
+    return (float)(srep / ngram.size());
 }
 
 void Worker::printNgrams() {

@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "Worker.h"
+
+class Worker;
 
 // threshholds used to prune undesired ngrams
 #define SIGMA_REP 0 //TODO: change this
@@ -16,16 +19,23 @@ class NgramEntry {
 private:
     std::vector<std::string> ngram;
     float readability, representativeness;
+    Worker *worker;
 
 public:
-    NgramEntry(std::vector<std::string>);
+    NgramEntry(std::vector<std::string>, Worker*);
     ~NgramEntry();
 
     // Returns true if merging is possible, and false otherwise.
     NgramEntry* mergeNgrams(NgramEntry*);
 
-    // Computes the readability and representativeness scores.
-    void computeScores();
+    // Computes the readability score.
+    void computeReadability();
+
+    // Computes the representativeness score.
+    void computeRepresent();
+
+    // Setter for the readability score;
+    void setReadability(float);
 
     // Computes similarity between the two given ngrams using the Jaccard
     // distance

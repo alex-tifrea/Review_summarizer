@@ -3,9 +3,20 @@
 #include <string>
 #include <vector>
 
-NgramEntry::NgramEntry(std::vector<std::string> bigram) {
-    this->ngram = bigram;
-    this->computeScores();
+NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
+    ngram(_ngram),
+    worker(_worker)
+{
+    // TODO: solutie temporara; va trebui sa nu calculam scorul de
+    // readability in constructor pentru niciun tip de ngrama, nu doar pentru
+    // bigrame
+    if (this->ngram.size() > 2) {
+        this->computeReadability();
+        this->computeRepresent();
+    } else {
+        this->computeReadability();
+        this->computeRepresent();
+    }
 }
 
 NgramEntry::~NgramEntry() {}
@@ -29,7 +40,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     std::vector<std::string> new_ngram_text = this->getNgram();
     new_ngram_text.push_back(bigram_text[1]);
 
-    NgramEntry *ret = new NgramEntry(new_ngram_text);
+    NgramEntry *ret = new NgramEntry(new_ngram_text, this->worker);
 
     if (ret->getReadability() < SIGMA_READ ||
         ret->getRepresentativeness() < SIGMA_REP ||
@@ -70,14 +81,21 @@ float NgramEntry::computeSimilarity(NgramEntry *ne) {
     return dist;
 }
 
-void NgramEntry::computeScores() {
+void NgramEntry::computeReadability() {
     this->readability = Interogate::getJointProbability(this->ngram);
-    // TODO: complete this function
-    // On it
-    this->representativeness = 0;
 }
 
-std::pair<float, float> NgramEntry::getScore ()
+void NgramEntry::computeRepresent() {
+    // TODO: aici trebuie chemata Worker::computeRepresentativeness
+    this->representativeness = this->worker->
+                                     computeRepresentativeness(this);
+}
+
+void NgramEntry::setReadability(float _read) {
+    this->readability = _read;
+}
+
+std::pair<float, float> NgramEntry::getScore()
 {
     return std::make_pair(this->readability, this->representativeness);
 }
