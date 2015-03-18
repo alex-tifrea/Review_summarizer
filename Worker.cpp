@@ -185,7 +185,6 @@ void Worker::generateLoop() {
 }
 
 float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
-    // TODO: remove this line when the code below works
     float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
     cout << "Ngram::::::";
