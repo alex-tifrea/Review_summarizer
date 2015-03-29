@@ -194,6 +194,10 @@ void Worker::generateLoop() {
 float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
+    cout << "Ngram::::::";
+    for (unsigned int i = 0; i < ngram.size(); i++)
+        cout << ngram[i] << " ";
+    cout << endl;
     for (unsigned int i = 0; i < ngram.size()-1; i++)
     {
         float pmi_local = 0;
@@ -206,24 +210,30 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             bool over_WindowSize = false;
             int review_number = current_word_pos[j].review_nr;
             int current_pos = current_word_pos[j].word_nr - 1;
-            while (current_pos > 0 &&
+            while (current_pos >= 0 &&
                     all_reviews[review_number][current_pos].compare(end_word) != 0)
             {
                 for (unsigned int k = i+1; k < ngram.size(); k++)
                 {
-                    if (current_pos <= 0)
+                    if (current_pos < 0)
                         break;
                     if (!over_WindowSize && all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
                     {
                         mutual_c[k-i-1]++;
                         mutual_p[k-i-1]++;
+                        if (!over_WindowSize && current_word_pos[j].word_nr - (current_pos-1) > WINDOW_SIZE)
+                            over_WindowSize = true;
+                        break;
                     }
                     else if (all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                    {
                         mutual_p[k-i-1]++;
-                    current_pos--;
-                    if (!over_WindowSize && current_word_pos[j].word_nr - current_pos > WINDOW_SIZE)
-                        over_WindowSize = true;
+                        if (!over_WindowSize && current_word_pos[j].word_nr - (current_pos-1) > WINDOW_SIZE)
+                            over_WindowSize = true;
+                        break;
+                    }
                 }
+                current_pos--;
             }
             current_pos = current_word_pos[j].word_nr + 1;
             over_WindowSize = false;
@@ -238,13 +248,20 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
                     {
                         mutual_c[k-i-1]++;
                         mutual_p[k-i-1]++;
+                        if (!over_WindowSize && (current_pos+1) - current_word_pos[j].word_nr > WINDOW_SIZE)
+                            over_WindowSize = true;
+                        break;
+
                     }
                     else if (all_reviews[review_number][current_pos].compare(ngram[k]) == 0)
+                    {
                         mutual_p[k-i-1]++;
-                    current_pos++;
-                    if (!over_WindowSize && current_pos - current_word_pos[j].word_nr > WINDOW_SIZE)
-                        over_WindowSize = true;
+                        if (!over_WindowSize && (current_pos+1) - current_word_pos[j].word_nr > WINDOW_SIZE)
+                            over_WindowSize = true;
+                        break;
+                    }
                 }
+                current_pos++;
             }
         }
         for (unsigned int k = i+1; k < ngram.size(); k++)
