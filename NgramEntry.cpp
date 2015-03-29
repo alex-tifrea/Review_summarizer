@@ -42,14 +42,14 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
 
     // Compare the last word of the n-gram with the first word of the bigram.
     if (this->ngram[this->ngram.size()-1].compare(bigram_text[0]) != 0) {
-        std::cerr << "First and final words don't match." << std::endl;
+        std::cout<< "First and final words don't match." << std::endl;
         return NULL;
     }
     // Check if the n-gram is a mirror of the bigram.
     if (this->ngram.size() == 2 &&
         this->ngram[0].compare(bigram_text[1]) == 0 &&
         this->ngram[1].compare(bigram_text[0]) == 0) {
-        std::cerr << "The n-grams are mirrors." << std::endl;
+        std::cout<< "The n-grams are mirrors." << std::endl;
         return NULL;
     }
 
@@ -61,8 +61,8 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     if (ret->getReadability() < SIGMA_READ ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
-        std::cerr << "SCORURI NASOALE\n";
-//         std::cerr << "SCORURI NASOALE " << ret->getReadability() << " " <<
+        std::cout<< "SCORURI NASOALE\n";
+//         std::cout<< "SCORURI NASOALE " << ret->getReadability() << " " <<
 //                 ret->getRepresentativeness() << std::endl;
         return NULL;
     }
@@ -77,14 +77,14 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
 
     // Compare the last word of the n-gram with the first word of the bigram.
     if (this->ngram[this->ngram.size()-1].compare(bigram_text[0]) != 0) {
-        std::cerr << "First and final words don't match." << std::endl;
+        std::cout<< "First and final words don't match." << std::endl;
         return NULL;
     }
     // Check if the n-gram is a mirror of the bigram.
     if (this->ngram.size() == 2 &&
         this->ngram[0].compare(bigram_text[1]) == 0 &&
         this->ngram[1].compare(bigram_text[0]) == 0) {
-        std::cerr << "The n-grams are mirrors." << std::endl;
+        std::cout<< "The n-grams are mirrors." << std::endl;
         return NULL;
     }
 
@@ -98,8 +98,8 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
     if (ret->getReadability() < SIGMA_READ ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
-        std::cerr << "SCORURI NASOALE\n";
-//         std::cerr << "SCORURI NASOALE " << ret->getReadability() << " " <<
+        std::cout<< "SCORURI NASOALE\n";
+//         std::cout<< "SCORURI NASOALE " << ret->getReadability() << " " <<
 //                 ret->getRepresentativeness() << std::endl;
         return NULL;
     }
