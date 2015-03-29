@@ -7,11 +7,18 @@ NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     ngram(_ngram),
     worker(_worker)
 {
+    // Update the text field.
+    text = "";
+    std::vector<std::string>::iterator it = this->ngram.begin();
+    for (; it != this->ngram.end(); ++it) {
+        text = text + *(it);
+    }
     // TODO: solutie temporara; va trebui sa nu calculam scorul de
     // readability in constructor pentru niciun tip de ngrama, nu doar pentru
     // bigrame
     if (this->ngram.size() > 2) {
-        this->computeReadability();
+//         this->computeReadability();
+        this->readability = 0;
         this->computeRepresent();
     } else {
         this->readability = 0;
@@ -41,6 +48,42 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     new_ngram_text.push_back(bigram_text[1]);
 
     NgramEntry *ret = new NgramEntry(new_ngram_text, this->worker);
+
+    if (ret->getReadability() < SIGMA_READ ||
+        ret->getRepresentativeness() < SIGMA_REP ||
+        ret->getNgram().size() > MAX_NGRAM_LENGTH) {
+        std::cerr << "SCORURI NASOALE " << ret->getReadability() << " " <<
+                ret->getRepresentativeness() << std::endl;
+        return NULL;
+    }
+
+    return ret;
+}
+
+// Pass the readability of the new ngram as a parameter, to be set before
+// evaluating the scores of the ngram.
+NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
+    std::vector<std::string> bigram_text = bigram->getNgram();
+
+    // Compare the last word of the n-gram with the first word of the bigram.
+    if (this->ngram[this->ngram.size()-1].compare(bigram_text[0]) != 0) {
+        std::cerr << "First and final words don't match." << std::endl;
+        return NULL;
+    }
+    // Check if the n-gram is a mirror of the bigram.
+    if (this->ngram.size() == 2 &&
+        this->ngram[0].compare(bigram_text[1]) == 0 &&
+        this->ngram[1].compare(bigram_text[0]) == 0) {
+        std::cerr << "The n-grams are mirrors." << std::endl;
+        return NULL;
+    }
+
+    std::vector<std::string> new_ngram_text = this->getNgram();
+    new_ngram_text.push_back(bigram_text[1]);
+
+    NgramEntry *ret = new NgramEntry(new_ngram_text, this->worker);
+    // Set readability score.
+    ret->setReadability(readability);
 
     if (ret->getReadability() < SIGMA_READ ||
         ret->getRepresentativeness() < SIGMA_REP ||
@@ -86,7 +129,6 @@ void NgramEntry::computeReadability() {
 }
 
 void NgramEntry::computeRepresent() {
-    // TODO: aici trebuie chemata Worker::computeRepresentativeness
     this->representativeness = this->worker->
                                      computeRepresentativeness(this);
 }

@@ -107,9 +107,9 @@ void Worker::initBigrams() {
     }
 
     // We call getJointProbabilities for all the bigrams at once.
-    std::vector<float> allReadabilities = InterogateNGRAM::getJointProbabilities(allBigrams);
+    std::vector<float> allReadabilities =
+        InterogateNGRAM::getJointProbabilities(allBigrams);
 
-    BigramEntry *tmp;
     for (unsigned int i = 0; i < newBigrams.size(); i++)
     {
         // Set the readability score.
@@ -120,12 +120,8 @@ void Worker::initBigrams() {
         {
             this->ngrams.push_back(newBigrams[i]);
 
-            tmp = new BigramEntry();
-            tmp->second_word = newBigrams[i]->getNgram()[1];
-            tmp->representativeness = newBigrams[i]->getRepresentativeness();
-            tmp->readability = newBigrams[i]->getReadability();
             this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
-                                                  tmp));
+                                                  newBigrams[i]));
         }
     }
 /* TODO: cred ca trebuie sters tot
@@ -153,13 +149,46 @@ void Worker::generateCandidate() {
         this->bigrams_t.equal_range(curr_ngram->getNgram().back());
 
     std::vector<std::string> newNgrams;
-    std::unordered_multimap<std::string, BigramEntry*>::iterator iter;
+    std::unordered_multimap<std::string, NgramEntry*>::iterator iter;
     std::string tmpNgram;
-    for (iter = matching_bigrams_range.first; iter != matching_bigrams_range.second; iter++) {
-        tmpNgram = curr_ngram->getNgram();//+iter->second->second_word;
+    iter = matching_bigrams_range.first;
+    for (; iter != matching_bigrams_range.second; ++iter) {
+        tmpNgram = curr_ngram->getText() + iter->second->getNgram()[1];
         newNgrams.push_back(tmpNgram);
     }
 
+    std::vector<float> allReadabilities =
+        InterogateNGRAM::getJointProbabilities(newNgrams);
+
+    iter = matching_bigrams_range.first;
+    for (unsigned int i = 0; i < allReadabilities.size(); i++) {
+        NgramEntry *new_ngram = curr_ngram->mergeNgrams(iter->second);
+        if (new_ngram != NULL) {
+            // Check if the newly created ngram is similar to any of the
+            // other ngrams
+            bool is_unique = true;
+            /*
+            // TODO: this might need to be changed. I think it may slow us
+            // down
+            for (unsigned int i = 0; i < ngrams.size(); i++) {
+                if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
+                    // TODO: pastreaza ngrama cu cele mai bune scoruri
+                    is_unique = false;
+                    break;
+                }
+            }
+            */
+
+            if (is_unique) {
+                // Add the newly created (n+1)-gram to the deque
+                ngrams.push_back(new_ngram);
+                this->printNgrams(log);
+            }
+        }
+        ++iter;
+    }
+
+    /*
     for (unsigned int i = 0; i < bigrams.size(); i++) {
 
         std::vector<std::string> bigram_text = bigrams[i]->getNgram(),
@@ -174,7 +203,6 @@ void Worker::generateCandidate() {
                 // Check if the newly created ngram is similar to any of the
                 // other ngrams
                 bool is_unique = true;
-                /*
                 // TODO: this might need to be changed. I think it may slow us
                 // down
                 for (unsigned int i = 0; i < ngrams.size(); i++) {
@@ -184,7 +212,6 @@ void Worker::generateCandidate() {
                         break;
                     }
                 }
-                */
 
                 if (is_unique) {
                     // Add the newly created (n+1)-gram to the deque
@@ -194,6 +221,7 @@ void Worker::generateCandidate() {
             }
         }
     }
+*/
 }
 
 void Worker::generateInteractiveLoop() {

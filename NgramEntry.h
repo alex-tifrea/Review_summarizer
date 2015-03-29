@@ -15,16 +15,10 @@ class Worker;
 
 #define MAX_NGRAM_LENGTH 7
 
-typedef struct BigramEntry {
-    std::string second_word;
-    float readability, representativeness;
-
-    BigramEntry() {};
-} BigramEntry;
-
 class NgramEntry {
 private:
     std::vector<std::string> ngram;
+    std::string text;
     float readability, representativeness;
     Worker *worker;
 
@@ -32,8 +26,9 @@ public:
     NgramEntry(std::vector<std::string>, Worker*);
     ~NgramEntry();
 
-    // Returns true if merging is possible, and false otherwise.
+    // Returns the merged NgramEntry
     NgramEntry* mergeNgrams(NgramEntry*);
+    NgramEntry* mergeNgrams(NgramEntry*, float);
 
     // Computes the readability score.
     void computeReadability();
@@ -65,6 +60,10 @@ public:
 
     std::vector<std::string> getNgram() const {
         return ngram;
+    }
+
+    std::string getText() {
+        return this->text;
     }
 
     friend std::ostream &operator<<(std::ostream&, const NgramEntry&);
