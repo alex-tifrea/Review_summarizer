@@ -117,7 +117,8 @@ void Worker::initBigrams() {
         // Check the readability and the representativeness score.
         if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
         {
-            this->bigrams.push_back(newBigrams[i]);
+            this->ngrams.push_back(newBigrams[i]);
+
         }
     }
 
@@ -155,6 +156,7 @@ void Worker::generateCandidate() {
                 // Check if the newly created ngram is similar to any of the
                 // other ngrams
                 bool is_unique = true;
+                /*
                 // TODO: this might need to be changed. I think it may slow us
                 // down
                 for (unsigned int i = 0; i < ngrams.size(); i++) {
@@ -164,6 +166,7 @@ void Worker::generateCandidate() {
                         break;
                     }
                 }
+                */
 
                 if (is_unique) {
                     // Add the newly created (n+1)-gram to the deque

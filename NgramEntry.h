@@ -15,6 +15,11 @@ class Worker;
 
 #define MAX_NGRAM_LENGTH 7
 
+typedef struct BigramEntry {
+    std::string second_word;
+    float readability, representativeness;
+} BigramEntry;
+
 class NgramEntry {
 private:
     std::vector<std::string> ngram;

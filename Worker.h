@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <deque>
+#include <unordered_multimap>
 
 #include "NgramEntry.h"
 #include "IO.h"
@@ -14,10 +15,11 @@
 #include "InterogateNGRAM.h"
 
 #define MIN_BIGRAM_NUMBER 500 // TODO: maybe change this
-#define NGRAM_COUNT_LIMIT 8
+#define NGRAM_COUNT_LIMIT 5
 #define WINDOW_SIZE 10
 
 class NgramEntry;
+struct BigramEntry;
 
 using namespace std;
 
@@ -41,7 +43,11 @@ class Worker {
         // The bigrams. They are used as seed in the generation of the n-grams and are
         // also used at each step in the generation process (a bigram will be
         // appended at the end of a given n-gram at each step).
+        // They are all saved in an unordered map with the key being the first
+        // word in every bigram and the value being a BigramEntry object
         std::vector<NgramEntry*> bigrams;
+        // TODO remove this ^ line
+        std::unordered_map<std::string, BigramEntry*> bigrams_t;
 
         // This is the initial review, the one that needs to be summerized. Each
         // element of the vector is a word of the original review (or a '\n' if
