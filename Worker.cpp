@@ -165,9 +165,9 @@ void Worker::generateCandidate() {
     iter = matching_bigrams_range.first;
     std::cout << "Pentru \"" << curr_ngram->getText() << "\" am BIGRAMELE astea:";
     for (; iter != matching_bigrams_range.second; ++iter) {
-        tmpNgram = curr_ngram->getText() + iter->second->getNgram()[1];
+        tmpNgram = curr_ngram->getText() + " " + iter->second->getNgram()[1];
         newNgrams.push_back(tmpNgram);
-        std::cout << iter->second->getText() << "\" ";
+        std::cout << "\"" << iter->second->getText() << "\" ";
     }
     std::cout << std::endl;
 
@@ -178,6 +178,7 @@ void Worker::generateCandidate() {
     for (unsigned int i = 0; i < allReadabilities.size(); i++) {
         std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
                      iter->second->getText() << "\"" << std::endl;
+        std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
         NgramEntry *new_ngram =
             curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
 

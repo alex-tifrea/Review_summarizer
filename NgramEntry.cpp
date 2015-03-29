@@ -61,8 +61,9 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     if (ret->getReadability() < SIGMA_READ ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
-        std::cerr << "SCORURI NASOALE " << ret->getReadability() << " " <<
-                ret->getRepresentativeness() << std::endl;
+        std::cerr << "SCORURI NASOALE\n";
+//         std::cerr << "SCORURI NASOALE " << ret->getReadability() << " " <<
+//                 ret->getRepresentativeness() << std::endl;
         return NULL;
     }
 
@@ -97,8 +98,9 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
     if (ret->getReadability() < SIGMA_READ ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
-        std::cerr << "SCORURI NASOALE " << ret->getReadability() << " " <<
-                ret->getRepresentativeness() << std::endl;
+        std::cerr << "SCORURI NASOALE\n";
+//         std::cerr << "SCORURI NASOALE " << ret->getReadability() << " " <<
+//                 ret->getRepresentativeness() << std::endl;
         return NULL;
     }
 
