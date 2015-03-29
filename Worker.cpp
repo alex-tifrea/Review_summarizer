@@ -118,12 +118,26 @@ void Worker::initBigrams() {
         // Check the readability and the representativeness score.
         if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
         {
+            this->bigrams.push_back(newBigrams[i]);
             this->ngrams.push_back(newBigrams[i]);
 
-            this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
-                                                  newBigrams[i]));
+            auto temp = this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
+                                                  this->bigrams.back()));
+            std::cout << "IOI MA IOI " << temp.first->second->getText() << " " << newBigrams[i]->getNgram()[0] << std::endl;
         }
     }
+
+    auto temp = this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
+                                          this->bigrams.back()));
+
+    std::cout << "BLABLA " << this->bigrams_t.count("The") << " " << this->bigrams.size() << std::endl;
+    auto pereche = this->bigrams_t.equal_range("The");
+    auto it = pereche.first;
+    for (; it != pereche.second; ++it) {
+        std::cout << it->second->getText() << std::endl;
+    }
+
+
 /* TODO: cred ca trebuie sters tot
     // TODO: sort bigrams alphabetically after the first word so that we can use
     // binary search when looking for a certain bigram in
@@ -152,17 +166,24 @@ void Worker::generateCandidate() {
     std::unordered_multimap<std::string, NgramEntry*>::iterator iter;
     std::string tmpNgram;
     iter = matching_bigrams_range.first;
+    std::cout << "Pentru \"" << curr_ngram->getText() << "\" am BIGRAMELE astea:";
     for (; iter != matching_bigrams_range.second; ++iter) {
         tmpNgram = curr_ngram->getText() + iter->second->getNgram()[1];
         newNgrams.push_back(tmpNgram);
+        std::cout << iter->second->getText() << "\" ";
     }
+    std::cout << std::endl;
 
     std::vector<float> allReadabilities =
         InterogateNGRAM::getJointProbabilities(newNgrams);
 
     iter = matching_bigrams_range.first;
     for (unsigned int i = 0; i < allReadabilities.size(); i++) {
-        NgramEntry *new_ngram = curr_ngram->mergeNgrams(iter->second);
+        std::cout << "About to merge \"" << iter->second->getText() << "\" with \"" <<
+                     curr_ngram->getText() << "\"" << std::endl;
+        NgramEntry *new_ngram =
+            curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
+
         if (new_ngram != NULL) {
             // Check if the newly created ngram is similar to any of the
             // other ngrams
@@ -243,7 +264,7 @@ void Worker::generateLoop() {
 float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
-    cout << "Ngram::::::";
+    cout << "Ngram::";
     for (unsigned int i = 0; i < ngram.size(); i++)
         cout << ngram[i] << " ";
     cout << endl;

@@ -8,10 +8,10 @@ NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     worker(_worker)
 {
     // Update the text field.
-    text = "";
     std::vector<std::string>::iterator it = this->ngram.begin();
+    text = *it++;
     for (; it != this->ngram.end(); ++it) {
-        text = text + *(it);
+        text = text + " " + *(it);
     }
     // TODO: solutie temporara; va trebui sa nu calculam scorul de
     // readability in constructor pentru niciun tip de ngrama, nu doar pentru
