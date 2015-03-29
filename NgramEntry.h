@@ -24,6 +24,7 @@ private:
 
 public:
     NgramEntry(std::vector<std::string>, Worker*);
+    NgramEntry(NgramEntry*);
     ~NgramEntry();
 
     // Returns the merged NgramEntry

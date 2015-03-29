@@ -47,7 +47,7 @@ class Worker {
         // word in every bigram and the value being a BigramEntry object
         std::vector<NgramEntry*> bigrams;
         // TODO remove this ^ line
-        std::unordered_map<std::string, NgramEntry*> bigrams_t;
+        std::unordered_multimap<std::string, NgramEntry*> bigrams_t;
 
         // This is the initial review, the one that needs to be summerized. Each
         // element of the vector is a word of the original review (or a '\n' if

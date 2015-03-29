@@ -121,21 +121,18 @@ void Worker::initBigrams() {
             this->bigrams.push_back(newBigrams[i]);
             this->ngrams.push_back(newBigrams[i]);
 
-            auto temp = this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
-                                                  this->bigrams.back()));
-            std::cout << "IOI MA IOI " << temp.first->second->getText() << " " << newBigrams[i]->getNgram()[0] << std::endl;
+            this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
+                                               this->bigrams.back()));
+//             std::cout << "IOI MA IOI " << temp.first->second->getText() << " " << newBigrams[i]->getNgram()[0] << std::endl;
         }
     }
 
-    auto temp = this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
-                                          this->bigrams.back()));
-
-    std::cout << "BLABLA " << this->bigrams_t.count("The") << " " << this->bigrams.size() << std::endl;
-    auto pereche = this->bigrams_t.equal_range("The");
-    auto it = pereche.first;
-    for (; it != pereche.second; ++it) {
-        std::cout << it->second->getText() << std::endl;
-    }
+//     std::cout << "BLABLA " << this->bigrams_t.count("The") << " " << this->bigrams.size() << std::endl;
+//     auto pereche = this->bigrams_t.equal_range("The");
+//     auto it = pereche.first;
+//     for (; it != pereche.second; ++it) {
+//         std::cout << it->second->getText() << std::endl;
+//     }
 
 
 /* TODO: cred ca trebuie sters tot
@@ -179,8 +176,8 @@ void Worker::generateCandidate() {
 
     iter = matching_bigrams_range.first;
     for (unsigned int i = 0; i < allReadabilities.size(); i++) {
-        std::cout << "About to merge \"" << iter->second->getText() << "\" with \"" <<
-                     curr_ngram->getText() << "\"" << std::endl;
+        std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
+                     iter->second->getText() << "\"" << std::endl;
         NgramEntry *new_ngram =
             curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
 

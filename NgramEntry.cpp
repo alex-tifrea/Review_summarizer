@@ -26,6 +26,15 @@ NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     }
 }
 
+NgramEntry::NgramEntry(NgramEntry *ne) :
+    ngram(ne->ngram),
+    text(ne->text),
+    readability(ne->readability),
+    representativeness(ne->representativeness)
+{
+    this->worker = ne->worker;
+}
+
 NgramEntry::~NgramEntry() {}
 
 NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
