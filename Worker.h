@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 #include <deque>
-#include <unordered_multimap>
+#include <unordered_map>
 
 #include "NgramEntry.h"
 #include "IO.h"

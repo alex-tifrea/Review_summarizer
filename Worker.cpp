@@ -109,6 +109,7 @@ void Worker::initBigrams() {
     // We call getJointProbabilities for all the bigrams at once.
     std::vector<float> allReadabilities = InterogateNGRAM::getJointProbabilities(allBigrams);
 
+    BigramEntry *tmp;
     for (unsigned int i = 0; i < newBigrams.size(); i++)
     {
         // Set the readability score.
@@ -119,9 +120,15 @@ void Worker::initBigrams() {
         {
             this->ngrams.push_back(newBigrams[i]);
 
+            tmp = new BigramEntry();
+            tmp->second_word = newBigrams[i]->getNgram()[1];
+            tmp->representativeness = newBigrams[i]->getRepresentativeness();
+            tmp->readability = newBigrams[i]->getReadability();
+            this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
+                                                  tmp));
         }
     }
-
+/* TODO: cred ca trebuie sters tot
     // TODO: sort bigrams alphabetically after the first word so that we can use
     // binary search when looking for a certain bigram in
     // Worker::generateCandidate
@@ -131,6 +138,7 @@ void Worker::initBigrams() {
     for (unsigned int i = 0; i < bigrams.size(); i++) {
         ngrams.push_back(bigrams[i]);
     }
+    */
 }
 
 void Worker::generateCandidate() {
@@ -141,7 +149,17 @@ void Worker::generateCandidate() {
     NgramEntry *curr_ngram = ngrams.front();
     ngrams.pop_front();
 
-    // TODO: here use Worker::binarySearch instead
+    auto matching_bigrams_range =
+        this->bigrams_t.equal_range(curr_ngram->getNgram().back());
+
+    std::vector<std::string> newNgrams;
+    std::unordered_multimap<std::string, BigramEntry*>::iterator iter;
+    std::string tmpNgram;
+    for (iter = matching_bigrams_range.first; iter != matching_bigrams_range.second; iter++) {
+        tmpNgram = curr_ngram->getNgram();//+iter->second->second_word;
+        newNgrams.push_back(tmpNgram);
+    }
+
     for (unsigned int i = 0; i < bigrams.size(); i++) {
 
         std::vector<std::string> bigram_text = bigrams[i]->getNgram(),

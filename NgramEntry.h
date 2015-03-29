@@ -18,6 +18,8 @@ class Worker;
 typedef struct BigramEntry {
     std::string second_word;
     float readability, representativeness;
+
+    BigramEntry() {};
 } BigramEntry;
 
 class NgramEntry {
