@@ -14,7 +14,7 @@ $(EXE): $(OBJ)
 	$(CC) $(CFLAGS) -c $<
 
 run: $(EXE)
-	./$(EXE)
+	time ./$(EXE)
 
 .PHONY: clean
 clean:

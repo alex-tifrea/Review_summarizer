@@ -23,6 +23,7 @@ using namespace std;
 
 class Worker {
     private:
+        std::ofstream log;
         // Holds the number of occurences for each word.
         std::map<std::string, WordInfo> wordInfo;
 
@@ -87,7 +88,7 @@ class Worker {
         // Computes the representativeness of this ngram
         float computeRepresentativeness(NgramEntry *current_ngram);
 
-        void printNgrams();
+        void printNgrams(std::ostream&);
 };
 
 #endif // __WORKER_H__

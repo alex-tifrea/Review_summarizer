@@ -3,9 +3,12 @@
 
 Worker::Worker(IO *_io) {
     io = new IO(_io);
+    log.open("log.file", std::ofstream::out);
 }
 
-Worker::~Worker() {}
+Worker::~Worker() {
+    log.close();
+}
 
 struct comp_frequencies
 {
@@ -156,6 +159,7 @@ void Worker::generateCandidate() {
                 // down
                 for (unsigned int i = 0; i < ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
+                        // TODO: pastreaza ngrama cu cele mai bune scoruri
                         is_unique = false;
                         break;
                     }
@@ -164,6 +168,7 @@ void Worker::generateCandidate() {
                 if (is_unique) {
                     // Add the newly created (n+1)-gram to the deque
                     ngrams.push_back(new_ngram);
+                    this->printNgrams(log);
                 }
             }
         }
@@ -172,6 +177,7 @@ void Worker::generateCandidate() {
 
 void Worker::generateInteractiveLoop() {
     std::string s;
+    this->printNgrams(log);
     while (s != "gata") {
         generateCandidate();
         std::cin >> s;
@@ -179,6 +185,7 @@ void Worker::generateInteractiveLoop() {
 }
 
 void Worker::generateLoop() {
+    this->printNgrams(log);
     while (NGRAM_COUNT_LIMIT < this->ngrams.size()) {
         generateCandidate();
     }
@@ -252,10 +259,10 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     return (float)(srep / ngram.size());
 }
 
-void Worker::printNgrams() {
-    std::cout << ngrams.size() << std::endl;
+void Worker::printNgrams(ostream &fout) {
+    fout << ngrams.size() << std::endl;
     for (unsigned int i = 0; i < ngrams.size(); i++) {
-        std::cout << *(ngrams[i]) << " ";
+        fout << *(ngrams[i]) << " ";
     }
-    std::cout << std::endl;
+    fout << std::endl;
 }

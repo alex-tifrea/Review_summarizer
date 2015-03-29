@@ -43,10 +43,10 @@ int main ()
     Worker *work = new Worker(init_io);
     work->init();
     work->initBigrams();
-    work->printNgrams();
+    work->printNgrams(std::cout);
 //     work->generateInteractiveLoop();
     work->generateLoop();
-    work->printNgrams();
+    work->printNgrams(std::cout);
     InterogateNGRAM::Finalize();
     return 0;
 }
