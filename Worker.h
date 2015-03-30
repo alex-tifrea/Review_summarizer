@@ -17,6 +17,7 @@
 #define MIN_BIGRAM_NUMBER 500 // TODO: maybe change this
 #define NGRAM_COUNT_LIMIT 5
 #define WINDOW_SIZE 10
+#define LOW_REP -1234567
 
 class NgramEntry;
 struct BigramEntry;

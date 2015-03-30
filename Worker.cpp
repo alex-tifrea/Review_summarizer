@@ -3,7 +3,6 @@
 
 Worker::Worker(IO *_io) {
     io = new IO(_io);
-    this->total_sentences_nr = io->get_sentences_nr();
     log.open("log.file", std::ofstream::out);
 }
 
@@ -24,6 +23,7 @@ void Worker::init() {
     // use IO::readReviews to populate wordInfo.frequency and original_review;
 
     io->readReviews(this->wordInfo, all_reviews, wordPos);
+    this->total_sentences_nr = io->get_sentences_nr();
     unordered_map<string, vector<WordPosition> >::iterator it;
     for (it = wordPos.begin(); it != wordPos.end(); ++it)
     {
@@ -109,9 +109,18 @@ void Worker::initBigrams() {
                 vector <string> bigram_text;
                 bigram_text.push_back(wordInfo_copy[i].first);
                 bigram_text.push_back(wordInfo_copy[j].first);
-                newBigrams.push_back(new NgramEntry(bigram_text, this));
-                std::string concat_bigram = bigram_text[0] + " " + bigram_text[1];
-                allBigrams.push_back(concat_bigram);
+                NgramEntry *aux_ngram = new NgramEntry(bigram_text, this);
+                // Keep only the bigrams that have a rep val higher than SIGMA_REP
+                if (aux_ngram->getRepresentativeness() > SIGMA_REP)
+                {
+                    newBigrams.push_back(aux_ngram);
+                    std::string concat_bigram = bigram_text[0] + " " + bigram_text[1];
+                    allBigrams.push_back(concat_bigram);
+                }
+                // Old code in case the new one is not working
+                // newBigrams.push_back(new NgramEntry(bigram_text, this));
+                // std::string concat_bigram = bigram_text[0] + " " + bigram_text[1];
+                // allBigrams.push_back(concat_bigram);
             }
         }
     }
@@ -361,8 +370,13 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
                         (float)((float)wordPos[ngram[k]].size() *
                             (float)wordPos[ngram[i]].size());
+            pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
+                    total_sentences_nr) / (float)(wordPos[ngram[k]].size() * 
+                        wordPos[ngram[i]].size());
         }
-        srep += (pmi_local / (2 * WINDOW_SIZE));
+        if (pmi_local == 0)
+            return LOW_REP;
+        srep += (log2(pmi_local) / (2 * WINDOW_SIZE));
     }
     return (float)(srep / ngram.size());
 }
