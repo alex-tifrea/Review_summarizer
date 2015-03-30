@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 struct WordInfo_t {
     unsigned int frequency;
@@ -37,12 +37,12 @@ public:
     /*
      * Read reviews from file.
      */
-    void readReviews(std::map<std::string, WordInfo> &wordInfo,
+    void readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews);
 
-    void readReviews(std::map<std::string, WordInfo> &wordInfo,
+    void readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews,
-                     std::map<std::string, std::vector<WordPosition> > &word_positions);
+                     std::unordered_map<std::string, std::vector<WordPosition> > &word_positions);
 };
 
 #endif // __IO_H__

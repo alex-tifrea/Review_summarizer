@@ -4,17 +4,17 @@
 
 #include "InterogateCoreNLP.h"
 
-void InterogateCoreNLP::init(std::map<std::string, WordInfo> &wordInfo) {
+void InterogateCoreNLP::init(std::unordered_map<std::string, WordInfo> &wordInfo) {
     std::fstream words_input;
     words_input.open("corenlpInput.in", std::ofstream::out);
-    std::map<std::string, WordInfo>::iterator iter;
+    std::unordered_map<std::string, WordInfo>::iterator iter;
     for (iter = wordInfo.begin(); iter != wordInfo.end(); ++iter) {
         words_input << iter->first << std::endl;
     }
     words_input.close();
 }
 
-void InterogateCoreNLP::getPartOfSpeech(std::map<std::string,WordInfo> &wordInfo) {
+void InterogateCoreNLP::getPartOfSpeech(std::unordered_map<std::string,WordInfo> &wordInfo) {
     // Call CoreNLP
     system("java -cp \"$CORENLP_PATH/*\" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos -file corenlpInput.in");
     // Parse the XML created by CoreNLP

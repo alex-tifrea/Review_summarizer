@@ -21,7 +21,7 @@ IO::~IO() {
     out.close();
 }
 
-void IO::readReviews(std::map<std::string, WordInfo> &wordInfo,
+void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews) {
     int nr_reviews, i = 0;
     this->in >> nr_reviews;
@@ -63,9 +63,9 @@ void IO::readReviews(std::map<std::string, WordInfo> &wordInfo,
     }
 }
 
-void IO::readReviews(std::map<std::string, WordInfo> &wordInfo,
+void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews,
-                     std::map<std::string, std::vector<WordPosition> > &word_positions) {
+                     std::unordered_map<std::string, std::vector<WordPosition> > &word_positions) {
     int nr_reviews, i = 0, k = 0;
     this->in >> nr_reviews;
     std::string line;

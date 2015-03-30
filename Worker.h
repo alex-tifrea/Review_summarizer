@@ -27,14 +27,14 @@ class Worker {
     private:
         std::ofstream log;
         // Holds the number of occurences for each word.
-        std::map<std::string, WordInfo> wordInfo;
+        std::unordered_map<std::string, WordInfo> wordInfo;
 
         // A hashtable in which the key is a word and the value is a vector in
         // which we have both the review in which we can find that word and at
         // which position the word is in the review. The frequency of the word
         // in the text can also be found in this data structure by evaluating
         // the size of the vector associated with a word.
-        std::map<std::string, std::vector<WordPosition> > wordPos;
+        std::unordered_map<std::string, std::vector<WordPosition> > wordPos;
 
         // The n-grams at a given time. Initially they are all bigrams. At each step,
         // we try to merge an n-gram with a bigram to obtain an (n+1)-gram.

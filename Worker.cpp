@@ -23,7 +23,7 @@ void Worker::init() {
     // use IO::readReviews to populate wordInfo.frequency and original_review;
 
     io->readReviews(this->wordInfo, all_reviews, wordPos);
-    map<string, vector<WordPosition> >::iterator it;
+    unordered_map<string, vector<WordPosition> >::iterator it;
     for (it = wordPos.begin(); it != wordPos.end(); ++it)
     {
         cout << it->first << " ";
@@ -42,7 +42,7 @@ void Worker::init() {
 
     fstream words;
     words.open("wordInfo.out", std::fstream::out);
-    std::map<std::string, WordInfo>::iterator iter;
+    std::unordered_map<std::string, WordInfo>::iterator iter;
     for (iter = wordInfo.begin(); iter != wordInfo.end(); ++iter) {
         words << iter->first << " " << iter->second.frequency << " " <<
                  iter->second.partOfSpeech << std::endl;
@@ -51,6 +51,15 @@ void Worker::init() {
 
     current_review = 0;
     sentences_count= 5;
+}
+
+// Comparator used to get trim this->bigrams;
+bool desc_comp(NgramEntry *a, NgramEntry *b) {
+    float res = a->getReadability() - b->getReadability();
+    // The representativeness score is more important, so give it a more
+    // significant weight (x 10).
+    res = res + 10 * (a->getRepresentativeness() - b->getRepresentativeness());
+    return (res > 0);
 }
 
 void Worker::initBigrams() {
@@ -119,12 +128,25 @@ void Worker::initBigrams() {
         if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
         {
             this->bigrams.push_back(newBigrams[i]);
-            this->ngrams.push_back(newBigrams[i]);
-
-            this->bigrams_t.insert(std::make_pair(newBigrams[i]->getNgram()[0],
-                                               this->bigrams.back()));
-//             std::cout << "IOI MA IOI " << temp.first->second->getText() << " " << newBigrams[i]->getNgram()[0] << std::endl;
         }
+    }
+
+    // Select the top 500 bigrams, if there are more than 500 in this->bigrams.
+    if (this->bigrams.size() > MIN_BIGRAM_NUMBER) {
+        std::nth_element (this->bigrams.begin(),
+                          this->bigrams.begin()+MIN_BIGRAM_NUMBER,
+                          this->bigrams.end(),
+                          desc_comp);
+        this->bigrams.erase(this->bigrams.begin()+MIN_BIGRAM_NUMBER,
+                            this->bigrams.end());
+    }
+
+    for (unsigned int i = 0; i < this->bigrams.size(); i++) {
+        this->ngrams.push_back(this->bigrams[i]);
+
+        this->bigrams_t.insert(std::make_pair(this->bigrams[i]->getNgram()[0],
+                                              this->bigrams[i]));
+//             std::cout << "IOI MA IOI " << temp.first->second->getText() << " " << newBigrams[i]->getNgram()[0] << std::endl;
     }
 
 //     std::cout << "BLABLA " << this->bigrams_t.count("The") << " " << this->bigrams.size() << std::endl;
