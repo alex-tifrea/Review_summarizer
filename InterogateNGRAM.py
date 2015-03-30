@@ -54,8 +54,15 @@ while (1):
             if buffer != []:
                 result += lookup.GetJointProbabilities(buffer)
             result_final = ""
+            i = 0
             for nr in result.split('\n'):
-                result_final = result_final + str(E_VALUE**(float(nr))) + "\n"
+                try:
+                    result_final = result_final + str(E_VALUE**(float(nr))) + "\n"
+                except ValueError:
+                    out_deb.write("eroare dim buffer: " + str(len(buffer)) + ", dim result: " + str(len(result.split('\n'))) + "\n")
+                    #out_deb.write("eroare de valoarea pentru (" + buffer[i] + ")\n")
+                    print "eroare de valoarea pentru " + nr
+                i += 1
             #out_deb.write("result " + result_final)
             resultOutput.write(result_final)
             resultOutput.flush()
