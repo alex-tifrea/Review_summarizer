@@ -26,6 +26,9 @@ java -cp "*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokeni
 
 In order for make run to work, you need to have CoreNLP installed and the environment variable CORENLP_PATH set to the folder where the CoreNLP sources can be found (it should look something like "..."/stanford-corenlp-full-...)
 
+Add the CORENLP_MEMORY environment variable which is the size with which java will run
+export CORENLP_MEMORY=2g
+
 
 More information about corenlp here:
 http://nlp.stanford.edu/software/corenlp.shtml

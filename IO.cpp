@@ -51,6 +51,8 @@ void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                 word.compare("?") != 0 &&
                 word.compare("!") != 0) {
                 wordInfo[word].frequency++;
+            }
+            else {
                 total_sentences_nr++;
             }
             if (word.compare("-") != 0) {
@@ -96,6 +98,8 @@ void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                 word.compare("?") != 0 &&
                 word.compare("!") != 0) {
                 wordInfo[word].frequency++;
+            }
+            else {
                 total_sentences_nr++;
             }
             if (word.compare("-") != 0) {
