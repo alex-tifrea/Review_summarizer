@@ -126,6 +126,7 @@ void Worker::initBigrams() {
     }
 
     // We call getJointProbabilities for all the bigrams at once.
+    std::cout << "Aici fac REQUEST cu lungimea " << allBigrams.size() << std::endl;
     std::vector<float> allReadabilities =
         InterogateNGRAM::getJointProbabilities(allBigrams);
 
@@ -202,6 +203,10 @@ void Worker::generateCandidate() {
         std::cout << "\"" << iter->second->getText() << "\" ";
     }
     std::cout << std::endl;
+
+    if (newNgrams.size() == 0) {
+        return;
+    }
 
     std::vector<float> allReadabilities =
         InterogateNGRAM::getJointProbabilities(newNgrams);
