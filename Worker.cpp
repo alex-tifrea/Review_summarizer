@@ -370,9 +370,9 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
         for (unsigned int k = i+1; k < ngram.size(); k++)
         {
             // It might also require the multiplication with sentences_count
-            pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
-                        (float)((float)wordPos[ngram[k]].size() *
-                            (float)wordPos[ngram[i]].size());
+            //pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
+            //            (float)((float)wordPos[ngram[k]].size() *
+            //                (float)wordPos[ngram[i]].size());
             pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
                     total_sentences_nr) / (float)(wordPos[ngram[k]].size() * 
                         wordPos[ngram[i]].size());
