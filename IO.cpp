@@ -6,6 +6,7 @@ IO::IO(std::string _in_name, std::string _out_name) {
     this->out_name = _out_name;
     in.open (this->in_name.c_str(), std::fstream::in);
     out.open (this->out_name.c_str(), std::fstream::out);
+    this->total_sentences_nr = 0;
 }
 
 
@@ -14,6 +15,7 @@ IO::IO(IO *_io) {
     this->out_name = _io->out_name;
     in.open (this->in_name.c_str(), std::fstream::in);
     out.open (this->out_name.c_str(), std::fstream::out);
+    this->total_sentences_nr = 0;
 }
 
 IO::~IO() {
@@ -24,8 +26,9 @@ IO::~IO() {
 void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews) {
     int nr_reviews, i = 0;
-    this->in >> nr_reviews;
     std::string line;
+    this->in >> nr_reviews;
+    this->total_sentences_nr = 0;
     while (i < nr_reviews && std::getline(this->in, line)) {
         // Separator between two consecutive reviews
         if (line.compare("-----") == 0) {
@@ -48,6 +51,7 @@ void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                 word.compare("?") != 0 &&
                 word.compare("!") != 0) {
                 wordInfo[word].frequency++;
+                total_sentences_nr++;
             }
             if (word.compare("-") != 0) {
                 newWords.push_back(word);
@@ -92,6 +96,7 @@ void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                 word.compare("?") != 0 &&
                 word.compare("!") != 0) {
                 wordInfo[word].frequency++;
+                total_sentences_nr++;
             }
             if (word.compare("-") != 0) {
                 newWords.push_back(word);

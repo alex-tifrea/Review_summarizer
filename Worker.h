@@ -55,6 +55,8 @@ class Worker {
         // n-gram.
         unsigned int current_review;
 
+        int total_sentences_nr;
+
         // Contains all the reviews.
         std::vector<std::vector<std::string> > all_reviews;
 

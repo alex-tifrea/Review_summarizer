@@ -27,6 +27,7 @@ private:
     std::string in_name, out_name;
     std::fstream in;
     std::fstream out;
+    int total_sentences_nr;
 
 public:
     IO(std::string _in_name, std::string _out_name);
@@ -43,6 +44,11 @@ public:
     void readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
                      std::vector<std::vector<std::string> > &reviews,
                      std::unordered_map<std::string, std::vector<WordPosition> > &word_positions);
+
+    int get_sentences_nr()
+    {
+        return total_sentences_nr;
+    }
 };
 
 #endif // __IO_H__

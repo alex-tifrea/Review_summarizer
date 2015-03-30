@@ -3,6 +3,7 @@
 
 Worker::Worker(IO *_io) {
     io = new IO(_io);
+    this->total_sentences_nr = io->get_sentences_nr();
     log.open("log.file", std::ofstream::out);
 }
 

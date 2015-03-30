@@ -16,7 +16,7 @@ void InterogateCoreNLP::init(std::unordered_map<std::string, WordInfo> &wordInfo
 
 void InterogateCoreNLP::getPartOfSpeech(std::unordered_map<std::string,WordInfo> &wordInfo) {
     // Call CoreNLP
-    system("java -cp \"$CORENLP_PATH/*\" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos -file corenlpInput.in");
+    system("java -cp \"$CORENLP_PATH/*\" -Xmx1500m edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos -file corenlpInput.in");
     // Parse the XML created by CoreNLP
     system("python coreNLP_output_parser.py corenlpInput.in.xml corenlpOutput.out");
 
