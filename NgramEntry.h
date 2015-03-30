@@ -9,9 +9,13 @@
 class Worker;
 
 // threshholds used to prune undesired ngrams
-#define SIGMA_REP 0.001 //TODO: change this
+#define SIGMA_REP 0.0005
 #define SIGMA_READ 0.005
 #define SIGMA_SIM 0.5 // TODO: maybe change this
+
+// bonuses for ngrams that contain nouns and/or adjectives.
+#define NOUN_BONUS 0.001
+#define ADJ_BONUS 0.01
 
 #define MAX_NGRAM_LENGTH 7
 

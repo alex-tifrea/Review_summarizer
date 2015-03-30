@@ -140,8 +140,36 @@ void NgramEntry::computeReadability() {
 }
 
 void NgramEntry::computeRepresent() {
+    // Compute the representativeness score.
     this->representativeness = this->worker->
                                      computeRepresentativeness(this);
+    // Adjust the representativeness score by adding bonuses if the ngram
+    // contains at least a noun and at least an adjective.
+    bool hasNoun = false, hasAdjective = false;
+    for (auto it = ngram.begin(); it != ngram.end(); ++it) {
+        WordInfo wi = this->worker->getWordInfo(*it);
+        auto adj = wi.partOfSpeech.find("JJ");
+        auto noun = wi.partOfSpeech.find("NN");
+        if (adj != string::npos) {
+            hasAdjective = true;
+        }
+
+        if (noun != string::npos) {
+            hasNoun = true;
+        }
+
+        if (hasNoun && hasAdjective) {
+            break;
+        }
+    }
+
+    if (hasNoun) {
+        this->representativeness += NOUN_BONUS;
+    }
+
+    if (hasAdjective) {
+        this->representativeness += ADJ_BONUS;
+    }
 }
 
 void NgramEntry::setReadability(float _read) {

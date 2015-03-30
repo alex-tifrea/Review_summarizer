@@ -374,3 +374,7 @@ void Worker::printNgrams(ostream &fout) {
     }
     fout << std::endl;
 }
+
+WordInfo Worker::getWordInfo(std::string word) {
+    return this->wordInfo[word];
+}
