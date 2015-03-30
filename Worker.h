@@ -95,6 +95,8 @@ class Worker {
         float computeRepresentativeness(NgramEntry *current_ngram);
 
         void printNgrams(std::ostream&);
+
+        WordInfo getWordInfo(std::string word);
 };
 
 #endif // __WORKER_H__
