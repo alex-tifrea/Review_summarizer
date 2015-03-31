@@ -8,6 +8,7 @@ class InterogateCoreNLP {
 public:
     static void init(std::unordered_map<std::string, WordInfo>&);
     static void getPartOfSpeech(std::unordered_map<std::string, WordInfo>&);
+    static void getSentiment(void);
     static void finalize();
 private:
     static FILE *words_input,
