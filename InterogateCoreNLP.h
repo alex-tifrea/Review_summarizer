@@ -18,9 +18,5 @@ public:
     static void getSentiment(Container<T, std::allocator<T> >&);
 
     static void finalize();
-private:
-    static FILE *words_input,
-                *xml_output,
-                *parsed_output;
 };
 #endif // __INTEROGATECORENLP_H__
