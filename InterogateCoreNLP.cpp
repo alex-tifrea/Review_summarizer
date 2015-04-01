@@ -52,7 +52,7 @@ void InterogateCoreNLP::getSentiment(Container<T, std::allocator<T> > &ngrams) {
     }
     nlp_in.close();
 
-    char command[100];
+    char command[300];
     // Call CoreNLP
     sprintf(command, "java -cp \"$CORENLP_PATH/*\" -Xmx\"$CORENLP_MEMORY\" edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse,sentiment -ssplit.eolonly -file %s",
             CORENLP_SENTIMENT_INPUT);
