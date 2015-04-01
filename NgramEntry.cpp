@@ -5,6 +5,8 @@
 
 NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     ngram(_ngram),
+    pos_bonus(0),
+    sentiment_bonus(0),
     worker(_worker),
     sentiment(UNDEFINED)
 {
@@ -32,6 +34,8 @@ NgramEntry::NgramEntry(NgramEntry *ne) :
     text(ne->text),
     readability(ne->readability),
     representativeness(ne->representativeness),
+    pos_bonus(ne->pos_bonus),
+    sentiment_bonus(ne->sentiment_bonus),
     sentiment(ne->sentiment)
 {
     this->worker = ne->worker;
@@ -145,8 +149,11 @@ void NgramEntry::computeRepresent() {
     // Compute the representativeness score.
     this->representativeness = this->worker->
                                      computeRepresentativeness(this);
-    // Adjust the representativeness score by adding bonuses if the ngram
-    // contains at least a noun and at least an adjective.
+}
+
+void NgramEntry::computePOSBonuses() {
+    // Set bonuses for ngrams that contain at least a noun or
+    // at least an adjective.
     bool hasNoun = false, hasAdjective = false;
     for (auto it = ngram.begin(); it != ngram.end(); ++it) {
         WordInfo wi = this->worker->getWordInfo(*it);
@@ -166,11 +173,23 @@ void NgramEntry::computeRepresent() {
     }
 
     if (hasNoun) {
-        this->representativeness += NOUN_BONUS;
+        this->pos_bonus += NOUN_BONUS;
     }
 
     if (hasAdjective) {
-        this->representativeness += ADJ_BONUS;
+        this->pos_bonus += ADJ_BONUS;
+    }
+}
+
+// Computes bonuses for ngrams that have a strong opinion.
+void NgramEntry::computeSentimentBonuses() {
+    if (this->sentiment == VERY_NEGATIVE ||
+        this->sentiment == VERY_POSITIVE) {
+        this->sentiment_bonus += VERY_POS_NEG_BONUS;
+    }
+    if (this->sentiment == POSITIVE ||
+        this->sentiment == NEGATIVE) {
+        this->sentiment_bonus += POS_NEG_BONUS;
     }
 }
 

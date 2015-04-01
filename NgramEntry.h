@@ -16,6 +16,8 @@ class Worker;
 // bonuses for ngrams that contain nouns and/or adjectives.
 #define NOUN_BONUS 0.001
 #define ADJ_BONUS 0.01
+#define VERY_POS_NEG_BONUS 0.05
+#define POS_NEG_BONUS 0.01
 
 #define MAX_NGRAM_LENGTH 7
 
@@ -32,7 +34,8 @@ class NgramEntry {
 private:
     std::vector<std::string> ngram;
     std::string text;
-    float readability, representativeness;
+    float readability, representativeness,
+          pos_bonus, sentiment_bonus;
     Worker *worker;
     Sentiment sentiment;
 
@@ -50,6 +53,12 @@ public:
 
     // Computes the representativeness score.
     void computeRepresent();
+
+    // Computes the bonuses for ngrams that contain nouns or adjectives.
+    void computePOSBonuses();
+
+    // Computes bonuses for ngrams that have a strong opinion.
+    void computeSentimentBonuses();
 
     // Setter for the readability score;
     void setReadability(float);
@@ -79,6 +88,22 @@ public:
 
     void setRepresentativeness(float rep_value){
         representativeness = rep_value;
+    }
+
+    float getPOSBonus() {
+        return this->pos_bonus;
+    }
+
+    void setPOSBonus(float _pos_bonus) {
+        this->pos_bonus = _pos_bonus;
+    }
+
+    float getSentimentBonus() {
+        return this->sentiment_bonus;
+    }
+
+    void setSentimentBonus(float _sentiment_bonus) {
+        this->sentiment_bonus = _sentiment_bonus;
     }
 
     std::vector<std::string> getNgram() const {
