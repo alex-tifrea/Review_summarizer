@@ -117,10 +117,6 @@ void Worker::initBigrams() {
                     std::string concat_bigram = bigram_text[0] + " " + bigram_text[1];
                     allBigrams.push_back(concat_bigram);
                 }
-                // Old code in case the new one is not working
-                // newBigrams.push_back(new NgramEntry(bigram_text, this));
-                // std::string concat_bigram = bigram_text[0] + " " + bigram_text[1];
-                // allBigrams.push_back(concat_bigram);
             }
         }
     }
@@ -129,6 +125,7 @@ void Worker::initBigrams() {
     std::cout << "Aici fac REQUEST cu lungimea " << allBigrams.size() << std::endl;
     std::vector<float> allReadabilities =
         InterogateNGRAM::getJointProbabilities(allBigrams);
+    allBigrams.clear();
 
     for (unsigned int i = 0; i < newBigrams.size(); i++)
     {
@@ -139,8 +136,15 @@ void Worker::initBigrams() {
         if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
         {
             this->bigrams.push_back(newBigrams[i]);
+            std::string concat_bigram = newBigrams[i]->getText()[0] +
+                                        " " +
+                                        newBigrams[i]->getText()[1];
+            allBigrams.push_back(concat_bigram);
         }
     }
+
+    // TODO: interogate CoreNLP for sentiment.
+    InterogateCoreNLP::getSentiment<NgramEntry*, std::vector>(this->bigrams);
 
     // Select the top 500 bigrams, if there are more than 500 in this->bigrams.
     if (this->bigrams.size() > MIN_BIGRAM_NUMBER) {
@@ -157,28 +161,7 @@ void Worker::initBigrams() {
 
         this->bigrams_t.insert(std::make_pair(this->bigrams[i]->getNgram()[0],
                                               this->bigrams[i]));
-//             std::cout << "IOI MA IOI " << temp.first->second->getText() << " " << newBigrams[i]->getNgram()[0] << std::endl;
     }
-
-//     std::cout << "BLABLA " << this->bigrams_t.count("The") << " " << this->bigrams.size() << std::endl;
-//     auto pereche = this->bigrams_t.equal_range("The");
-//     auto it = pereche.first;
-//     for (; it != pereche.second; ++it) {
-//         std::cout << it->second->getText() << std::endl;
-//     }
-
-
-/* TODO: cred ca trebuie sters tot
-    // TODO: sort bigrams alphabetically after the first word so that we can use
-    // binary search when looking for a certain bigram in
-    // Worker::generateCandidate
-
-    // when done with bigrams, copy the | bigrams | vector into the | ngrams |
-    // vector (because initially the n-grams are the bigrams);
-    for (unsigned int i = 0; i < bigrams.size(); i++) {
-        ngrams.push_back(bigrams[i]);
-    }
-    */
 }
 
 void Worker::generateCandidate() {
@@ -374,7 +357,7 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             //            (float)((float)wordPos[ngram[k]].size() *
             //                (float)wordPos[ngram[i]].size());
             pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
-                    total_sentences_nr) / (float)(wordPos[ngram[k]].size() * 
+                    total_sentences_nr) / (float)(wordPos[ngram[k]].size() *
                         wordPos[ngram[i]].size());
         }
         if (pmi_local == 0)
