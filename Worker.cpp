@@ -159,7 +159,7 @@ void Worker::initBigrams() {
     for (unsigned int i = 0; i < this->bigrams.size(); i++) {
         this->ngrams.push_back(this->bigrams[i]);
 
-        this->bigrams_t.insert(std::make_pair(this->bigrams[i]->getNgram()[0],
+        this->bigrams_map.insert(std::make_pair(this->bigrams[i]->getNgram()[0],
                                               this->bigrams[i]));
     }
 }
@@ -173,7 +173,7 @@ void Worker::generateCandidate() {
     ngrams.pop_front();
 
     auto matching_bigrams_range =
-        this->bigrams_t.equal_range(curr_ngram->getNgram().back());
+        this->bigrams_map.equal_range(curr_ngram->getNgram().back());
 
     std::vector<std::string> newNgrams;
     std::unordered_multimap<std::string, NgramEntry*>::iterator iter;
