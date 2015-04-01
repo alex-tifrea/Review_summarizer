@@ -5,6 +5,8 @@ main
 Reviews_*
 Papers
 *out
+*in
+*xml
 !hotels_urls.out
 .*
 !.lvimrc
