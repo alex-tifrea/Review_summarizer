@@ -21,7 +21,7 @@ void InterogateCoreNLP::init(std::unordered_map<std::string, WordInfo> &wordInfo
 
 void InterogateCoreNLP::getPartOfSpeech(std::unordered_map<std::string,WordInfo> &wordInfo) {
     // Call CoreNLP
-    char command[100];
+    char command[1000];
     sprintf(command, "java -cp \"$CORENLP_PATH/*\" -Xmx\"$CORENLP_MEMORY\" edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos -file %s",
             CORENLP_POS_INPUT);
     system(command);
