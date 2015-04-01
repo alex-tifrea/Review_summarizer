@@ -132,7 +132,7 @@ float NgramEntry::computeSimilarity(NgramEntry *ne) {
                                              this->ngram.size());
     }
 
-    std::cout << "SIMILARITATE " << dist << std::endl;
+//     std::cout << "SIMILARITATE " << dist << std::endl;
 
     return dist;
 }
