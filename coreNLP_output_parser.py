@@ -52,7 +52,22 @@ def main():
 
     if sys.argv[1] == "--sentiment":
         # Interogate for sentiment information
-        print "BANG"
+        try:
+            tree = ET.parse(sys.argv[2])
+        except Exception:
+            logging.error("Wrong input file")
+            sys.exit(2)
+        try:
+            # Finds the path from root to tokens
+            root = tree.getroot()
+            document = root[0]
+            sentences = document[0]
+            for sentence in sentences:
+                print int(sentence.attrib["sentimentValue"])
+        except IndexError:
+            logging.error("The file has an unusual format")
+            sys.exit(3)
+
 
 if __name__ == "__main__":
     main()
