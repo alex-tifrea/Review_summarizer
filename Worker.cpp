@@ -37,10 +37,10 @@ void Worker::init() {
     // reviews, using CoreNLP
     InterogateCoreNLP::init(this->wordInfo);
     InterogateCoreNLP::getPartOfSpeech(this->wordInfo);
-    InterogateCoreNLP::finalize();
+//     InterogateCoreNLP::finalize();
+
     // At this point, this->wordInfo should be contain both the frequency and
     // the part-of-speech of each word appearing in the reviews.
-
     fstream words;
     words.open("wordInfo.out", std::fstream::out);
     std::unordered_map<std::string, WordInfo>::iterator iter;

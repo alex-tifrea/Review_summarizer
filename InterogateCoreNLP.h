@@ -15,7 +15,7 @@ public:
     static void getPartOfSpeech(std::unordered_map<std::string, WordInfo>&);
 
     template<typename T, template <typename, typename> class Container>
-    static void getSentiment(Container<T, std::allocator<T> > ngrams) {}
+    static void getSentiment(Container<T, std::allocator<T> >&);
 
     static void finalize();
 private:

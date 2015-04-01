@@ -24,7 +24,8 @@ enum Sentiment {
     NEGATIVE,
     NEUTRAL,
     POSITIVE,
-    VERY_POSITIVE
+    VERY_POSITIVE,
+    UNDEFINED
 };
 
 class NgramEntry {
@@ -59,6 +60,14 @@ public:
 
     // Returns the readability and representativeness score.
     std::pair<float, float> getScore();
+
+    void setSentiment(Sentiment s) {
+        this->sentiment = s;
+    }
+
+    Sentiment getSentiment() {
+        return sentiment;
+    }
 
     float getReadability() const {
         return readability;

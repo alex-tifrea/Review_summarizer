@@ -5,7 +5,8 @@
 
 NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     ngram(_ngram),
-    worker(_worker)
+    worker(_worker),
+    sentiment(UNDEFINED)
 {
     // Update the text field.
     std::vector<std::string>::iterator it = this->ngram.begin();
@@ -30,7 +31,8 @@ NgramEntry::NgramEntry(NgramEntry *ne) :
     ngram(ne->ngram),
     text(ne->text),
     readability(ne->readability),
-    representativeness(ne->representativeness)
+    representativeness(ne->representativeness),
+    sentiment(ne->sentiment)
 {
     this->worker = ne->worker;
 }
