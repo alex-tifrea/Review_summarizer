@@ -65,15 +65,18 @@ void InterogateCoreNLP::getSentiment(Container<T, std::allocator<T> > &ngrams) {
             CORENLP_SENTIMENT_OUTPUT);
     system(command);
 
-    /*
     // Add the sentiment information to the NgramEntry structure
     std::fstream nlp_out;
     nlp_out.open(CORENLP_SENTIMENT_OUTPUT, std::fstream::in);
-    while (nlp_out >> word >> part_of_speech) {
-        wordInfo[word].partOfSpeech = part_of_speech;
+    // XXX: maybe provide a way to check if we have the coresponding sentiment
+    // or not
+    int i = 0;
+    int temp_sent;
+    while (nlp_out >> temp_sent) {
+        ngrams[i]->setSentiment(static_cast<Sentiment>(temp_sent));
+        i++;
     }
     nlp_out.close();
-    */
 }
 
 void InterogateCoreNLP::finalize() {
