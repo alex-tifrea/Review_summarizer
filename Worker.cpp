@@ -169,23 +169,29 @@ void Worker::generateCandidate() {
     // bigram that starts with the last word of n (this test is done by
     // NgramEntry::mergeNgrams); merge the two and push the newly created
     // (n+1)-gram at the and of the queue.
-    NgramEntry *curr_ngram = ngrams.front();
-    ngrams.pop_front();
-
-    auto matching_bigrams_range =
-        this->bigrams_map.equal_range(curr_ngram->getNgram().back());
-
     std::vector<std::string> newNgrams;
-    std::unordered_multimap<std::string, NgramEntry*>::iterator iter;
-    std::string tmpNgram;
-    iter = matching_bigrams_range.first;
-    std::cout << "Pentru \"" << curr_ngram->getText() << "\" am BIGRAMELE astea:";
-    for (; iter != matching_bigrams_range.second; ++iter) {
-        tmpNgram = curr_ngram->getText() + " " + iter->second->getNgram()[1];
-        newNgrams.push_back(tmpNgram);
-        std::cout << "\"" << iter->second->getText() << "\" ";
+    int loop_size = ngrams.size();
+    std::vector<int> size_vector;
+    for (int i = 0; i < loop_size; i++)
+    {
+        NgramEntry *curr_ngram = ngrams[i];
+
+        auto matching_bigrams_range =
+            this->bigrams_map.equal_range(curr_ngram->getNgram().back());
+
+        std::unordered_multimap<std::string, NgramEntry*>::iterator iter;
+        std::string tmpNgram;
+        iter = matching_bigrams_range.first;
+        std::cout << "Pentru \"" << curr_ngram->getText() << "\" am BIGRAMELE astea:";
+        int measure_size = 0;
+        for (; iter != matching_bigrams_range.second; ++iter, measure_size++) {
+            tmpNgram = curr_ngram->getText() + " " + iter->second->getNgram()[1];
+            newNgrams.push_back(tmpNgram);
+            std::cout << "\"" << iter->second->getText() << "\" ";
+        }
+        size_vector.push_back(measure_size);
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
 
     if (newNgrams.size() == 0) {
         return;
@@ -194,35 +200,50 @@ void Worker::generateCandidate() {
     std::vector<float> allReadabilities =
         InterogateNGRAM::getJointProbabilities(newNgrams);
 
-    iter = matching_bigrams_range.first;
-    for (unsigned int i = 0; i < allReadabilities.size(); i++) {
-        std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
-                     iter->second->getText() << "\"" << std::endl;
-        std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
-        NgramEntry *new_ngram =
-            curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
+    int current_poz = 0;
+    for (int k = 0; k < loop_size; k++, current_poz++)
+    {
+        NgramEntry *curr_ngram = ngrams.front();
+        ngrams.pop_front();
 
-        if (new_ngram != NULL) {
-            // Check if the newly created ngram is similar to any of the
-            // other ngrams
-            bool is_unique = true;
-            // TODO: this might need to be changed. I think it may slow us
-            // down
-            for (unsigned int i = 0; i < ngrams.size(); i++) {
-                if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
-                    // TODO: pastreaza ngrama cu cele mai bune scoruri
-                    is_unique = false;
-                    break;
+        auto matching_bigrams_range =
+            this->bigrams_map.equal_range(curr_ngram->getNgram().back());
+
+        std::unordered_multimap<std::string, NgramEntry*>::iterator iter;
+        iter = matching_bigrams_range.first;
+        int i = current_poz;
+        for (int j = 0; j < size_vector[k]; j++, i++)
+        {
+            std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
+                         iter->second->getText() << "\"" << std::endl;
+            std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
+            NgramEntry *new_ngram =
+                curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
+
+            if (new_ngram != NULL) {
+                // Check if the newly created ngram is similar to any of the
+                // other ngrams
+                bool is_unique = true;
+                // TODO: this might need to be changed. I think it may slow us
+                // down
+                /*
+                for (unsigned int i = 0; i < ngrams.size(); i++) {
+                    if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
+                        // TODO: pastreaza ngrama cu cele mai bune scoruri
+                        is_unique = false;
+                        break;
+                    }
+                }
+                */
+
+                if (is_unique) {
+                    // Add the newly created (n+1)-gram to the deque
+                    ngrams.push_back(new_ngram);
+                    this->printNgrams(log);
                 }
             }
-
-            if (is_unique) {
-                // Add the newly created (n+1)-gram to the deque
-                ngrams.push_back(new_ngram);
-                this->printNgrams(log);
-            }
+            ++iter;
         }
-        ++iter;
     }
 
     /*
