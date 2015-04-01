@@ -120,9 +120,12 @@ def process_review(review_info, output_file, count, city, hotel_name):
         tree.write(output_file.name)
         xmlstr = ET.tostring(root, encoding='utf8', method='xml')
 
-        output_file.write(xmlstr)
-        pretty_xml = xml.dom.minidom.parseString(xmlstr)
-        output_file.write(pretty_xml.toprettyxml())
+        try:
+            output_file.write(xmlstr)
+            pretty_xml = xml.dom.minidom.parseString(xmlstr)
+            output_file.write(pretty_xml.toprettyxml())
+        except Exception:
+            pass
 
 # @args the url of a hotel
 # extracts the reviews for the given hotel and calls process_review to create
@@ -136,6 +139,8 @@ def process_hotel(url, count_reviews, city, hotel_name):
 
     reviews = reviews.xpath('//*[contains(concat(" ", \
             normalize-space(@class), " "), " quote ")]')
+
+    print "Pe pagina asta am",len(reviews),"review-uri"
 
     for myiter in reviews:
         url_rev = myiter.xpath('child::a')[0].xpath('attribute::href')[0]
@@ -153,13 +158,13 @@ def process_hotel(url, count_reviews, city, hotel_name):
         count_reviews = count_reviews + 1
 
     # move on to the next page
-    nextPage = tree_rev.xpath('//*[contains(concat(" ", \
+    nextPage = tree.xpath('//*[contains(concat(" ", \
             normalize-space(@class), " "), " sprite-pageNext ")]')
     if (len(nextPage) == 0): # am ajuns la ultima pagina
         return
 
     nextPageURL = nextPage[0].xpath('attribute::href')[0]
-    process_hotel(url, count_reviews, city, hotel_name)
+    process_hotel(nextPageURL, count_reviews, city, hotel_name)
 
 
 # @args the file that contains all the hotels that are about to be crawled
