@@ -19,12 +19,21 @@ class Worker;
 
 #define MAX_NGRAM_LENGTH 7
 
+enum Sentiment {
+    VERY_NEGATIVE,
+    NEGATIVE,
+    NEUTRAL,
+    POSITIVE,
+    VERY_POSITIVE
+};
+
 class NgramEntry {
 private:
     std::vector<std::string> ngram;
     std::string text;
     float readability, representativeness;
     Worker *worker;
+    Sentiment sentiment;
 
 public:
     NgramEntry(std::vector<std::string>, Worker*);
