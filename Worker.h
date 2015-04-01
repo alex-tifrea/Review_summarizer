@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <deque>
+#include <queue>
 #include <unordered_map>
 
 #include "NgramEntry.h"
@@ -26,6 +27,9 @@ using namespace std;
 
 class Worker {
     private:
+        // Structure in which we keep the best ngrams.
+        std::priority_queue<NgramEntry *> best_ngrams;
+
         std::ofstream log;
         // Holds the number of occurences for each word.
         std::unordered_map<std::string, WordInfo> wordInfo;

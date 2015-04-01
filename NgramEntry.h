@@ -115,6 +115,8 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream&, const NgramEntry&);
+    
+    friend inline bool operator> (const NgramEntry& first, const NgramEntry& second);
 };
 
 #endif // __NGRAMENTRY_H__

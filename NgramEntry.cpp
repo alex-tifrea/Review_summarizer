@@ -212,3 +212,7 @@ std::ostream &operator<<(std::ostream &out, const NgramEntry &ne) {
     out << ne.getReadability() << ", " << ne.getRepresentativeness() << "] ";
     return out;
 }
+
+inline bool operator> (const NgramEntry& first, const NgramEntry& second){
+    return first.getReadability() > second.getReadability();
+}
