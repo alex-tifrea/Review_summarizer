@@ -406,11 +406,13 @@ void Worker::printBestNgrams(ostream &fout) {
 //         fout << *(this->best_ngrams.top()) << " ";
 //         this->best_ngrams.pop();
 //     }
-    sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end());
-    for (auto it = this->vect_best_ngrams.begin();
-         it != this->vect_best_ngrams.end();
-         ++it) {
-        fout << *(*it) << " ";
+
+    NgramEntry::DereferenceGreaterComparator comp;
+    sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
+    fout << "Best n-grams are: " << this->vect_best_ngrams.size() << " ";
+    for (unsigned int i = 0;
+         i < MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size(); i++) {
+        fout << *(this->vect_best_ngrams[i]) << " ";
     }
     fout << std::endl;
 }

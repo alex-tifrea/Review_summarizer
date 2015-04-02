@@ -46,7 +46,7 @@ int main ()
     work->printNgrams(std::cout);
 //     work->generateInteractiveLoop();
     work->generateLoop();
-    work->printNgrams(std::cout);
+    work->printBestNgrams(std::cout);
     InterogateNGRAM::Finalize();
     return 0;
 }

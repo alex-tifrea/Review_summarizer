@@ -117,13 +117,27 @@ public:
     friend std::ostream&
     operator<<(std::ostream&, const NgramEntry&) override;
 
-    inline bool operator>(const NgramEntry& ne) const {
-        return this->getReadability() > ne.getReadability();
+    bool operator>(const NgramEntry& ne) const {
+        float lhs = this->readability + this->representativeness +
+                    this->pos_bonus + this->sentiment_bonus;
+        float rhs = ne.readability + ne.representativeness +
+                    ne.pos_bonus + ne.sentiment_bonus;
+        return lhs > rhs;
     }
 
-    inline bool operator<(const NgramEntry& ne) const {
-        return this->getReadability() < ne.getReadability();
+    bool operator<(const NgramEntry& ne) const {
+        float lhs = this->readability + this->representativeness +
+                    this->pos_bonus + this->sentiment_bonus;
+        float rhs = ne.readability + ne.representativeness +
+                    ne.pos_bonus + ne.sentiment_bonus;
+        return lhs < rhs;
     }
+
+    struct DereferenceGreaterComparator {
+        bool operator() (NgramEntry *lhs, NgramEntry *rhs) {
+            return *(lhs) > *(rhs);
+        }
+    };
 };
 
 #endif // __NGRAMENTRY_H__
