@@ -237,8 +237,19 @@ void Worker::generateCandidate() {
                 */
 
                 if (is_unique) {
-                    // Add the newly created (n+1)-gram to the deque
                     ngrams.push_back(new_ngram);
+                    // Add the newly created (n+1)-gram to the deque
+                    vect_best_ngrams.push_back(ngrams[ngrams.size() - 1]);
+                    /*
+                    else
+                    {
+                        NgramEntry *low_ngram = best_ngrams.top();
+                        if (low_ngram->getReadability() < ngrams[ngrams.size()-1]->getReadability())
+                        {
+                            best_ngrams.pop();
+                            best_ngrams.push(ngrams[ngrams.size()-1]);
+                        }
+                    }*/
                     this->printNgrams(log);
                 }
             }
@@ -389,10 +400,18 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
 }
 
 void Worker::printNgrams(ostream &fout) {
+    fout << vect_best_ngrams.size() << " ";
+    sort(vect_best_ngrams.begin(), vect_best_ngrams.end());
+    for (int i = 0; i < (int)vect_best_ngrams.size(); i++)
+    {
+        fout << *(vect_best_ngrams[i]) << " ";
+    }
+    /*
     fout << ngrams.size() << std::endl;
     for (unsigned int i = 0; i < ngrams.size(); i++) {
         fout << *(ngrams[i]) << " ";
     }
+    */
     fout << std::endl;
 }
 

@@ -9,6 +9,7 @@
 #include <deque>
 #include <queue>
 #include <unordered_map>
+#include <algorithm>
 
 #include "NgramEntry.h"
 #include "IO.h"
@@ -27,6 +28,8 @@ using namespace std;
 
 class Worker {
     private:
+        std::vector <NgramEntry *> vect_best_ngrams;
+
         // Structure in which we keep the best ngrams.
         std::priority_queue<NgramEntry *> best_ngrams;
 

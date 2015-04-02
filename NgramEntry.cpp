@@ -214,5 +214,5 @@ std::ostream &operator<<(std::ostream &out, const NgramEntry &ne) {
 }
 
 inline bool operator> (const NgramEntry& first, const NgramEntry& second){
-    return first.getReadability() > second.getReadability();
+    return first.getReadability() < second.getReadability();
 }
