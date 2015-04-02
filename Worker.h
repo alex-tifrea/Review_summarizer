@@ -29,6 +29,9 @@ using namespace std;
 
 class Worker {
     private:
+        // Structure in whidw we keep al the ngrams, with a size greater than 3,
+        // that we created in the while running the programs. From this vector
+        // we will find the best ngrams for the final part of the project
         std::vector <NgramEntry *> vect_best_ngrams;
 
         // Structure in which we keep the best ngrams.
@@ -76,11 +79,9 @@ class Worker {
         // Reads the input and writes back the output.
         IO *io;
 
-        // TODO We need to find the total number of sentences in the reviews in
-        // order to find the corresponding joint probability, which is the
-        // number of times two words are in the same sentence over the total
-        // number of sentences. This variable will be 5 for the moment.
-        int sentences_count;
+        // Keep the values for the minimum representativenes for ngrams of
+        // size: 3, 4 and 5.
+        float *rep_min_values;
 
     public:
         Worker(IO*);

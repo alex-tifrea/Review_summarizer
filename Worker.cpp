@@ -3,6 +3,10 @@
 
 Worker::Worker(IO *_io) {
     this->io = new IO(_io);
+    this->rep_min_values =  new float[3];
+    this->rep_min_values[0] = 0.35;
+    this->rep_min_values[1] = 0.52;
+    this->rep_min_values[2] = 0.7;
     log.open("log.file", std::ofstream::out);
 }
 
@@ -51,7 +55,6 @@ void Worker::init() {
     words.close();
 
     current_review = 0;
-    sentences_count= 5;
 }
 
 // Comparator used to get trim this->bigrams;
@@ -169,6 +172,11 @@ void Worker::generateCandidate() {
     // bigram that starts with the last word of n (this test is done by
     // NgramEntry::mergeNgrams); merge the two and push the newly created
     // (n+1)-gram at the and of the queue.
+    float minimum_rep;
+    if (this->ngrams.size() > 0)
+        minimum_rep = rep_min_values[this->ngrams[0]->getNgramSize()-2];
+    else
+        minimum_rep = SIGMA_REP;
     std::vector<std::string> newNgrams;
     int loop_size = ngrams.size();
     std::vector<int> size_vector;
@@ -201,6 +209,8 @@ void Worker::generateCandidate() {
         InterogateNGRAM::getJointProbabilities(newNgrams);
 
     int current_poz = 0;
+    int count = 0;
+    float mean_rep = 0;
     for (int k = 0; k < loop_size; k++, current_poz++)
     {
         NgramEntry *curr_ngram = ngrams.front();
@@ -236,7 +246,9 @@ void Worker::generateCandidate() {
                 }
                 */
 
-                if (is_unique) {
+                if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
+                    mean_rep += new_ngram->getRepresentativeness();
+                    count ++;
                     ngrams.push_back(new_ngram);
                     // Add the newly created (n+1)-gram to the deque
                     vect_best_ngrams.push_back(ngrams[ngrams.size() - 1]);
@@ -250,6 +262,8 @@ void Worker::generateCandidate() {
             ++iter;
         }
     }
+
+    cout << "mean rep value " << (float)(mean_rep / (float)count) << endl;
 
     /*
     for (unsigned int i = 0; i < bigrams.size(); i++) {
@@ -382,13 +396,13 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             //pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
             //            (float)((float)wordPos[ngram[k]].size() *
             //                (float)wordPos[ngram[i]].size());
-            pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
+            pmi_local += log2((float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
                     total_sentences_nr) / (float)(wordPos[ngram[k]].size() *
-                        wordPos[ngram[i]].size());
+                        wordPos[ngram[i]].size()));
         }
         if (pmi_local == 0)
             return LOW_REP;
-        srep += (log2(pmi_local) / (2 * WINDOW_SIZE));
+        srep += (pmi_local) / (2 * WINDOW_SIZE);
     }
     return (float)(srep / ngram.size());
 }

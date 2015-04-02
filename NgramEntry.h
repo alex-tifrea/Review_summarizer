@@ -9,7 +9,7 @@
 class Worker;
 
 // threshholds used to prune undesired ngrams
-#define SIGMA_REP -20
+#define SIGMA_REP 0.06
 #define SIGMA_READ 0.0001
 #define SIGMA_SIM 0.5 // TODO: maybe change this
 
@@ -104,6 +104,10 @@ public:
 
     void setSentimentBonus(float _sentiment_bonus) {
         this->sentiment_bonus = _sentiment_bonus;
+    }
+
+    int getNgramSize(){
+        return (int)this->ngram.size();
     }
 
     std::vector<std::string> getNgram() const {
