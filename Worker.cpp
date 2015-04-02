@@ -2,7 +2,7 @@
 #include <math.h>
 
 Worker::Worker(IO *_io) {
-    io = new IO(_io);
+    this->io = new IO(_io);
     log.open("log.file", std::ofstream::out);
 }
 
@@ -240,16 +240,10 @@ void Worker::generateCandidate() {
                     ngrams.push_back(new_ngram);
                     // Add the newly created (n+1)-gram to the deque
                     vect_best_ngrams.push_back(ngrams[ngrams.size() - 1]);
-                    /*
-                    else
-                    {
-                        NgramEntry *low_ngram = best_ngrams.top();
-                        if (low_ngram->getReadability() < ngrams[ngrams.size()-1]->getReadability())
-                        {
-                            best_ngrams.pop();
-                            best_ngrams.push(ngrams[ngrams.size()-1]);
-                        }
-                    }*/
+//                     this->best_ngrams.push(new_ngram);
+//                     if (this->best_ngrams.size() > MAX_BEST_NGRAMS) {
+//                         this->best_ngrams.pop();
+//                     }
                     this->printNgrams(log);
                 }
             }
@@ -400,18 +394,24 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
 }
 
 void Worker::printNgrams(ostream &fout) {
-    fout << vect_best_ngrams.size() << " ";
-    sort(vect_best_ngrams.begin(), vect_best_ngrams.end());
-    for (int i = 0; i < (int)vect_best_ngrams.size(); i++)
-    {
-        fout << *(vect_best_ngrams[i]) << " ";
-    }
-    /*
     fout << ngrams.size() << std::endl;
     for (unsigned int i = 0; i < ngrams.size(); i++) {
         fout << *(ngrams[i]) << " ";
     }
-    */
+}
+
+void Worker::printBestNgrams(ostream &fout) {
+//     fout << this->best_ngrams.size() << " ";
+//     while (this->best_ngrams.size() != 0) {
+//         fout << *(this->best_ngrams.top()) << " ";
+//         this->best_ngrams.pop();
+//     }
+    sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end());
+    for (auto it = this->vect_best_ngrams.begin();
+         it != this->vect_best_ngrams.end();
+         ++it) {
+        fout << *(*it) << " ";
+    }
     fout << std::endl;
 }
 

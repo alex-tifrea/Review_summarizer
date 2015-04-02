@@ -16,6 +16,7 @@
 #include "InterogateCoreNLP.h"
 #include "InterogateNGRAM.h"
 
+#define MAX_BEST_NGRAMS 20
 #define MIN_BIGRAM_NUMBER 500 // TODO: maybe change this
 #define NGRAM_COUNT_LIMIT 5
 #define WINDOW_SIZE 10
@@ -31,7 +32,11 @@ class Worker {
         std::vector <NgramEntry *> vect_best_ngrams;
 
         // Structure in which we keep the best ngrams.
-        std::priority_queue<NgramEntry *> best_ngrams;
+        // It is a bounded priority queue with maximum MAX_BEST_NGRAMS elements.
+        // Even though it keeps the best ngrams (so the ones that have the
+        // highest scores), we declare it with the reversed comparator, so that
+        // we can bound its size.
+//         priority_queue<NgramEntry*, std::vector<NgramEntry*>, NgramEntry::ReverseLess> best_ngrams;
 
         std::ofstream log;
         // Holds the number of occurences for each word.
@@ -105,6 +110,8 @@ class Worker {
         float computeRepresentativeness(NgramEntry *current_ngram);
 
         void printNgrams(std::ostream&);
+
+        void printBestNgrams(std::ostream&);
 
         WordInfo getWordInfo(std::string word);
 };

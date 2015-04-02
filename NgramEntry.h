@@ -114,9 +114,16 @@ public:
         return this->text;
     }
 
-    friend std::ostream &operator<<(std::ostream&, const NgramEntry&);
-    
-    friend inline bool operator> (const NgramEntry& first, const NgramEntry& second);
+    friend std::ostream&
+    operator<<(std::ostream&, const NgramEntry&) override;
+
+    inline bool operator>(const NgramEntry& ne) const {
+        return this->getReadability() > ne.getReadability();
+    }
+
+    inline bool operator<(const NgramEntry& ne) const {
+        return this->getReadability() < ne.getReadability();
+    }
 };
 
 #endif // __NGRAMENTRY_H__
