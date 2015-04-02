@@ -409,7 +409,7 @@ void Worker::printBestNgrams(ostream &fout) {
 
     NgramEntry::DereferenceGreaterComparator comp;
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
-    fout << "Best n-grams are: " << this->vect_best_ngrams.size() << " ";
+    fout << "Best n-grams are: " << this->vect_best_ngrams.size() << "\n";
     for (unsigned int i = 0;
          i < MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size(); i++) {
         fout << *(this->vect_best_ngrams[i]) << " ";

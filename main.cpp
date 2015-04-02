@@ -37,16 +37,21 @@ int main ()
     // Register signal and signal handler
     signal(SIGINT, signal_callback_handler);
 
+    std::fstream fout;
+    fout.open("fisier.out", std::fstream::out);
+
     string _in_name = "input_example";
     string _out_name = "output_example";
     IO *init_io = new IO(_in_name, _out_name);
     Worker *work = new Worker(init_io);
     work->init();
     work->initBigrams();
-    work->printNgrams(std::cout);
+    work->printNgrams(fout);
 //     work->generateInteractiveLoop();
     work->generateLoop();
-    work->printBestNgrams(std::cout);
+    work->printBestNgrams(fout);
     InterogateNGRAM::Finalize();
+
+    fout.close();
     return 0;
 }
