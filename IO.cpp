@@ -55,7 +55,7 @@ void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
             else {
                 total_sentences_nr++;
             }
-            if (word.compare("-") != 0) {
+            if (word.find("-") != std::string::npos) {
                 newWords.push_back(word);
             }
         }
