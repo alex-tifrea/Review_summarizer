@@ -4,9 +4,9 @@
 Worker::Worker(IO *_io) {
     this->io = new IO(_io);
     this->rep_min_values =  new float[3];
-    this->rep_min_values[0] = 0.35;
-    this->rep_min_values[1] = 0.52;
-    this->rep_min_values[2] = 0.7;
+    this->rep_min_values[0] = 0.45;
+    this->rep_min_values[1] = 0.62;
+    this->rep_min_values[2] = 0.85;
     log.open("log.file", std::ofstream::out);
 }
 

@@ -9,7 +9,7 @@
 class Worker;
 
 // threshholds used to prune undesired ngrams
-#define SIGMA_REP 0.06
+#define SIGMA_REP 0.075
 #define SIGMA_READ 0.0001
 #define SIGMA_SIM 0.5 // TODO: maybe change this
 
