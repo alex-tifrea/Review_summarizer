@@ -4,9 +4,9 @@
 Worker::Worker(IO *_io) {
     this->io = new IO(_io);
     this->rep_min_values =  new float[3];
-    this->rep_min_values[0] = 0.45;
-    this->rep_min_values[1] = 0.62;
-    this->rep_min_values[2] = 0.85;
+    this->rep_min_values[0] = 0.35;
+    this->rep_min_values[1] = 0.52;
+    this->rep_min_values[2] = 0.7;
     log.open("log.file", std::ofstream::out);
 }
 
@@ -326,10 +326,10 @@ void Worker::generateLoop() {
 float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
-    cout << "Ngram::";
-    for (unsigned int i = 0; i < ngram.size(); i++)
-        cout << ngram[i] << " ";
-    cout << endl;
+    //cout << "Ngram::";
+    //for (unsigned int i = 0; i < ngram.size(); i++)
+    //    cout << ngram[i] << " ";
+    //cout << endl;
     for (unsigned int i = 0; i < ngram.size()-1; i++)
     {
         float pmi_local = 0;
@@ -405,7 +405,7 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             float aux_pmi = (float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
                     total_sentences_nr) / (float)(wordPos[ngram[k]].size() *
                         wordPos[ngram[i]].size());
-            if (aux_pmi == 0)
+            if (aux_pmi == 0 || ngram[i].compare(ngram[k]) == 0)
                 return LOW_REP;
             pmi_local += log2(aux_pmi);
         }
