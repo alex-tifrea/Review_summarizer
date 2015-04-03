@@ -255,9 +255,9 @@ void Worker::generateCandidate() {
                 if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
                     mean_rep += new_ngram->getRepresentativeness();
                     count ++;
-                    ngrams.push_back(new_ngram);
                     // Add the newly created (n+1)-gram to the deque
-                    vect_best_ngrams.push_back(ngrams[ngrams.size() - 1]);
+                    this->ngrams.push_back(new_ngram);
+                    this->vect_best_ngrams.push_back(new_ngram);
 //                     this->best_ngrams.push(new_ngram);
 //                     if (this->best_ngrams.size() > MAX_BEST_NGRAMS) {
 //                         this->best_ngrams.pop();
@@ -431,8 +431,8 @@ void Worker::printBestNgrams(ostream &fout) {
 //     }
 
     NgramEntry::DereferenceGreaterComparator comp;
+    fout << "\nBest n-grams are: " << this->vect_best_ngrams.size() << "\n";
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
-    fout << "Best n-grams are: " << this->vect_best_ngrams.size() << "\n";
     for (unsigned int i = 0;
          i < MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size(); i++) {
         fout << *(this->vect_best_ngrams[i]) << " ";

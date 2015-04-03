@@ -37,8 +37,7 @@ int main ()
     // Register signal and signal handler
     signal(SIGINT, signal_callback_handler);
 
-    std::fstream fout;
-    fout.open("fisier.out", std::fstream::out);
+    std::ofstream fout("fisier.out");
 
     string _in_name = "input_example";
     string _out_name = "output_example";
