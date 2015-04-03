@@ -5,6 +5,7 @@
 
 NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     ngram(_ngram),
+    readability(0),
     pos_bonus(0),
     sentiment_bonus(0),
     worker(_worker),
@@ -16,17 +17,9 @@ NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     for (; it != this->ngram.end(); ++it) {
         text = text + " " + *(it);
     }
-    // TODO: solutie temporara; va trebui sa nu calculam scorul de
-    // readability in constructor pentru niciun tip de ngrama, nu doar pentru
-    // bigrame
-    if (this->ngram.size() > 2) {
-//         this->computeReadability();
-        this->readability = 0;
-        this->computeRepresent();
-    } else {
-        this->readability = 0;
-        this->computeRepresent();
-    }
+
+    this->computePOSBonusesAndPenalties();
+    this->computeRepresent();
 }
 
 NgramEntry::NgramEntry(NgramEntry *ne) :
@@ -151,33 +144,58 @@ void NgramEntry::computeRepresent() {
                                      computeRepresentativeness(this);
 }
 
-void NgramEntry::computePOSBonuses() {
+void NgramEntry::computePOSBonusesAndPenalties() {
     // Set bonuses for ngrams that contain at least a noun or
     // at least an adjective.
-    bool hasNoun = false, hasAdjective = false;
-    for (auto it = ngram.begin(); it != ngram.end(); ++it) {
+    bool hasNoun = false, hasAdjective = false,
+         hasInterjection = false, hasDeterminer = false, hasPreposition = false,
+         hasNumber = false;
+    for (auto it = this->ngram.begin(); it != this->ngram.end(); ++it) {
         WordInfo wi = this->worker->getWordInfo(*it);
         auto adj = wi.partOfSpeech.find("JJ");
         auto noun = wi.partOfSpeech.find("NN");
+        auto interjection = wi.partOfSpeech.find("UH");
+        auto determiner = wi.partOfSpeech.find("DT");
+        auto preposition = wi.partOfSpeech.find("IN");
+        auto number = wi.partOfSpeech.find("CD");
+
         if (adj != string::npos) {
             hasAdjective = true;
         }
-
         if (noun != string::npos) {
             hasNoun = true;
         }
-
-        if (hasNoun && hasAdjective) {
-            break;
+        if (interjection != string::npos) {
+            hasInterjection = true;
+        }
+        if (determiner != string::npos) {
+            hasDeterminer = true;
+        }
+        if (preposition != string::npos) {
+            hasPreposition = true;
+        }
+        if (number != string::npos) {
+            hasNumber = true;
         }
     }
 
     if (hasNoun) {
         this->pos_bonus += NOUN_BONUS;
     }
-
     if (hasAdjective) {
-        this->pos_bonus += ADJ_BONUS;
+        this->pos_bonus += ADJECTIVE_BONUS;
+    }
+    if (hasInterjection) {
+        this->pos_bonus += INTERJECTION_PENALTY;
+    }
+    if (hasDeterminer) {
+        this->pos_bonus += DETERMINER_PENALTY;
+    }
+    if (hasPreposition) {
+        this->pos_bonus += PREPOSITION_PENALTY;
+    }
+    if (hasNumber) {
+        this->pos_bonus += NUMBER_PENALTY;
     }
 }
 

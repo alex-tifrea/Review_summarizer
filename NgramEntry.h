@@ -15,9 +15,15 @@ class Worker;
 
 // bonuses for ngrams that contain nouns and/or adjectives.
 #define NOUN_BONUS 0.001
-#define ADJ_BONUS 0.01
+#define ADJECTIVE_BONUS 0.01
+// bonuses for ngrams that convey an opinion
 #define VERY_POS_NEG_BONUS 0.05
 #define POS_NEG_BONUS 0.01
+// penalties for ngrams that contain certain parts of speech
+#define INTERJECTION_PENALTY (-0.001)
+#define DETERMINER_PENALTY (-0.001)
+#define PREPOSITION_PENALTY (-0.001)
+#define NUMBER_PENALTY (-0.001)
 
 #define MAX_NGRAM_LENGTH 7
 
@@ -54,8 +60,9 @@ public:
     // Computes the representativeness score.
     void computeRepresent();
 
-    // Computes the bonuses for ngrams that contain nouns or adjectives.
-    void computePOSBonuses();
+    // Computes the bonuses and penalties for ngrams based on the pos of the
+    // words that form them.
+    void computePOSBonusesAndPenalties();
 
     // Computes bonuses for ngrams that have a strong opinion.
     void computeSentimentBonuses();
