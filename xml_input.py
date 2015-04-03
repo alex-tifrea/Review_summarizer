@@ -50,7 +50,7 @@ def main():
                     if len(review) > 1 and review[len(review)-1] == '\n':
                         review = review[:(len(review)-1)]
                     out_file.write(review)
-                    out_file.write("\n-----\n")
+                    out_file.write("\n \n")
 
 if __name__ == "__main__":
     main()

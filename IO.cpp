@@ -30,8 +30,8 @@ void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
     this->in >> nr_reviews;
     this->total_sentences_nr = 0;
     while (i < nr_reviews && std::getline(this->in, line)) {
-        // Separator between two consecutive reviews
-        if (line.compare("-----") == 0) {
+        // Separating between two consecutive reviews
+        if (line.compare(" ") == 0) {
             i++;
             continue;
         }
@@ -76,8 +76,8 @@ void IO::readReviews(std::unordered_map<std::string, WordInfo> &wordInfo,
     this->in >> nr_reviews;
     std::string line;
     while (i < nr_reviews && std::getline(this->in, line)) {
-        // Separator between two consecutive reviews
-        if (line.compare("-----") == 0) {
+        // Separating line between two consecutive reviews
+        if (line.compare(" ") == 0) {
             i++;
             k = 0;
             continue;
