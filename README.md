@@ -33,8 +33,4 @@ export CORENLP_MEMORY=2g
 More information about corenlp here:
 http://nlp.stanford.edu/software/corenlp.shtml
 
-Stats for 401 reviews:
-
-    - Total number of words:        35498
-    - Number of unique word:        376
-    - Aprox. number of sentences:   2403
+List with POS tags used by CoreNLP: https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
