@@ -76,7 +76,6 @@ class Worker {
         // They are all saved in an unordered map with the key being the first
         // word in every bigram and the value being a BigramEntry object
         std::vector<NgramEntry*> bigrams;
-        // TODO remove this ^ line
         std::unordered_multimap<std::string, NgramEntry*> bigrams_map;
 
         // This is the initial review, the one that needs to be summerized. Each

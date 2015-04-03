@@ -222,6 +222,7 @@ void Worker::generateCandidate() {
         NgramEntry *curr_ngram = ngrams.front();
         ngrams.pop_front();
 
+        // Get the bigrams matching the given key.
         auto matching_bigrams_range =
             this->bigrams_map.equal_range(curr_ngram->getNgram().back());
 
@@ -230,9 +231,9 @@ void Worker::generateCandidate() {
         int i = current_poz;
         for (int j = 0; j < size_vector[k]; j++, i++)
         {
-            std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
-                         iter->second->getText() << "\"" << std::endl;
-            std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
+//             std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
+//                          iter->second->getText() << "\"" << std::endl;
+//             std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
             NgramEntry *new_ngram =
                 curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
 
@@ -242,15 +243,21 @@ void Worker::generateCandidate() {
                 bool is_unique = true;
                 // TODO: this might need to be changed. I think it may slow us
                 // down
-                /*
                 for (unsigned int i = 0; i < ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
-                        // TODO: pastreaza ngrama cu cele mai bune scoruri
-                        is_unique = false;
+                        // TODO: Keep the ngram with the highest scores.
+//                         if (new_ngram < this->ngrams[i]) {
+                            is_unique = false;
+//                         } else {
+//                             // Remove the old ngram.
+//                             this->ngrams.erase(this->ngrams.begin() + i);
+//                         }
                         break;
                     }
                 }
-                */
+
+                // TODO: poate verifica si similaritatea cu ce avem in
+                // this->vect_best_ngrams
 
                 if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
                     mean_rep += new_ngram->getRepresentativeness();
@@ -445,7 +452,7 @@ void Worker::printBestNgrams(ostream &fout) {
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
     for (unsigned int i = 0;
          i < MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size(); i++) {
-        fout << *(this->vect_best_ngrams[i]) << " ";
+        fout << *(this->vect_best_ngrams[i]) << std::endl;
     }
     fout << std::endl;
 }

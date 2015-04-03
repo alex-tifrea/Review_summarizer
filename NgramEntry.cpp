@@ -124,12 +124,10 @@ float NgramEntry::computeSimilarity(NgramEntry *ne) {
     // d = |intersection(A, B)| / |union(A, B)|, where |N| = card(N)
     float dist = 1; // if both ngrams have 0 words, then the distance is 1
     if (ne_text.size() + this->ngram.size() != 0) {
-        dist = (float) intersection_count / (intersection_count +
-                                             ne_text.size() +
-                                             this->ngram.size());
+        dist = (float) intersection_count / (ne_text.size() +
+                                             this->ngram.size() -
+                                             intersection_count);
     }
-
-//     std::cout << "SIMILARITATE " << dist << std::endl;
 
     return dist;
 }
