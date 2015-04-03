@@ -17,7 +17,7 @@
 #include "InterogateNGRAM.h"
 
 #define MAX_BEST_NGRAMS 20
-#define MIN_BIGRAM_NUMBER 600 // TODO: maybe change this
+#define MAX_BIGRAM_NUMBER 600 // TODO: maybe change this
 #define NGRAM_COUNT_LIMIT 5
 #define WINDOW_SIZE 10
 #define LOW_REP -1234567

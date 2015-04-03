@@ -69,7 +69,7 @@ bool desc_comp(NgramEntry *a, NgramEntry *b) {
 void Worker::initBigrams() {
     // convert frequency to a std::vector<std::pair<std::string, int> >;
     // sort the resulting vector and then use either the first half or the first
-    // MIN_BIGRAM_NUMBER (?) (depending on which is the least) to generate all the possible
+    // MAX_BIGRAM_NUMBER (?) (depending on which is the least) to generate all the possible
     // bigrams. Keep a bigram only if it meets the readability and
     // representativeness requirements and if there is no other bigram similar to
     // the newly created one.
@@ -79,7 +79,7 @@ void Worker::initBigrams() {
     sort (wordInfo_copy.begin(), wordInfo_copy.end(), comp_frequencies());
     int remove_from = ((int)wordInfo_copy.size() >> 1) + 1;
 
-    if (remove_from < MIN_BIGRAM_NUMBER)
+    if (remove_from < MAX_BIGRAM_NUMBER)
     {
         unsigned int last_value = wordInfo_copy[remove_from-1].second.frequency;
         while (remove_from < (int)wordInfo_copy.size() &&
@@ -92,7 +92,7 @@ void Worker::initBigrams() {
     }
     else
     {
-        wordInfo_copy.erase(wordInfo_copy.begin()+MIN_BIGRAM_NUMBER, wordInfo_copy.end());
+        wordInfo_copy.erase(wordInfo_copy.begin()+MAX_BIGRAM_NUMBER, wordInfo_copy.end());
     }
 
     this->wordInfo.clear();
@@ -152,12 +152,12 @@ void Worker::initBigrams() {
     */
 
     // Select the top 500 bigrams, if there are more than 500 in this->bigrams.
-    if (this->bigrams.size() > MIN_BIGRAM_NUMBER) {
+    if (this->bigrams.size() > MAX_BIGRAM_NUMBER) {
         std::nth_element (this->bigrams.begin(),
-                          this->bigrams.begin()+MIN_BIGRAM_NUMBER,
+                          this->bigrams.begin()+MAX_BIGRAM_NUMBER,
                           this->bigrams.end(),
                           desc_comp);
-        this->bigrams.erase(this->bigrams.begin()+MIN_BIGRAM_NUMBER,
+        this->bigrams.erase(this->bigrams.begin()+MAX_BIGRAM_NUMBER,
                             this->bigrams.end());
     }
 
@@ -398,9 +398,12 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             //pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
             //            (float)((float)wordPos[ngram[k]].size() *
             //                (float)wordPos[ngram[i]].size());
-            pmi_local += log2((float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
+            float aux_pmi = (float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
                     total_sentences_nr) / (float)(wordPos[ngram[k]].size() *
-                        wordPos[ngram[i]].size()));
+                        wordPos[ngram[i]].size());
+            if (aux_pmi == 0)
+                return LOW_REP;
+            pmi_local += log2(aux_pmi);
         }
         if (pmi_local == 0)
             return LOW_REP;
