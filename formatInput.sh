@@ -1,5 +1,6 @@
 #!/bin/bash
-# separates each point from the adiacent words using spaces
+# Separates each point from the adiacent words using spaces.
+# Converts all words to lowercase.
 # @args the file which need to be formatted and the destination file
 
 # TODO: decomenteaza liniile de jos
@@ -18,5 +19,6 @@ formatted_reviews=$(echo "$formatted_reviews" | tr -s " ")
 formatted_reviews=$(sed 's/\./ \. /g' <<< "$formatted_reviews")
 formatted_reviews=$(sed 's/\?/ \? /g' <<< "$formatted_reviews")
 formatted_reviews=$(sed 's/\!/ \! /g' <<< "$formatted_reviews")
+formatted_reviews=$(echo "$formatted_reviews" | tr '[:upper:]' '[:lower:]')
 echo "$formatted_reviews" > tmp
 mv tmp $2
