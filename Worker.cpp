@@ -333,7 +333,7 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     for (unsigned int i = 0; i < ngram.size()-1; i++)
     {
         float pmi_local = 0;
-        string end_word = ".";
+        char end_words[] = ".!?;";
         vector <WordPosition> current_word_pos = wordPos[ngram[i]];
         vector <float> mutual_p(ngram.size()-i-1, 0);
         vector <float> mutual_c(ngram.size()-i-1, 0);
@@ -342,9 +342,14 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             bool over_WindowSize = false;
             int review_number = current_word_pos[j].review_nr;
             int current_pos = current_word_pos[j].word_nr - 1;
-            while (current_pos >= 0 &&
-                    all_reviews[review_number][current_pos].compare(end_word) != 0)
+            while (current_pos >= 0)
             {
+                if (all_reviews[review_number][current_pos].size() == 1)
+                {
+                    char aux_end = all_reviews[review_number][current_pos][0];
+                    if (strchr(end_words, aux_end) != NULL)
+                        break;
+                }
                 for (unsigned int k = i+1; k < ngram.size(); k++)
                 {
                     if (current_pos < 0)
@@ -369,9 +374,14 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             }
             current_pos = current_word_pos[j].word_nr + 1;
             over_WindowSize = false;
-            while ((current_pos < (int)all_reviews[review_number].size()) &&
-                    all_reviews[review_number][current_pos].compare(end_word) != 0)
+            while (current_pos < (int)all_reviews[review_number].size())
             {
+                if (all_reviews[review_number][current_pos].size() == 1)
+                {
+                    char aux_end = all_reviews[review_number][current_pos][0];
+                    if (strchr(end_words, aux_end) != NULL)
+                        break;
+                }
                 for (unsigned int k = i+1; k < ngram.size(); k++)
                 {
                     if (current_pos >= (int)all_reviews[review_number].size())

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <string.h>
 #include <algorithm>
 #include <vector>
 #include <map>
@@ -25,7 +26,7 @@
 
 // Number of bigrams that we use to create (n+1)grams from ngrams. They are
 // selected based on their scores and bonuses.
-#define MAX_BIGRAM_NUMBER 1000
+#define MAX_BIGRAM_NUMBER 2000
 
 #define NGRAM_COUNT_LIMIT 5
 
