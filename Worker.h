@@ -25,7 +25,7 @@
 
 // Number of bigrams that we use to create (n+1)grams from ngrams. They are
 // selected based on their scores and bonuses.
-#define MAX_BIGRAM_NUMBER 600
+#define MAX_BIGRAM_NUMBER 1000
 
 #define NGRAM_COUNT_LIMIT 5
 
