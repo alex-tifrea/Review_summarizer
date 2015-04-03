@@ -16,10 +16,23 @@
 #include "InterogateCoreNLP.h"
 #include "InterogateNGRAM.h"
 
+// Number of ngrams that we consider for the best candidate
 #define MAX_BEST_NGRAMS 20
-#define MIN_BIGRAM_NUMBER 600 // TODO: maybe change this
+
+// Number of words that we use to create bigrams (we select them based on their
+// occurence frequency in the reviews)
+#define MAX_WORDS_NUMBER 1500
+
+// Number of bigrams that we use to create (n+1)grams from ngrams. They are
+// selected based on their scores and bonuses.
+#define MAX_BIGRAM_NUMBER 600
+
 #define NGRAM_COUNT_LIMIT 5
+
+// Used to compute representativeness
 #define WINDOW_SIZE 10
+
+// Worse value a representativeness score can have
 #define LOW_REP -1234567
 
 class NgramEntry;

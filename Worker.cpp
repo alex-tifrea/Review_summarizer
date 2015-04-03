@@ -69,17 +69,20 @@ bool desc_comp(NgramEntry *a, NgramEntry *b) {
 void Worker::initBigrams() {
     // convert frequency to a std::vector<std::pair<std::string, int> >;
     // sort the resulting vector and then use either the first half or the first
-    // MIN_BIGRAM_NUMBER (?) (depending on which is the least) to generate all the possible
+    // MAX_BIGRAM_NUMBER (?) (depending on which is the least) to generate all the possible
     // bigrams. Keep a bigram only if it meets the readability and
     // representativeness requirements and if there is no other bigram similar to
     // the newly created one.
 
     vector <pair <string, WordInfo> > wordInfo_copy(this->wordInfo.begin(),
         this->wordInfo.end());
+    // TODO: remove the code below using nth_element function
+    // -------
     sort (wordInfo_copy.begin(), wordInfo_copy.end(), comp_frequencies());
     int remove_from = ((int)wordInfo_copy.size() >> 1) + 1;
 
-    if (remove_from < MIN_BIGRAM_NUMBER)
+    // This part removes _words_ until only MAX_WORDS_NUMBER are left;
+    if (remove_from < MAX_WORDS_NUMBER)
     {
         unsigned int last_value = wordInfo_copy[remove_from-1].second.frequency;
         while (remove_from < (int)wordInfo_copy.size() &&
@@ -92,8 +95,9 @@ void Worker::initBigrams() {
     }
     else
     {
-        wordInfo_copy.erase(wordInfo_copy.begin()+MIN_BIGRAM_NUMBER, wordInfo_copy.end());
+        wordInfo_copy.erase(wordInfo_copy.begin()+MAX_WORDS_NUMBER, wordInfo_copy.end());
     }
+    //------
 
     this->wordInfo.clear();
     for (int i = 0; i < (int)wordInfo_copy.size(); i++)
@@ -152,12 +156,12 @@ void Worker::initBigrams() {
     */
 
     // Select the top 500 bigrams, if there are more than 500 in this->bigrams.
-    if (this->bigrams.size() > MIN_BIGRAM_NUMBER) {
+    if (this->bigrams.size() > MAX_BIGRAM_NUMBER) {
         std::nth_element (this->bigrams.begin(),
-                          this->bigrams.begin()+MIN_BIGRAM_NUMBER,
+                          this->bigrams.begin()+MAX_BIGRAM_NUMBER,
                           this->bigrams.end(),
                           desc_comp);
-        this->bigrams.erase(this->bigrams.begin()+MIN_BIGRAM_NUMBER,
+        this->bigrams.erase(this->bigrams.begin()+MAX_BIGRAM_NUMBER,
                             this->bigrams.end());
     }
 
