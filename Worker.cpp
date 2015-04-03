@@ -222,6 +222,7 @@ void Worker::generateCandidate() {
         NgramEntry *curr_ngram = ngrams.front();
         ngrams.pop_front();
 
+        // Get the bigrams matching the given key.
         auto matching_bigrams_range =
             this->bigrams_map.equal_range(curr_ngram->getNgram().back());
 
@@ -230,9 +231,9 @@ void Worker::generateCandidate() {
         int i = current_poz;
         for (int j = 0; j < size_vector[k]; j++, i++)
         {
-            std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
-                         iter->second->getText() << "\"" << std::endl;
-            std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
+//             std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
+//                          iter->second->getText() << "\"" << std::endl;
+//             std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
             NgramEntry *new_ngram =
                 curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
 
@@ -247,10 +248,16 @@ void Worker::generateCandidate() {
                         // TODO: Keep the ngram with the highest scores.
 //                         if (new_ngram < this->ngrams[i]) {
                             is_unique = false;
+//                         } else {
+//                             // Remove the old ngram.
+//                             this->ngrams.erase(this->ngrams.begin() + i);
 //                         }
                         break;
                     }
                 }
+
+                // TODO: poate verifica si similaritatea cu ce avem in
+                // this->vect_best_ngrams
 
                 if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
                     mean_rep += new_ngram->getRepresentativeness();
