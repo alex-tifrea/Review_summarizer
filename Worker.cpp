@@ -146,10 +146,8 @@ void Worker::initBigrams() {
         }
     }
 
-    /*
-    // Interogate CoreNLP for sentiment.
+    // TODO: interogate CoreNLP for sentiment.
     InterogateCoreNLP::getSentiment<NgramEntry*, std::vector>(this->bigrams);
-    */
 
     // Select the top 500 bigrams, if there are more than 500 in this->bigrams.
     if (this->bigrams.size() > MAX_BIGRAM_NUMBER) {
