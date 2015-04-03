@@ -11,7 +11,7 @@ class Worker;
 // threshholds used to prune undesired ngrams
 #define SIGMA_REP 0.075
 #define SIGMA_READ 0.0001
-#define SIGMA_SIM 0.5 // TODO: maybe change this
+#define SIGMA_SIM 0.3 // TODO: maybe change this
 
 // bonuses for ngrams that contain nouns and/or adjectives.
 #define NOUN_BONUS 0.001
@@ -20,6 +20,7 @@ class Worker;
 #define VERY_POS_NEG_BONUS 0.05
 #define POS_NEG_BONUS 0.01
 // penalties for ngrams that contain certain parts of speech
+// (i.e UH, DT, IN, CD)
 #define INTERJECTION_PENALTY (-0.001)
 #define DETERMINER_PENALTY (-0.001)
 #define PREPOSITION_PENALTY (-0.001)

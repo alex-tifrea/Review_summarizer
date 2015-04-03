@@ -242,15 +242,15 @@ void Worker::generateCandidate() {
                 bool is_unique = true;
                 // TODO: this might need to be changed. I think it may slow us
                 // down
-                /*
                 for (unsigned int i = 0; i < ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
-                        // TODO: pastreaza ngrama cu cele mai bune scoruri
-                        is_unique = false;
+                        // TODO: Keep the ngram with the highest scores.
+//                         if (new_ngram < this->ngrams[i]) {
+                            is_unique = false;
+//                         }
                         break;
                     }
                 }
-                */
 
                 if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
                     mean_rep += new_ngram->getRepresentativeness();
@@ -435,7 +435,7 @@ void Worker::printBestNgrams(ostream &fout) {
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
     for (unsigned int i = 0;
          i < MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size(); i++) {
-        fout << *(this->vect_best_ngrams[i]) << " ";
+        fout << *(this->vect_best_ngrams[i]) << std::endl;
     }
     fout << std::endl;
 }
