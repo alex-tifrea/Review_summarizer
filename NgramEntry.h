@@ -10,7 +10,7 @@ class Worker;
 
 // threshholds used to prune undesired ngrams
 #define SIGMA_REP 0.075
-#define SIGMA_READ 0.00001
+#define SIGMA_READ 0.00000001
 #define SIGMA_SIM 0.3 // TODO: maybe change this
 
 // bonuses for ngrams that contain nouns and/or adjectives.

@@ -197,11 +197,17 @@ void Worker::generateCandidate() {
     // NgramEntry::mergeNgrams); merge the two and push the newly created
     // (n+1)-gram at the and of the queue.
     float minimum_rep;
+    int current_ngram_size;
     if (this->ngrams.size() > 0)
+    {
+        current_ngram_size = this->ngrams[0]->getNgramSize() + 1;
         minimum_rep = rep_min_values[this->ngrams[0]->getNgramSize()-2];
+    }
     else
+    {
+        current_ngram_size = 0;
         minimum_rep = SIGMA_REP;
-
+    }
     std::vector<std::string> newNgrams;
     int loop_size = ngrams.size();
     std::vector<int> size_vector;
@@ -296,6 +302,8 @@ void Worker::generateCandidate() {
     }
 
     cout << "mean rep value " << (float)(mean_rep / (float)count) << endl;
+    cout << "there are " << ngrams.size() << " ngrams of size "
+        << current_ngram_size << endl;
 
     /*
     for (unsigned int i = 0; i < bigrams.size(); i++) {
