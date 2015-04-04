@@ -18,7 +18,7 @@
 #include "InterogateNGRAM.h"
 
 // Number of ngrams that we consider for the best candidate
-#define MAX_BEST_NGRAMS 20
+#define MAX_BEST_NGRAMS 50
 
 // Number of words that we use to create bigrams (we select them based on their
 // occurence frequency in the reviews)
@@ -26,7 +26,7 @@
 
 // The minimum number of occurences a word must have in order for it t be
 // considered for further creating bigrams containing it.
-#define MIN_WORD_OCCURENCES 3
+#define MIN_WORD_OCCURENCES 4
 
 // Number of bigrams that we use to create (n+1)grams from ngrams. They are
 // selected based on their scores and bonuses.

@@ -14,17 +14,17 @@ class Worker;
 #define SIGMA_SIM 0.3 // TODO: maybe change this
 
 // bonuses for ngrams that contain nouns and/or adjectives.
-#define NOUN_BONUS 0.001
-#define ADJECTIVE_BONUS 0.01
+#define NOUN_BONUS 0.01
+#define ADJECTIVE_BONUS 0.1
 // bonuses for ngrams that convey an opinion
 #define VERY_POS_NEG_BONUS 0.05
 #define POS_NEG_BONUS 0.01
 // penalties for ngrams that contain certain parts of speech
 // (i.e UH, DT, IN, CD)
 #define INTERJECTION_PENALTY (-0.1)
-#define DETERMINER_PENALTY (-0.01)
-#define PREPOSITION_PENALTY (-0.001)
-#define NUMBER_PENALTY (-0.1)
+#define DETERMINER_PENALTY (-0.1)
+#define PREPOSITION_PENALTY (-0.01)
+#define NUMBER_PENALTY (-0.0)
 
 #define MAX_NGRAM_LENGTH 7
 
