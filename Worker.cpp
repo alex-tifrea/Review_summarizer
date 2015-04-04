@@ -451,6 +451,7 @@ void Worker::printBestNgrams(ostream &fout) {
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
     for (unsigned int i = 0;
          i < MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size(); i++) {
+        this->vect_best_ngrams[i]->refineNgram();
         fout << *(this->vect_best_ngrams[i]) << std::endl;
     }
     fout << std::endl;

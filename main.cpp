@@ -1,12 +1,14 @@
 #include <iostream>
-#include "IO.h"
-#include "Worker.h"
-#include "InterogateNGRAM.h"
 #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
 #include <signal.h>
+
+#include "IO.h"
+#include "Worker.h"
+#include "InterogateNGRAM.h"
+
 using namespace std;
 
 template <typename T1, typename T2>
@@ -41,6 +43,7 @@ int main ()
 
     string _in_name = "input_example";
     string _out_name = "output_example";
+
     IO *init_io = new IO(_in_name, _out_name);
     Worker *work = new Worker(init_io);
     work->init();

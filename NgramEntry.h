@@ -51,6 +51,9 @@ public:
     NgramEntry(NgramEntry*);
     ~NgramEntry();
 
+    // Generate the concatenated ngram from this->ngram.
+    void updateText();
+
     // Returns the merged NgramEntry
     NgramEntry* mergeNgrams(NgramEntry*);
     NgramEntry* mergeNgrams(NgramEntry*, float);
@@ -68,12 +71,13 @@ public:
     // Computes bonuses for ngrams that have a strong opinion.
     void computeSentimentBonuses();
 
-    // Setter for the readability score;
-    void setReadability(float);
-
     // Computes similarity between the two given ngrams using the Jaccard
     // distance
     float computeSimilarity(NgramEntry*);
+
+    // This function is called at the end in order to rephrase the ngram so that
+    // we get the best readability score for it.
+    void refineNgram();
 
     // Returns the readability and representativeness score.
     std::pair<float, float> getScore();
@@ -85,6 +89,9 @@ public:
     Sentiment getSentiment() {
         return sentiment;
     }
+
+    // Setter for the readability score;
+    void setReadability(float);
 
     float getReadability() const {
         return readability;

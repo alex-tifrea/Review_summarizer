@@ -2,6 +2,7 @@
 #include "InterogateNGRAM.h"
 #include <string>
 #include <vector>
+#include "POS.h"
 
 NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     ngram(_ngram),
@@ -12,11 +13,7 @@ NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     sentiment(UNDEFINED)
 {
     // Update the text field.
-    std::vector<std::string>::iterator it = this->ngram.begin();
-    text = *it++;
-    for (; it != this->ngram.end(); ++it) {
-        text = text + " " + *(it);
-    }
+    this->updateText();
 
     this->computePOSBonusesAndPenalties();
     this->computeRepresent();
@@ -35,6 +32,14 @@ NgramEntry::NgramEntry(NgramEntry *ne) :
 }
 
 NgramEntry::~NgramEntry() {}
+
+void NgramEntry::updateText() {
+    std::vector<std::string>::iterator it = this->ngram.begin();
+    text = *it++;
+    for (; it != this->ngram.end(); ++it) {
+        text = text + " " + *(it);
+    }
+}
 
 NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     std::vector<std::string> bigram_text = bigram->getNgram();
@@ -106,32 +111,6 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
     return ret;
 }
 
-// Use Jaccard distance to compute the similarity
-float NgramEntry::computeSimilarity(NgramEntry *ne) {
-    std::vector<std::string> ne_text = ne->getNgram();
-    unsigned int intersection_count = 0;
-    // It's ok to use for's because NgramEntry.ngram.size() is MAX_NGRAM_LENGTH
-    // at most.
-    for (unsigned int i = 0; i < ne_text.size(); i++) {
-        for (unsigned int j = 0; j < this->ngram.size(); j++) {
-            if (ne_text[i] == this->ngram[j]) {
-                intersection_count++;
-            }
-        }
-    }
-
-    // the distance between the two ngrams is:
-    // d = |intersection(A, B)| / |union(A, B)|, where |N| = card(N)
-    float dist = 1; // if both ngrams have 0 words, then the distance is 1
-    if (ne_text.size() + this->ngram.size() != 0) {
-        dist = (float) intersection_count / (ne_text.size() +
-                                             this->ngram.size() -
-                                             intersection_count);
-    }
-
-    return dist;
-}
-
 void NgramEntry::computeReadability() {
     this->readability = InterogateNGRAM::getJointProbability(this->ngram);
 }
@@ -150,12 +129,12 @@ void NgramEntry::computePOSBonusesAndPenalties() {
          hasNumber = false;
     for (auto it = this->ngram.begin(); it != this->ngram.end(); ++it) {
         WordInfo wi = this->worker->getWordInfo(*it);
-        auto adj = wi.partOfSpeech.find("JJ");
-        auto noun = wi.partOfSpeech.find("NN");
-        auto interjection = wi.partOfSpeech.find("UH");
-        auto determiner = wi.partOfSpeech.find("DT");
-        auto preposition = wi.partOfSpeech.find("IN");
-        auto number = wi.partOfSpeech.find("CD");
+        auto adj = wi.partOfSpeech.find(POS_t::name[JJ]);
+        auto noun = wi.partOfSpeech.find(POS_t::name[NN]);
+        auto interjection = wi.partOfSpeech.find(POS_t::name[UH]);
+        auto determiner = wi.partOfSpeech.find(POS_t::name[DT]);
+        auto preposition = wi.partOfSpeech.find(POS_t::name[IN]);
+        auto number = wi.partOfSpeech.find(POS_t::name[CD]);
 
         if (adj != string::npos) {
             hasAdjective = true;
@@ -211,6 +190,57 @@ void NgramEntry::computeSentimentBonuses() {
         this->sentiment == NEGATIVE) {
         this->sentiment_bonus += POS_NEG_BONUS;
     }
+}
+
+// Use Jaccard distance to compute the similarity
+float NgramEntry::computeSimilarity(NgramEntry *ne) {
+    std::vector<std::string> ne_text = ne->getNgram();
+    unsigned int intersection_count = 0;
+    // It's ok to use for's because NgramEntry.ngram.size() is MAX_NGRAM_LENGTH
+    // at most.
+    for (unsigned int i = 0; i < ne_text.size(); i++) {
+        for (unsigned int j = 0; j < this->ngram.size(); j++) {
+            if (ne_text[i] == this->ngram[j]) {
+                intersection_count++;
+            }
+        }
+    }
+
+    // the distance between the two ngrams is:
+    // d = |intersection(A, B)| / |union(A, B)|, where |N| = card(N)
+    float dist = 1; // if both ngrams have 0 words, then the distance is 1
+    if (ne_text.size() + this->ngram.size() != 0) {
+        dist = (float) intersection_count / (ne_text.size() +
+                                             this->ngram.size() -
+                                             intersection_count);
+    }
+
+    return dist;
+}
+
+void NgramEntry::refineNgram() {
+    std::vector<unsigned int> ngram_pos;
+    for (unsigned int i = 0; i < this->ngram.size(); i++) {
+        for (unsigned int j = 0; j < POS_t::name.size(); j++) {
+            // Get word info for current word.
+            WordInfo wi = this->worker->getWordInfo(this->ngram[i]);
+            if (wi.partOfSpeech.compare(POS_t::name[j]) == 0) {
+                ngram_pos.push_back(j);
+                break;
+            }
+        }
+    }
+
+    // Make sure that we don't have NN-JJ constructions (noun followed by an
+    // adjective).
+    for (unsigned int i = 0; i < ngram_pos.size() - 1; i++) {
+        if (POS_t::isNoun(ngram_pos[i]) && POS_t::isAdjective(ngram_pos[i+1])) {
+            swap(this->ngram[i], this->ngram[i+1]);
+        }
+    }
+
+    // Update the text field after the changes.
+    this->updateText();
 }
 
 void NgramEntry::setReadability(float _read) {
