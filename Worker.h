@@ -40,7 +40,7 @@
 
 // The minimum number of occurences a word must have in order for it t be
 // considered for further creating bigrams containing it.
-#define MIN_WORD_OCCURENCES 4
+#define MIN_WORD_OCCURENCES 5
 
 // Number of bigrams that we use to create (n+1)grams from ngrams. They are
 // selected based on their scores and bonuses.
