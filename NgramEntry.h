@@ -98,7 +98,7 @@ public:
         representativeness = rep_value;
     }
 
-    float getPOSBonus() {
+    float getPOSBonus() const {
         return this->pos_bonus;
     }
 
