@@ -57,7 +57,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
 
     NgramEntry *ret = new NgramEntry(new_ngram_text, this->worker);
 
-    if (ret->getReadability() < SIGMA_READ ||
+    if (ret->getReadability() < worker->read_min_values[ret->getNgramSize()] ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
         std::cout<< "SCORURI NASOALE\n";
@@ -94,7 +94,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
     // Set readability score.
     ret->setReadability(readability);
 
-    if (ret->getReadability() < SIGMA_READ ||
+    if (ret->getReadability() < worker->read_min_values[ret->getNgramSize()] ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
 //         std::cout<< "SCORURI NASOALE\n";

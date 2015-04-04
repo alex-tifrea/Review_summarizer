@@ -17,6 +17,20 @@
 #include "InterogateCoreNLP.h"
 #include "InterogateNGRAM.h"
 
+// Threshholds used for prunning representativeness
+#define SIGMA_REP_3 0.3
+#define SIGMA_REP_4 0.52
+#define SIGMA_REP_5 0.7
+#define SIGMA_REP_6 0.7
+#define SIGMA_REP_7 0.7
+
+// Threshholds used for prunning readability
+#define SIGMA_READ_3 0.0001
+#define SIGMA_READ_4 0.000001
+#define SIGMA_READ_5 0.0000001
+#define SIGMA_READ_6 0.0000001
+#define SIGMA_READ_7 0.0000001
+
 // Number of ngrams that we consider for the best candidate
 #define MAX_BEST_NGRAMS 50
 
@@ -101,6 +115,11 @@ class Worker {
         float *rep_min_values;
 
     public:
+
+        // Keep the values for the minimum readability for ngrams of size: 3, 4
+        // and 5
+        float *read_min_values;
+
         Worker(IO*);
         ~Worker();
 

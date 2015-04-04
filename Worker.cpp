@@ -3,10 +3,18 @@
 
 Worker::Worker(IO *_io) {
     this->io = new IO(_io);
-    this->rep_min_values =  new float[3];
-    this->rep_min_values[0] = 0.35;
-    this->rep_min_values[1] = 0.52;
-    this->rep_min_values[2] = 0.7;
+    this->rep_min_values =  new float[5];
+    this->rep_min_values[0] = SIGMA_REP_3;
+    this->rep_min_values[1] = SIGMA_REP_4;
+    this->rep_min_values[2] = SIGMA_REP_5;
+    this->rep_min_values[3] = SIGMA_REP_6;
+    this->rep_min_values[4] = SIGMA_REP_7;
+    this->read_min_values = new float[8];
+    this->read_min_values[3] = SIGMA_READ_3;
+    this->read_min_values[4] = SIGMA_READ_4;
+    this->read_min_values[5] = SIGMA_READ_5;
+    this->read_min_values[6] = SIGMA_READ_6;
+    this->read_min_values[7] = SIGMA_READ_7;
     log.open("log.file", std::ofstream::out);
 }
 
@@ -241,7 +249,7 @@ void Worker::generateCandidate() {
 
     int current_poz = 0;
     int count = 0;
-    float mean_rep = 0;
+    float mean_rep = 0, mean_read = 0;
     int new_ngrams_start = loop_size - 1;
     for (int k = 0; k < loop_size; k++, current_poz++)
     {
@@ -283,6 +291,7 @@ void Worker::generateCandidate() {
                 if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
                     mean_rep += new_ngram->getRepresentativeness();
                     count ++;
+                    mean_read += new_ngram->getReadability();
                     // Add the newly created (n+1)-gram to the deque
                     this->ngrams.push_back(new_ngram);
                     this->vect_best_ngrams.push_back(new_ngram);
@@ -299,6 +308,7 @@ void Worker::generateCandidate() {
     }
 
     cout << "mean rep value " << (float)(mean_rep / (float)count) << endl;
+    cout << "read value " << (float)(mean_read / (float)count) << endl;
     cout << "there are " << ngrams.size() << " ngrams of size "
         << current_ngram_size << endl;
 }
