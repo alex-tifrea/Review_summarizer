@@ -18,18 +18,18 @@
 #include "InterogateNGRAM.h"
 
 // Threshholds used for prunning representativeness
-#define SIGMA_REP_3 0.3
+#define SIGMA_REP_3 0.30
 #define SIGMA_REP_4 0.52
-#define SIGMA_REP_5 0.7
-#define SIGMA_REP_6 0.7
-#define SIGMA_REP_7 0.7
+#define SIGMA_REP_5 0.70
+#define SIGMA_REP_6 0.82
+#define SIGMA_REP_7 1.00
 
 // Threshholds used for prunning readability
 #define SIGMA_READ_3 0.0001
 #define SIGMA_READ_4 0.000001
 #define SIGMA_READ_5 0.0000001
-#define SIGMA_READ_6 0.0000001
-#define SIGMA_READ_7 0.0000001
+#define SIGMA_READ_6 0.00000001
+#define SIGMA_READ_7 0.000000001
 
 // Number of ngrams that we consider for the best candidate
 #define MAX_BEST_NGRAMS 50
