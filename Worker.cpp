@@ -76,12 +76,27 @@ void Worker::initBigrams() {
 
     vector <pair <string, WordInfo> > wordInfo_copy(this->wordInfo.begin(),
         this->wordInfo.end());
-    // TODO: remove the code below using nth_element function
-    // -------
-    sort (wordInfo_copy.begin(), wordInfo_copy.end(), comp_frequencies());
-    int remove_from = ((int)wordInfo_copy.size() >> 1) + 1;
 
-    // This part removes _words_ until only MAX_WORDS_NUMBER are left;
+    sort (wordInfo_copy.begin(), wordInfo_copy.end(), comp_frequencies());
+//     int remove_from = ((int)wordInfo_copy.size() >> 1) + 1;
+
+    // This part removes _words_ until only MAX_WORDS_NUMBER are left; it also
+    // keeps into account the fact that only words that occur for at least
+    // MIN_WORD_OCCURENCES times are being considered.
+    int remove_from = wordInfo_copy.size() - 1;
+    if (remove_from > MAX_WORDS_NUMBER) {
+        remove_from = MAX_WORDS_NUMBER;
+    }
+
+    for (unsigned int i = remove_from; i >= 0; i--) {
+        if (wordInfo_copy[i].second.frequency >= MIN_WORD_OCCURENCES) {
+            break;
+        } else {
+            remove_from--;
+        }
+    }
+
+    /*
     if (remove_from < MAX_WORDS_NUMBER)
     {
         unsigned int last_value = wordInfo_copy[remove_from-1].second.frequency;
@@ -97,7 +112,10 @@ void Worker::initBigrams() {
     {
         wordInfo_copy.erase(wordInfo_copy.begin()+MAX_WORDS_NUMBER, wordInfo_copy.end());
     }
-    //------
+    */
+
+    // Erase the undesired words.
+    wordInfo_copy.erase(wordInfo_copy.begin()+remove_from, wordInfo_copy.end());
 
     this->wordInfo.clear();
     for (int i = 0; i < (int)wordInfo_copy.size(); i++)
@@ -183,6 +201,7 @@ void Worker::generateCandidate() {
         minimum_rep = rep_min_values[this->ngrams[0]->getNgramSize()-2];
     else
         minimum_rep = SIGMA_REP;
+
     std::vector<std::string> newNgrams;
     int loop_size = ngrams.size();
     std::vector<int> size_vector;
