@@ -160,6 +160,7 @@ void NgramEntry::computePOSBonusesAndPenalties() {
         if (adj != string::npos) {
             hasAdjective = true;
         }
+
         if (noun != string::npos) {
             hasNoun = true;
         }
@@ -182,6 +183,9 @@ void NgramEntry::computePOSBonusesAndPenalties() {
     }
     if (hasAdjective) {
         this->pos_bonus += ADJECTIVE_BONUS;
+    } else {
+        // If the ngram has NO adjectives, then apply a penalty.
+        this->pos_bonus -= ADJECTIVE_BONUS;
     }
     if (hasInterjection) {
         this->pos_bonus += INTERJECTION_PENALTY;
@@ -225,6 +229,7 @@ std::ostream &operator<<(std::ostream &out, const NgramEntry &ne) {
         out << _ngram[i] << " ";
     }
     out << _ngram[_ngram.size()-1] << ", ";
-    out << ne.getReadability() << ", " << ne.getRepresentativeness() << "] ";
+    out << ne.getReadability() << ", " << ne.getRepresentativeness() << ", "
+        << ne.getPOSBonus() << "] ";
     return out;
 }
