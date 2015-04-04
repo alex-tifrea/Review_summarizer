@@ -242,6 +242,7 @@ void Worker::generateCandidate() {
     int current_poz = 0;
     int count = 0;
     float mean_rep = 0;
+    int new_ngrams_start = loop_size - 1;
     for (int k = 0; k < loop_size; k++, current_poz++)
     {
         NgramEntry *curr_ngram = ngrams.front();
@@ -256,9 +257,6 @@ void Worker::generateCandidate() {
         int i = current_poz;
         for (int j = 0; j < size_vector[k]; j++, i++)
         {
-//             std::cout << "About to merge \"" << curr_ngram->getText() << "\" with \"" <<
-//                          iter->second->getText() << "\"" << std::endl;
-//             std::cout << "\"" << newNgrams[i] << "\" are scorul " << allReadabilities[i] << std::endl;
             NgramEntry *new_ngram =
                 curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
 
@@ -268,12 +266,10 @@ void Worker::generateCandidate() {
                 bool is_unique = true;
                 // TODO: this might need to be changed. I think it may slow us
                 // down
-                for (unsigned int i = 0; i < ngrams.size(); i++) {
+                for (int i = new_ngrams_start; i < (int)ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
-                        // TODO: Keep the ngram with the highest scores.
-//                         if (new_ngram < this->ngrams[i]) {
                             is_unique = false;
-//                         } else {
+//                         else {
 //                             // Remove the old ngram.
 //                             this->ngrams.erase(this->ngrams.begin() + i);
 //                         }
@@ -299,46 +295,12 @@ void Worker::generateCandidate() {
             }
             ++iter;
         }
+        new_ngrams_start--;
     }
 
     cout << "mean rep value " << (float)(mean_rep / (float)count) << endl;
     cout << "there are " << ngrams.size() << " ngrams of size "
         << current_ngram_size << endl;
-
-    /*
-    for (unsigned int i = 0; i < bigrams.size(); i++) {
-
-        std::vector<std::string> bigram_text = bigrams[i]->getNgram(),
-                                 ngram_text  = curr_ngram->getNgram();
-        std::cout << "About to merge " << bigram_text[0] << " " <<
-                     ngram_text[ngram_text.size()-1] << std::endl;
-        if (bigram_text[0] == ngram_text[ngram_text.size()-1]) {
-            NgramEntry *new_ngram = curr_ngram->mergeNgrams(bigrams[i]);
-            if (!new_ngram) {
-//                 std::cerr << "Merge did not go smoothly." << std::endl;
-            } else {
-                // Check if the newly created ngram is similar to any of the
-                // other ngrams
-                bool is_unique = true;
-                // TODO: this might need to be changed. I think it may slow us
-                // down
-                for (unsigned int i = 0; i < ngrams.size(); i++) {
-                    if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
-                        // TODO: pastreaza ngrama cu cele mai bune scoruri
-                        is_unique = false;
-                        break;
-                    }
-                }
-
-                if (is_unique) {
-                    // Add the newly created (n+1)-gram to the deque
-                    ngrams.push_back(new_ngram);
-                    this->printNgrams(log);
-                }
-            }
-        }
-    }
-*/
 }
 
 void Worker::generateInteractiveLoop() {
