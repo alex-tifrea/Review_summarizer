@@ -37,19 +37,12 @@ void Worker::init() {
     io->readReviews(this->wordInfo, all_reviews, wordPos);
     this->total_sentences_nr = io->get_sentences_nr();
     unordered_map<string, vector<WordPosition> >::iterator it;
-    for (it = wordPos.begin(); it != wordPos.end(); ++it)
-    {
-        cout << it->first << " ";
-        for (unsigned int i = 0; i < it->second.size(); i++)
-            cout << all_reviews[it->second[i].review_nr][it->second[i].word_nr] << " ";
-        cout << endl;
-    }
 
     // Start aquiring part-of-speech information for all the words in the
     // reviews, using CoreNLP
     InterogateCoreNLP::init(this->wordInfo);
     InterogateCoreNLP::getPartOfSpeech(this->wordInfo);
-//     InterogateCoreNLP::finalize();
+    InterogateCoreNLP::finalizePOS();
 
     // At this point, this->wordInfo should be contain both the frequency and
     // the part-of-speech of each word appearing in the reviews.
@@ -179,6 +172,7 @@ void Worker::initBigrams() {
     /*
     // TODO: interogate CoreNLP for sentiment.
     InterogateCoreNLP::getSentiment<NgramEntry*, std::vector>(this->bigrams);
+    InterogateCoreNLP::finalizeSentiment();
     */
 
     // Select the top 500 bigrams, if there are more than 500 in this->bigrams.
@@ -229,15 +223,15 @@ void Worker::generateCandidate() {
         std::unordered_multimap<std::string, NgramEntry*>::iterator iter;
         std::string tmpNgram;
         iter = matching_bigrams_range.first;
-        std::cout << "Pentru \"" << curr_ngram->getText() << "\" am BIGRAMELE astea:";
+//         std::cout << "Pentru \"" << curr_ngram->getText() << "\" am BIGRAMELE astea:";
         int measure_size = 0;
         for (; iter != matching_bigrams_range.second; ++iter, measure_size++) {
             tmpNgram = curr_ngram->getText() + " " + iter->second->getNgram()[1];
             newNgrams.push_back(tmpNgram);
-            std::cout << "\"" << iter->second->getText() << "\" ";
+//             std::cout << "\"" << iter->second->getText() << "\" ";
         }
         size_vector.push_back(measure_size);
-        std::cout << std::endl;
+//         std::cout << std::endl;
     }
 
     if (newNgrams.size() == 0) {
@@ -332,10 +326,6 @@ void Worker::generateLoop() {
 float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     float srep = 0;
     vector<string> ngram = current_ngram->getNgram();
-    //cout << "Ngram::";
-    //for (unsigned int i = 0; i < ngram.size(); i++)
-    //    cout << ngram[i] << " ";
-    //cout << endl;
     for (unsigned int i = 0; i < ngram.size()-1; i++)
     {
         float pmi_local = 0;

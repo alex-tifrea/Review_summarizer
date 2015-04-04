@@ -79,10 +79,20 @@ void InterogateCoreNLP::getSentiment(Container<T, std::allocator<T> > &ngrams) {
     nlp_out.close();
 }
 
-void InterogateCoreNLP::finalize() {
-    remove("corenlpInput.in");
-    remove("corenlpInput.in.xml");
-    remove("corenlpOutput.out");
+void InterogateCoreNLP::finalizePOS() {
+    remove(CORENLP_POS_INPUT);
+    std::string temp = CORENLP_POS_INPUT;
+    temp += ".xml";
+    remove(temp.c_str());
+    remove(CORENLP_POS_OUTPUT);
+}
+
+void InterogateCoreNLP::finalizeSentiment() {
+    remove(CORENLP_SENTIMENT_INPUT);
+    std::string temp = CORENLP_SENTIMENT_INPUT;
+    temp += ".xml";
+    remove(temp.c_str());
+    remove(CORENLP_SENTIMENT_OUTPUT);
 }
 
 template void

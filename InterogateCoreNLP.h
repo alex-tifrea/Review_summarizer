@@ -17,6 +17,7 @@ public:
     template<typename T, template <typename, typename> class Container>
     static void getSentiment(Container<T, std::allocator<T> >&);
 
-    static void finalize();
+    static void finalizePOS();
+    static void finalizeSentiment();
 };
 #endif // __INTEROGATECORENLP_H__

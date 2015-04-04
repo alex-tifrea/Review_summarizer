@@ -53,7 +53,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     if (this->ngram.size() == 2 &&
         this->ngram[0].compare(bigram_text[1]) == 0 &&
         this->ngram[1].compare(bigram_text[0]) == 0) {
-        std::cout<< "The n-grams are mirrors." << std::endl;
+//         std::cout<< "The n-grams are mirrors." << std::endl;
         return NULL;
     }
 
@@ -65,7 +65,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
     if (ret->getReadability() < worker->read_min_values[ret->getNgramSize()] ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
-        std::cout<< "SCORURI NASOALE\n";
+//         std::cout<< "SCORURI NASOALE\n";
 //         std::cout<< "SCORURI NASOALE " << ret->getReadability() << " " <<
 //                 ret->getRepresentativeness() << std::endl;
         return NULL;
@@ -88,7 +88,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
     if (this->ngram.size() == 2 &&
         this->ngram[0].compare(bigram_text[1]) == 0 &&
         this->ngram[1].compare(bigram_text[0]) == 0) {
-        std::cout<< "The n-grams are mirrors." << std::endl;
+//         std::cout<< "The n-grams are mirrors." << std::endl;
         return NULL;
     }
 
@@ -103,8 +103,8 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
 //         std::cout<< "SCORURI NASOALE\n";
-        std::cout<< "SCORURI NASOALE " << ret->getReadability() << " " <<
-                ret->getRepresentativeness() << std::endl;
+//         std::cout<< "SCORURI NASOALE " << ret->getReadability() << " " <<
+//                 ret->getRepresentativeness() << std::endl;
         return NULL;
     }
 
