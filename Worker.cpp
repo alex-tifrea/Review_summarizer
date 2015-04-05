@@ -10,6 +10,7 @@ Worker::Worker(IO *_io) {
     this->rep_min_values[3] = SIGMA_REP_6;
     this->rep_min_values[4] = SIGMA_REP_7;
     this->read_min_values = new float[8];
+    this->read_min_values[2] = SIGMA_READ;
     this->read_min_values[3] = SIGMA_READ_3;
     this->read_min_values[4] = SIGMA_READ_4;
     this->read_min_values[5] = SIGMA_READ_5;
@@ -270,11 +271,19 @@ void Worker::generateCandidate() {
                 // down
                 for (int i = new_ngrams_start; i < (int)ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
-                            is_unique = false;
-//                         else {
-//                             // Remove the old ngram.
-//                             this->ngrams.erase(this->ngrams.begin() + i);
-//                         }
+                        is_unique = false;
+                        /*
+                        float old_score, new_score;
+                        old_score = ngrams[i]->getRepresentativeness() + 
+                            ngrams[i]->getReadability();
+                        new_score = new_ngram->getRepresentativeness() +
+                            new_ngram->getReadability();
+                        if (new_score > old_score)
+                        {
+                            cout << "KKKKKKKKKKK schimbare" << endl;
+                            ngrams[i] = new_ngram;
+                        }
+                        */
                         break;
                     }
                 }
