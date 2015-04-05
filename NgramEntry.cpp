@@ -234,7 +234,8 @@ void NgramEntry::refineNgram() {
     // Make sure that we don't have NN-JJ constructions (noun followed by an
     // adjective).
     for (unsigned int i = 0; i < ngram_pos.size() - 1; i++) {
-        if (POS_t::isNoun(ngram_pos[i]) && POS_t::isAdjective(ngram_pos[i+1])) {
+        if (POS_t::isNoun(ngram_pos[i]) && (POS_t::isAdjective(ngram_pos[i+1]) ||
+                                            POS_t::isAdverb(ngram_pos[i+1]))) {
             swap(this->ngram[i], this->ngram[i+1]);
         }
     }
