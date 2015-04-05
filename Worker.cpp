@@ -267,17 +267,16 @@ void Worker::generateCandidate() {
                 // Check if the newly created ngram is similar to any of the
                 // other ngrams
                 bool is_unique = true;
-                // TODO: this might need to be changed. I think it may slow us
-                // down
                 for (int i = new_ngrams_start; i < (int)ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
                         is_unique = false;
+//                         if (this->ngrams[i]->getReadability() >
+//                             curr_ngram->getReadability()) {
+//                             this->ngrams[i] = new NgramEntry(curr_ngram);
+//                         }
                         break;
                     }
                 }
-
-                // TODO: poate verifica si similaritatea cu ce avem in
-                // this->vect_best_ngrams
 
                 if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
                     mean_rep += new_ngram->getRepresentativeness();
