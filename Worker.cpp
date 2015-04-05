@@ -272,20 +272,6 @@ void Worker::generateCandidate() {
                 for (int i = new_ngrams_start; i < (int)ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
                         is_unique = false;
-                        if (*new_ngram > *(ngrams[i]))
-                            ngrams[i] = new_ngram;
-                        /*
-                        float old_score, new_score;
-                        old_score = ngrams[i]->getRepresentativeness() + 
-                            ngrams[i]->getReadability();
-                        new_score = new_ngram->getRepresentativeness() +
-                            new_ngram->getReadability();
-                        if (new_score > old_score)
-                        {
-                            cout << "KKKKKKKKKKK schimbare" << endl;
-                            ngrams[i] = new_ngram;
-                        }
-                        */
                         break;
                     }
                 }
