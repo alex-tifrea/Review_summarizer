@@ -240,7 +240,28 @@ void NgramEntry::refineNgram() {
         }
     }
 
+    for (unsigned int i = 0; i < ngram_pos.size(); i++) {
+        if (!POS_t::isToBeRemoved(ngram_pos[i])) {
+            break;
+        }
+
+        // Remove the word.
+        this->ngram.erase(this->ngram.begin() + i);
+        ngram_pos.erase(ngram_pos.begin() + i);
+    }
+
+    for (unsigned int i = ngram_pos.size() - 1; i >= 0; i--) {
+        if (!POS_t::isToBeRemoved(ngram_pos[i])) {
+            break;
+        }
+
+        // Remove the word.
+        this->ngram.erase(this->ngram.begin() + i);
+        ngram_pos.erase(ngram_pos.begin() + i);
+    }
+
     // Update the text field after the changes.
+    // !!! This should be the last line in refineNgram.
     this->updateText();
 }
 
@@ -254,6 +275,9 @@ std::pair<float, float> NgramEntry::getScore()
 }
 
 std::ostream &operator<<(std::ostream &out, const NgramEntry &ne) {
+    if (ne.ngram.size() == 0) {
+        return out;
+    }
     out << "[";
     std::vector<std::string> _ngram = ne.getNgram();
     for (unsigned int i = 0; i < _ngram.size()-1; i++) {

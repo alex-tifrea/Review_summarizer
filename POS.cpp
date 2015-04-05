@@ -19,3 +19,8 @@ bool POS_t::isNoun(unsigned int pos_code) {
 bool POS_t::isAdverb(unsigned int pos_code) {
     return pos_code == RB || pos_code == RBR || pos_code == RBS;
 }
+
+bool POS_t::isToBeRemoved(unsigned int pos_code) {
+    return pos_code == IN || pos_code == FW || pos_code == UH || pos_code == DT ||
+           pos_code == CC || pos_code == PRP || pos_code == WDT;
+}
