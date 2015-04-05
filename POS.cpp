@@ -15,3 +15,7 @@ bool POS_t::isNoun(unsigned int pos_code) {
     return pos_code == NN || pos_code == NNS || pos_code == NNP ||
            pos_code == NNPS;
 }
+
+bool POS_t::isAdverb(unsigned int pos_code) {
+    return pos_code == RB || pos_code == RBR || pos_code == RBS;
+}

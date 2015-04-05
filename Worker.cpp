@@ -42,7 +42,7 @@ void Worker::init() {
     // reviews, using CoreNLP
     InterogateCoreNLP::init(this->wordInfo);
     InterogateCoreNLP::getPartOfSpeech(this->wordInfo);
-    InterogateCoreNLP::finalizePOS();
+//     InterogateCoreNLP::finalizePOS();
 
     // At this point, this->wordInfo should be contain both the frequency and
     // the part-of-speech of each word appearing in the reviews.
