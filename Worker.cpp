@@ -435,10 +435,23 @@ void Worker::printBestNgrams(ostream &fout) {
     NgramEntry::DereferenceGreaterComparator comp;
     fout << "\nBest n-grams are: " << this->vect_best_ngrams.size() << "\n";
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
+    int count = 0; // the number of unique ngrams printed so far
     for (unsigned int i = 0;
-         i < MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size(); i++) {
-        this->vect_best_ngrams[i]->refineNgram();
-        fout << *(this->vect_best_ngrams[i]) << std::endl;
+             i < MAX_BEST_NGRAMS * MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size();
+             i++) {
+        bool is_unique = true;
+        for (unsigned int j = 0;
+                j < MAX_BIGRAM_NUMBER*MAX_BIGRAM_NUMBER && j < i;
+                j++) {
+            if (this->vect_best_ngrams[i]->computeSimilarity(this->vect_best_ngrams[j]) > SIGMA_SIM) {
+                is_unique = false;
+                break;
+            }
+        }
+        if (is_unique) {
+            this->vect_best_ngrams[i]->refineNgram();
+            fout << *(this->vect_best_ngrams[i]) << std::endl;
+        }
     }
     fout << std::endl;
 }
