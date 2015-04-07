@@ -98,24 +98,6 @@ void Worker::initBigrams() {
         }
     }
 
-    /*
-    if (remove_from < MAX_WORDS_NUMBER)
-    {
-        unsigned int last_value = wordInfo_copy[remove_from-1].second.frequency;
-        while (remove_from < (int)wordInfo_copy.size() &&
-               wordInfo_copy[remove_from].second.frequency == last_value)
-        {
-            remove_from++;
-        }
-        wordInfo_copy.erase(wordInfo_copy.begin()+remove_from,
-                wordInfo_copy.end());
-    }
-    else
-    {
-        wordInfo_copy.erase(wordInfo_copy.begin()+MAX_WORDS_NUMBER, wordInfo_copy.end());
-    }
-    */
-
     // Erase the undesired words.
     wordInfo_copy.erase(wordInfo_copy.begin()+remove_from, wordInfo_copy.end());
 
