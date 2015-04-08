@@ -146,6 +146,11 @@ class Worker {
         // Computes the representativeness of this ngram
         float computeRepresentativeness(NgramEntry *current_ngram);
 
+        // This functions computes the readability scores for all the permutations
+        // formed with the ngram's words and replaces the current ngram with the one
+        // that has the best score.
+        NgramEntry* replaceWithBestPermutation(NgramEntry*);
+
         void printNgrams(std::ostream&);
 
         void printBestNgrams(std::ostream&);

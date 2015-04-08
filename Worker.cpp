@@ -400,6 +400,12 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     return (float)(srep / ngram.size());
 }
 
+// This functions computes the readability scores for all the permutations
+// formed with the ngram's words and replaces the current ngram with the one
+// that has the best score.
+NgramEntry* Worker::replaceWithBestPermutation(NgramEntry *ne) {
+}
+
 void Worker::printNgrams(ostream &fout) {
     fout << ngrams.size() << std::endl;
     for (unsigned int i = 0; i < ngrams.size(); i++) {
@@ -428,6 +434,8 @@ void Worker::printBestNgrams(ostream &fout) {
             }
         }
         if (is_unique) {
+            this->vect_best_ngrams[i] =
+                this->replaceWithBestPermutation(this->vect_best_ngrams[i]);
 //             this->vect_best_ngrams[i]->refineNgram();
             fout << *(this->vect_best_ngrams[i]) << std::endl;
             count++;
