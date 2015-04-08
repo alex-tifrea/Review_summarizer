@@ -257,7 +257,6 @@ void NgramEntry::refineNgram() {
     }
 
     if (this->ngram.size() != 0) {
-        std::cout << "BLABLABLA " << ngram_pos.size() << " " << this->ngram.size() << std::endl;
         unsigned int i = ngram_pos.size() - 1;
         while (i >= 0) {
             if (!POS_t::isToBeRemoved(ngram_pos[i])) {
