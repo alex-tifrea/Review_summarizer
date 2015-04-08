@@ -418,13 +418,10 @@ void Worker::printBestNgrams(ostream &fout) {
     fout << "\nBest n-grams are: " << this->vect_best_ngrams.size() << "\n";
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
     int count = 0; // the number of unique ngrams printed so far
-    for (unsigned int i = 0;
-             i < MAX_BEST_NGRAMS * MAX_BEST_NGRAMS && i < this->vect_best_ngrams.size();
-             i++) {
+    for (unsigned int i = 0; i < this->vect_best_ngrams.size(); i++) {
+        // Check for similarity in the best selected ngrams.
         bool is_unique = true;
-        for (unsigned int j = 0;
-                j < MAX_BIGRAM_NUMBER*MAX_BIGRAM_NUMBER && j < i;
-                j++) {
+        for (unsigned int j = 0; j < i; j++) {
             if (this->vect_best_ngrams[i]->computeSimilarity(this->vect_best_ngrams[j]) > SIGMA_SIM) {
                 is_unique = false;
                 break;
@@ -433,6 +430,10 @@ void Worker::printBestNgrams(ostream &fout) {
         if (is_unique) {
             this->vect_best_ngrams[i]->refineNgram();
             fout << *(this->vect_best_ngrams[i]) << std::endl;
+            count++;
+        }
+        if (count >= MAX_BEST_NGRAMS) {
+            break;
         }
     }
     fout << std::endl;
