@@ -34,10 +34,15 @@ NgramEntry::NgramEntry(NgramEntry *ne) :
 NgramEntry::~NgramEntry() {}
 
 void NgramEntry::updateText() {
+    if (this->ngram.size() == 0) {
+        this->text = "";
+        return;
+    }
+
     std::vector<std::string>::iterator it = this->ngram.begin();
-    text = *it++;
+    this->text = *it++;
     for (; it != this->ngram.end(); ++it) {
-        text = text + " " + *(it);
+        this->text = this->text + " " + *(it);
     }
 }
 
@@ -219,7 +224,7 @@ float NgramEntry::computeSimilarity(NgramEntry *ne) {
 }
 
 void NgramEntry::refineNgram() {
-    std::vector<unsigned int> ngram_pos;
+    std::vector<unsigned int> ngram_pos(0);
     for (unsigned int i = 0; i < this->ngram.size(); i++) {
         for (unsigned int j = 0; j < POS_t::name.size(); j++) {
             // Get word info for current word.
@@ -248,16 +253,23 @@ void NgramEntry::refineNgram() {
         // Remove the word.
         this->ngram.erase(this->ngram.begin() + i);
         ngram_pos.erase(ngram_pos.begin() + i);
+        i--;
     }
 
-    for (unsigned int i = ngram_pos.size() - 1; i >= 0; i--) {
-        if (!POS_t::isToBeRemoved(ngram_pos[i])) {
-            break;
-        }
+    if (this->ngram.size() != 0) {
+        std::cout << "BLABLABLA " << ngram_pos.size() << " " << this->ngram.size() << std::endl;
+        unsigned int i = ngram_pos.size() - 1;
+        while (i >= 0) {
+            if (!POS_t::isToBeRemoved(ngram_pos[i])) {
+                break;
+            }
 
-        // Remove the word.
-        this->ngram.erase(this->ngram.begin() + i);
-        ngram_pos.erase(ngram_pos.begin() + i);
+            // Remove the word.
+            this->ngram.erase(this->ngram.begin() + i);
+            ngram_pos.erase(ngram_pos.begin() + i);
+
+            i--;
+        }
     }
 
     // Update the text field after the changes.

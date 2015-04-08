@@ -421,12 +421,12 @@ void Worker::printBestNgrams(ostream &fout) {
     for (unsigned int i = 0; i < this->vect_best_ngrams.size(); i++) {
         // Check for similarity in the best selected ngrams.
         bool is_unique = true;
-        for (unsigned int j = 0; j < i; j++) {
-            if (this->vect_best_ngrams[i]->computeSimilarity(this->vect_best_ngrams[j]) > SIGMA_SIM) {
-                is_unique = false;
-                break;
-            }
-        }
+//         for (unsigned int j = 0; j < i; j++) {
+//             if (this->vect_best_ngrams[i]->computeSimilarity(this->vect_best_ngrams[j]) > SIGMA_SIM) {
+//                 is_unique = false;
+//                 break;
+//             }
+//         }
         if (is_unique) {
             this->vect_best_ngrams[i]->refineNgram();
             fout << *(this->vect_best_ngrams[i]) << std::endl;
