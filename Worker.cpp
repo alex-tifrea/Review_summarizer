@@ -461,6 +461,8 @@ NgramEntry* Worker::replaceWithBestPermutation(NgramEntry *ne) {
         permutations_ngram.push_back(ngram);
     } while (std::next_permutation(ngram.begin(), ngram.end()));
 
+    // TODO: Use static variables and interogate this only once for all the
+    // permutations of all the ngrams.
     std::vector<float> permutations_read =
         InterogateNGRAM::getJointProbabilities(permutations_text);
 

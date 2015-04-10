@@ -24,7 +24,7 @@ class Worker;
 #define INTERJECTION_PENALTY (-0.1)
 #define DETERMINER_PENALTY (-0.001)
 #define PREPOSITION_PENALTY (-0.001)
-#define NUMBER_PENALTY (-0.0)
+#define NUMBER_PENALTY (-0.01)
 
 #define MAX_NGRAM_LENGTH 7
 
