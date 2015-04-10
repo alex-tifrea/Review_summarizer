@@ -4,6 +4,18 @@ SRC = InterogateNGRAM.cpp IO.cpp main.cpp NgramEntry.cpp Worker.cpp InterogateCo
 HEADERS = InterogateNGRAM.h IO.h NgramEntry.h Worker.h InterogateCoreNLP.h POS.h
 OBJ = InterogateNGRAM.o IO.o main.o NgramEntry.o Worker.o InterogateCoreNLP.o POS.o
 EXE = main
+NOTIFY=""
+ERROR=""
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	NOTIFY=true
+	ERROR=true
+endif
+ifeq ($(UNAME_S),Darwin)
+	NOTIFY=say "Boss, I am done"
+	ERROR=say "Error Error Error"
+endif
 
 build: $(SRC) $(EXE)
 
@@ -14,7 +26,7 @@ $(EXE): $(OBJ)
 	$(CC) $(CFLAGS) -c $<
 
 run: $(EXE)
-	time ./$(EXE)
+	(time ./$(EXE) || $(ERROR)) && $(NOTIFY)
 
 .PHONY: clean
 clean:
