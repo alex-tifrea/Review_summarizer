@@ -61,10 +61,10 @@ using namespace std;
 
 class Worker {
     private:
-        // Structure in whidw we keep al the ngrams, with a size greater than 3,
+        // Structure in which we keep al the ngrams, with a size greater than 3,
         // that we created in the while running the programs. From this vector
         // we will find the best ngrams for the final part of the project
-        std::vector <NgramEntry *> vect_best_ngrams;
+        std::vector <NgramEntry*> vect_best_ngrams;
 
         // Structure in which we keep the best ngrams.
         // It is a bounded priority queue with maximum MAX_BEST_NGRAMS elements.
@@ -130,10 +130,6 @@ class Worker {
         // the summary).
         void initBigrams();
 
-        // TODO: searches for the bigrams that start with the last word of the
-        // given bigram
-        std::vector<int> binarySearch(NgramEntry*);
-
         // Used to traverse the solution space in a DFS manner.
         void generateCandidate();
 
@@ -144,7 +140,7 @@ class Worker {
         void generateInteractiveLoop();
 
         // Computes the representativeness of this ngram
-        float computeRepresentativeness(NgramEntry *current_ngram);
+        float computeRepresentativeness(NgramEntry*);
 
         // This functions computes the readability scores for all the permutations
         // formed with the ngram's words and replaces the current ngram with the one
