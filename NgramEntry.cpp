@@ -236,6 +236,9 @@ void NgramEntry::refineNgram() {
         }
     }
 
+    /*
+     * NN-JJ constructions are now taken care of by
+     * Worker::replaceWithBestPermutation.
     // Make sure that we don't have NN-JJ constructions (noun followed by an
     // adjective).
     for (unsigned int i = 0; i < ngram_pos.size() - 1; i++) {
@@ -244,6 +247,7 @@ void NgramEntry::refineNgram() {
             swap(this->ngram[i], this->ngram[i+1]);
         }
     }
+    */
 
     for (unsigned int i = 0; i < ngram_pos.size(); i++) {
         if (!POS_t::isToBeRemoved(ngram_pos[i])) {
@@ -259,6 +263,7 @@ void NgramEntry::refineNgram() {
     if (this->ngram.size() != 0) {
         unsigned int i = ngram_pos.size() - 1;
         while (i >= 0) {
+            // XXX: (Maybe) Also replace any adjectives at the end of the ngram
             if (!POS_t::isToBeRemoved(ngram_pos[i])) {
                 break;
             }
