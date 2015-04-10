@@ -400,10 +400,65 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
     return (float)(srep / ngram.size());
 }
 
+
+std::string ngram2string(std::vector<std::string> ngram) {
+    std::string text;
+
+    if (ngram.size() == 0) {
+        text = "";
+        return text;
+    }
+
+    std::vector<std::string>::iterator it = ngram.begin();
+    text = *it++;
+    for (; it != ngram.end(); ++it) {
+        text = text + " " + *(it);
+    }
+
+    return text;
+}
+
 // This functions computes the readability scores for all the permutations
 // formed with the ngram's words and replaces the current ngram with the one
 // that has the best score.
 NgramEntry* Worker::replaceWithBestPermutation(NgramEntry *ne) {
+    std::vector<std::string> permutations_text;
+    std::vector<std::vector<std::string> > permutations_ngram;
+
+    std::vector<std::string> ngram = ne->getNgram();
+    std::string text;
+
+    // Sort the ngram alphanetically before iterating through the permutations.
+    std::sort(ngram.begin(), ngram.end());
+
+    do {
+        text = ngram2string(ngram);
+        permutations_text.push_back(text);
+        permutations_ngram.push_back(ngram);
+    } while (std::next_permutation(ngram.begin(), ngram.end()));
+
+    std::vector<float> permutations_read =
+        InterogateNGRAM::getJointProbabilities(permutations_text);
+
+    for (unsigned int i = 0; i < permutations_text.size(); i++) {
+        std::cout << "PERM: " << permutations_text[i] << " " << permutations_read[i] << std::endl;
+    }
+
+    auto max_pos = std::max_element(permutations_read.begin(),
+                                    permutations_read.end());
+
+    unsigned int index = max_pos - permutations_read.begin();
+
+    std::cout << "Am indexul " << index << std::endl;
+    std::cout << "Best permutation " << *(permutations_text.begin() + index) << std::endl;
+
+    // All other members of ne stay unchanged. We only need to update the
+    // following:
+    ne->setReadability(*max_pos);
+    ne->setText(*(permutations_text.begin() + index));
+    ne->setNgram(*(permutations_ngram.begin() + index));
+
+    return ne;
 }
 
 void Worker::printNgrams(ostream &fout) {

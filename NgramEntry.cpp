@@ -276,6 +276,14 @@ void NgramEntry::refineNgram() {
     this->updateText();
 }
 
+void NgramEntry::setNgram(std::vector<std::string> _ngram) {
+    this->ngram = _ngram;
+}
+
+void NgramEntry::setText(std::string _text) {
+    this->text = _text;
+}
+
 void NgramEntry::setReadability(float _read) {
     this->readability = _read;
 }

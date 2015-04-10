@@ -125,9 +125,13 @@ public:
         return (int)this->ngram.size();
     }
 
+    void setNgram(std::vector<std::string>);
+
     std::vector<std::string> getNgram() const {
         return ngram;
     }
+
+    void setText(std::string);
 
     std::string getText() {
         return this->text;
