@@ -22,8 +22,8 @@ class Worker;
 // penalties for ngrams that contain certain parts of speech
 // (i.e UH, DT, IN, CD)
 #define INTERJECTION_PENALTY (-0.1)
-#define DETERMINER_PENALTY (-0.1)
-#define PREPOSITION_PENALTY (-0.01)
+#define DETERMINER_PENALTY (-0.001)
+#define PREPOSITION_PENALTY (-0.001)
 #define NUMBER_PENALTY (-0.0)
 
 #define MAX_NGRAM_LENGTH 7

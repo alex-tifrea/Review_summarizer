@@ -245,22 +245,25 @@ void Worker::generateCandidate() {
             NgramEntry *new_ngram =
                 curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
 
-            if (new_ngram != NULL) {
+            if (new_ngram != NULL && new_ngram->getRepresentativeness() > minimum_rep) {
                 // Check if the newly created ngram is similar to any of the
                 // other ngrams
-                bool is_unique = true;
+                std::vector<NgramEntry*> similar_ngrams;
                 for (int i = new_ngrams_start; i < (int)ngrams.size(); i++) {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
-                        is_unique = false;
+                        similar_ngrams.push_back(this->ngrams[i]);
+                        this->ngrams.erase(this->ngrams.begin() + i);
 //                         if (this->ngrams[i]->getReadability() >
-//                             curr_ngram->getReadability()) {
-//                             this->ngrams[i] = new NgramEntry(curr_ngram);
+//                                 curr_ngram->getReadability()) {
+//                             this->ngrams.erase(this->ngrams.begin() + i);
+//                             this->ngrams.push_back(curr_ngram);
 //                         }
-                        break;
                     }
                 }
 
-                if (is_unique && new_ngram->getRepresentativeness() > minimum_rep) {
+                if (similar_ngrams.size() == 0) {
+                    // If new_ngram is similar with no other ngram in
+                    // this->ngrams.
                     mean_rep += new_ngram->getRepresentativeness();
                     count ++;
                     mean_read += new_ngram->getReadability();
@@ -272,6 +275,27 @@ void Worker::generateCandidate() {
 //                         this->best_ngrams.pop();
 //                     }
                     this->printNgrams(log);
+                } else {
+                    // If new_ngram is similar to more than just one ngram,
+                    // then we should drop new_ngram. We can assume that at any
+                    // given time, all the ngrams in this->ngrams are not
+                    // similar to one another. So new_ngram being similar to
+                    // more ngrams means that new_ngram contains information
+                    // that can be found in all these ngrams. Since we do not
+                    // want to mix up more than one topic into a summary, we
+                    // should drop the ngram that contains more heterogeneous
+                    // pieces of information.
+                    if (similar_ngrams.size() == 1) {
+                        // If new_ngram is similar to just another ngram, than
+                        // we decide to keep only the one with the highest
+                        // readability score.
+                        if (similar_ngrams[0]->getReadability() >
+                                new_ngram->getReadability()) {
+                            this->ngrams.push_back(similar_ngrams[0]);
+                        } else {
+                            this->ngrams.push_back(new_ngram);
+                        }
+                    }
                 }
             }
             ++iter;
@@ -489,8 +513,8 @@ void Worker::printBestNgrams(ostream &fout) {
             }
         }
         if (is_unique) {
-//             this->vect_best_ngrams[i] =
-//                 this->replaceWithBestPermutation(this->vect_best_ngrams[i]);
+            this->vect_best_ngrams[i] =
+                this->replaceWithBestPermutation(this->vect_best_ngrams[i]);
 //             this->vect_best_ngrams[i]->refineNgram();
             fout << *(this->vect_best_ngrams[i]) << std::endl;
             count++;
