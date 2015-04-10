@@ -489,8 +489,8 @@ void Worker::printBestNgrams(ostream &fout) {
             }
         }
         if (is_unique) {
-            this->vect_best_ngrams[i] =
-                this->replaceWithBestPermutation(this->vect_best_ngrams[i]);
+//             this->vect_best_ngrams[i] =
+//                 this->replaceWithBestPermutation(this->vect_best_ngrams[i]);
 //             this->vect_best_ngrams[i]->refineNgram();
             fout << *(this->vect_best_ngrams[i]) << std::endl;
             count++;
