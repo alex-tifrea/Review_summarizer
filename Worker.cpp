@@ -425,66 +425,64 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
 }
 
 
-std::string ngram2string(std::vector<std::string> ngram) {
-    std::string text;
-
-    if (ngram.size() == 0) {
-        text = "";
-        return text;
-    }
-
-    std::vector<std::string>::iterator it = ngram.begin();
-    text = *it++;
-    for (; it != ngram.end(); ++it) {
-        text = text + " " + *(it);
-    }
-
-    return text;
-}
-
 // This functions computes the readability scores for all the permutations
 // formed with the ngram's words and replaces the current ngram with the one
 // that has the best score.
-NgramEntry* Worker::replaceWithBestPermutation(NgramEntry *ne) {
-    std::vector<std::string> permutations_text;
-    std::vector<std::vector<std::string> > permutations_ngram;
+// @mode    it tells whether to keep gathering ngrams (i.e. if mode == GATHER)
+// or to start processing the gathered ngrams by interogating Microsoft Ngram
+// service (i.e. if mode == PROCESS). If mode is PROCESS, then we ignore the
+// value of ne (it can even be NULL).
+void Worker::replaceWithBestPermutation(NgramEntry *ne, int mode) {
+    static std::vector<std::string> permutations_text;
+    static std::vector<std::vector<std::string> > permutations_ngram;
+    static std::vector<float> permutations_read;
+    static std::vector<NgramEntry*> results;
 
-    std::vector<std::string> ngram = ne->getNgram();
-    std::string text;
+    if (mode == GATHER) {
+        std::vector<std::string> ngram = ne->getNgram();
+        std::string text;
 
-    // Sort the ngram alphanetically before iterating through the permutations.
-    std::sort(ngram.begin(), ngram.end());
+        results.push_back(ne);
 
-    do {
-        text = ngram2string(ngram);
-        permutations_text.push_back(text);
-        permutations_ngram.push_back(ngram);
-    } while (std::next_permutation(ngram.begin(), ngram.end()));
+        // Sort the ngram alphabetically before iterating through the permutations.
+        std::sort(ngram.begin(), ngram.end());
 
-    // TODO: Use static variables and interogate this only once for all the
-    // permutations of all the ngrams.
-    std::vector<float> permutations_read =
-        InterogateNGRAM::getJointProbabilities(permutations_text);
-
-    for (unsigned int i = 0; i < permutations_text.size(); i++) {
-        std::cout << "PERM: " << permutations_text[i] << " " << permutations_read[i] << std::endl;
+        do {
+            text = NgramEntry::ngram2string(ngram);
+            permutations_text.push_back(text);
+            permutations_ngram.push_back(ngram);
+        } while (std::next_permutation(ngram.begin(), ngram.end()));
     }
 
-    auto max_pos = std::max_element(permutations_read.begin(),
-                                    permutations_read.end());
+    if (mode == PROCESS) {
+        // The query itself.
+        permutations_read = InterogateNGRAM::getJointProbabilities(permutations_text);
 
-    unsigned int index = max_pos - permutations_read.begin();
+        for (unsigned int i = 0; i < results.size(); i++) {
+            unsigned int curr_perm_end =
+                Worker::factorial(results[i]->getNgram().size());
 
-    std::cout << "Am indexul " << index << std::endl;
-    std::cout << "Best permutation " << *(permutations_text.begin() + index) << std::endl;
+            auto max_pos = std::max_element(permutations_read.begin(),
+                                            permutations_read.begin() + curr_perm_end);
 
-    // All other members of ne stay unchanged. We only need to update the
-    // following:
-    ne->setReadability(*max_pos);
-    ne->setText(*(permutations_text.begin() + index));
-    ne->setNgram(*(permutations_ngram.begin() + index));
+            unsigned int index = max_pos - permutations_read.begin();
 
-    return ne;
+            // All other members of the ngram stay unchanged. We only need to
+            // update the following:
+            results[i]->setReadability(*max_pos);
+            results[i]->setText(*(permutations_text.begin() + index));
+            results[i]->setNgram(*(permutations_ngram.begin() + index));
+
+            // Remove the elements coresponding to the processed result from
+            // permutations_text, permutations_read, and permutations_read.
+            permutations_text.erase(permutations_text.begin(),
+                                    permutations_text.begin() + curr_perm_end);
+            permutations_ngram.erase(permutations_ngram.begin(),
+                                     permutations_ngram.begin() + curr_perm_end);
+            permutations_read.erase(permutations_read.begin(),
+                                    permutations_read.begin() + curr_perm_end);
+        }
+    }
 }
 
 void Worker::printNgrams(ostream &fout) {
@@ -504,26 +502,33 @@ void Worker::printBestNgrams(ostream &fout) {
     NgramEntry::DereferenceGreaterComparator comp;
     fout << "\nBest n-grams are: " << this->vect_best_ngrams.size() << "\n";
     sort(this->vect_best_ngrams.begin(), this->vect_best_ngrams.end(), comp);
-    int count = 0; // the number of unique ngrams printed so far
+    unsigned int count = 0; // the number of unique ngrams printed so far
     for (unsigned int i = 0; i < this->vect_best_ngrams.size(); i++) {
         // Check for similarity in the best selected ngrams.
         bool is_unique = true;
         for (unsigned int j = 0; j < i; j++) {
-            if (this->vect_best_ngrams[i]->computeSimilarity(this->vect_best_ngrams[j]) > SIGMA_SIM) {
+            if (this->vect_best_ngrams[i]->
+                    computeSimilarity(this->vect_best_ngrams[j]) > SIGMA_SIM) {
                 is_unique = false;
                 break;
             }
         }
         if (is_unique) {
-            this->vect_best_ngrams[i] =
-                this->replaceWithBestPermutation(this->vect_best_ngrams[i]);
-            this->vect_best_ngrams[i]->refineNgram();
-            fout << *(this->vect_best_ngrams[i]) << std::endl;
+            this->replaceWithBestPermutation(this->vect_best_ngrams[i], GATHER);
             count++;
         }
         if (count >= MAX_BEST_NGRAMS) {
             break;
         }
+    }
+
+    // Interogate Microsoft Ngram for all the permutations of all the ngrams at
+    // once.
+    this->replaceWithBestPermutation(NULL, PROCESS);
+
+    for (unsigned int i = 0; i < count; i++) {
+        this->vect_best_ngrams[i]->refineNgram();
+        fout << *(this->vect_best_ngrams[i]) << std::endl;
     }
     fout << std::endl;
 }

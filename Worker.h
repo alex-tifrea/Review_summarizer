@@ -54,6 +54,10 @@
 // Worse value a representativeness score can have
 #define LOW_REP -1234567
 
+// Used by replaceWithBestPermutation
+#define GATHER 0
+#define PROCESS 1
+
 class NgramEntry;
 struct BigramEntry;
 
@@ -145,13 +149,31 @@ class Worker {
         // This functions computes the readability scores for all the permutations
         // formed with the ngram's words and replaces the current ngram with the one
         // that has the best score.
-        NgramEntry* replaceWithBestPermutation(NgramEntry*);
+        void replaceWithBestPermutation(NgramEntry*, int);
 
         void printNgrams(std::ostream&);
 
         void printBestNgrams(std::ostream&);
 
         WordInfo getWordInfo(std::string word);
+
+        // Computes n! for all natural values of n less than 10.
+        static unsigned int factorial(unsigned int n) {
+            switch(n) {
+                case 0: return 1;
+                case 1: return 1;
+                case 2: return 2;
+                case 3: return 6;
+                case 4: return 24;
+                case 5: return 120;
+                case 6: return 720;
+                case 7: return 5040;
+                case 8: return 40320;
+                case 9: return 362880;
+                case 10: return 3628800;
+                default: return -1;
+            }
+        }
 };
 
 #endif // __WORKER_H__

@@ -51,6 +51,23 @@ public:
     NgramEntry(NgramEntry*);
     ~NgramEntry();
 
+    static std::string ngram2string(std::vector<std::string> ngram) {
+        std::string text;
+
+        if (ngram.size() == 0) {
+            text = "";
+            return text;
+        }
+
+        std::vector<std::string>::iterator it = ngram.begin();
+        text = *it++;
+        for (; it != ngram.end(); ++it) {
+            text = text + " " + *(it);
+        }
+
+        return text;
+    }
+
     // Generate the concatenated ngram from this->ngram.
     void updateText();
 
