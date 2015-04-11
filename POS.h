@@ -19,7 +19,7 @@
 #define NNP 13
 #define NNPS 14
 #define PDT 15
-// #define POS 16
+#define _POS 16 // aka POS
 #define PRP 17
 #define PRP$ 18
 #define RB 19
