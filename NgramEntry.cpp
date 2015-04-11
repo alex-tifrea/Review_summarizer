@@ -237,7 +237,7 @@ void NgramEntry::refineNgram() {
     }
 
     /*
-     * NN-JJ constructions are now taken care of by
+     * XXX: NN-JJ constructions are now taken care of by
      * Worker::replaceWithBestPermutation.
     // Make sure that we don't have NN-JJ constructions (noun followed by an
     // adjective).

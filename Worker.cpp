@@ -527,6 +527,7 @@ void Worker::printBestNgrams(ostream &fout) {
     this->replaceWithBestPermutation(NULL, PROCESS);
 
     for (unsigned int i = 0; i < count; i++) {
+        fout << *(this->vect_best_ngrams[i]) << " BECOMES ";
         this->vect_best_ngrams[i]->refineNgram();
         fout << *(this->vect_best_ngrams[i]) << std::endl;
     }

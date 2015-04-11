@@ -10,7 +10,7 @@
 input=$1
 old_reviews="$(cat $input)"
 
-formatted_reviews=$(echo "$old_reviews" | tr -d "():;,\"'[]{}*&%$#@~\`\\></=+_-")
+formatted_reviews=$(echo "$old_reviews" | tr -d "():;,\"'[]{}*&%\$\#@~\`\\></=+_-")
 formatted_reviews=$(echo "$formatted_reviews" | tr -s " ")
 
 formatted_reviews=$(sed 's/\./ \. /g' <<< "$formatted_reviews")
