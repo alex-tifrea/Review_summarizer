@@ -1,0 +1,22 @@
+This file offers all the details of using crawler.py to extract all the review
+information for a given hotel listed on tripadvisor.com.
+
+DISCLAIMER: This README file is a guide for the current version of crawler (as
+            of Apr 15, 2015) which is still work in progress. We plan to make it
+            more user friendly and much easier to use. Any major changes to the
+            script should also result in the updating of this file.
+
+crawler.py has two stages: Firstly, it creates the file hotels_urls.out which
+contains a list of the URLs of the hotels found at the URL given as parameter
+(e.g. if "/Hotels-g294458-Bucharest-Hotels.html" is passed as parameter to the
+script, then it will atempt to crawl information about all the hotels in
+Bucharest).
+Note: At the moment, the code that is implementing this phase is commented out.
+      New entries in hotels_urls.out should be added by hand until the script
+      goes through a refactoring.
+
+During the second stage, the script goes through all the urls in hotels_urls.out
+and, for each entry, extracts all the reviews for that particular hotel. The
+reviews will be saved in a separate file each, in a folder that is created by
+the script. Each folder coresponds to a hotel (and, consequently, to an entry in
+hotels_urls.out) and each file in a folder coresponds to a review.
