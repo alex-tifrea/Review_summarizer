@@ -526,8 +526,23 @@ void Worker::printBestNgrams(ostream &fout) {
     // once.
     this->replaceWithBestPermutation(NULL, PROCESS);
 
+    // Refine the ngrams (basically, trim the redundant words at the beginning
+    // and at the end of a ngram).
     for (unsigned int i = 0; i < count; i++) {
         this->vect_best_ngrams[i]->refineNgram();
+    }
+
+    // Interogate CoreNLP for sentiment information for the candidate ngrams.
+    // TODO: uncomment the following two lines. The parameter of getSentiment
+    // should be a fraction of this->vect_best_ngrams:
+    // [this->vect_best_ngrams.begin(), this->vect_best_ngrams.begin+CEVA]
+    // CEVA should be chosen heuristically s.t. we can select ~MAX_BEST_NGRAMS
+    // that are either Positive or Negative.
+//     InterogateCoreNLP::getSentiment<NgramEntry*, std::vector>(???);
+//     InterogateCoreNLP::finalizeSentiment();
+
+    // Print the best ngrams.
+    for (unsigned int i = 0; i < count; i++) {
         fout << *(this->vect_best_ngrams[i]) << std::endl;
     }
     fout << std::endl;
