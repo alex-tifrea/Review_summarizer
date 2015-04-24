@@ -3,19 +3,6 @@
 
 Worker::Worker(IO *_io) {
     this->io = new IO(_io);
-    this->rep_min_values =  new float[5];
-    this->rep_min_values[0] = SIGMA_REP_3;
-    this->rep_min_values[1] = SIGMA_REP_4;
-    this->rep_min_values[2] = SIGMA_REP_5;
-    this->rep_min_values[3] = SIGMA_REP_6;
-    this->rep_min_values[4] = SIGMA_REP_7;
-    this->read_min_values = new float[8];
-    this->read_min_values[2] = SIGMA_READ;
-    this->read_min_values[3] = SIGMA_READ_3;
-    this->read_min_values[4] = SIGMA_READ_4;
-    this->read_min_values[5] = SIGMA_READ_5;
-    this->read_min_values[6] = SIGMA_READ_6;
-    this->read_min_values[7] = SIGMA_READ_7;
     log.open("log.file", std::ofstream::out);
 }
 
@@ -186,7 +173,8 @@ void Worker::generateCandidate() {
     if (this->ngrams.size() > 0)
     {
         current_ngram_size = this->ngrams[0]->getNgramSize() + 1;
-        minimum_rep = rep_min_values[this->ngrams[0]->getNgramSize()-2];
+        minimum_rep =
+            NgramEntry::rep_min_values[this->ngrams[0]->getNgramSize()-2];
     }
     else
     {

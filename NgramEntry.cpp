@@ -4,6 +4,18 @@
 #include <vector>
 #include "POS.h"
 
+const float NgramEntry::sim_min_values[] = {SIGMA_SIM_3,SIGMA_SIM_4,
+                                            SIGMA_SIM_5,SIGMA_SIM_6,
+                                            SIGMA_SIM_7,SIGMA_SIM_8};
+
+const float NgramEntry::rep_min_values[] = {SIGMA_REP_3,SIGMA_REP_4,
+                                            SIGMA_REP_5,SIGMA_REP_6,
+                                            SIGMA_REP_7};
+
+const float NgramEntry::read_min_values[] = {SIGMA_READ_3,SIGMA_READ_4,
+                                             SIGMA_READ_5,SIGMA_READ_6,
+                                             SIGMA_READ_7};
+
 NgramEntry::NgramEntry(std::vector<std::string> _ngram, Worker *_worker) :
     ngram(_ngram),
     readability(0),
@@ -67,7 +79,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
 
     NgramEntry *ret = new NgramEntry(new_ngram_text, this->worker);
 
-    if (ret->getReadability() < worker->read_min_values[ret->getNgramSize()] ||
+    if (ret->getReadability() < NgramEntry::read_min_values[ret->getNgramSize()] ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
 //         std::cout<< "SCORURI NASOALE\n";
@@ -104,7 +116,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
     // Set readability score.
     ret->setReadability(readability);
 
-    if (ret->getReadability() < worker->read_min_values[ret->getNgramSize()] ||
+    if (ret->getReadability() < NgramEntry::read_min_values[ret->getNgramSize()] ||
         ret->getRepresentativeness() < SIGMA_REP ||
         ret->getNgram().size() > MAX_NGRAM_LENGTH) {
 //         std::cout<< "SCORURI NASOALE\n";
@@ -237,9 +249,6 @@ void NgramEntry::refineNgram() {
         }
     }
 
-    /*
-     * XXX: NN-JJ constructions are now taken care of by
-     * Worker::replaceWithBestPermutation.
     // Make sure that we don't have NN-JJ constructions (noun followed by an
     // adjective).
     for (unsigned int i = 0; i < ngram_pos.size() - 1; i++) {
@@ -248,12 +257,9 @@ void NgramEntry::refineNgram() {
             swap(this->ngram[i], this->ngram[i+1]);
         }
     }
-    */
 
     for (unsigned int i = 0; i < ngram_pos.size(); i++) {
         if (!POS_t::isToBeRemoved(ngram_pos[i])) {
-            std::cout << "Sunt gata cu rafinatul " << this->ngram[i] <<
-                " " << ngram_pos[i] << std::endl;
             break;
         }
 
@@ -268,8 +274,6 @@ void NgramEntry::refineNgram() {
         while (i >= 0) {
             // XXX: (Maybe) Also replace any adjectives at the end of the ngram
             if (!POS_t::isToBeRemoved(ngram_pos[i])) {
-                std::cout << "Sunt gata cu rafinatul " << this->ngram[i] <<
-                    " " << ngram_pos[i] << std::endl;
                 break;
             }
 

@@ -8,10 +8,34 @@
 
 class Worker;
 
-// threshholds used to prune undesired ngrams
+// Threshholds used for pruning representativeness
+#define SIGMA_REP_3 0.30
+#define SIGMA_REP_4 0.52
+#define SIGMA_REP_5 0.70
+#define SIGMA_REP_6 0.82
+#define SIGMA_REP_7 1.00
+
+// Threshholds used for pruning readability
+#define SIGMA_READ_3 0.0001
+#define SIGMA_READ_4 0.000001
+#define SIGMA_READ_5 0.0000001
+#define SIGMA_READ_6 0.00000001
+#define SIGMA_READ_7 0.000000001
+
+// Thresholds used to erase ngrams that are similar to other ngrams.
+#define SIGMA_SIM_3 0.5
+#define SIGMA_SIM_4 0.33
+#define SIGMA_SIM_5 0.43
+#define SIGMA_SIM_6 0.33
+#define SIGMA_SIM_7 0.4
+#define SIGMA_SIM_8 0.33
+
+
+// Old thresholds for scores.
+// XXX: !!! These are obsolete and SHOULD NOT BE USED !!!
 #define SIGMA_REP 0.075
 #define SIGMA_READ 0.0001
-#define SIGMA_SIM 0.3 // TODO: maybe change this
+#define SIGMA_SIM 0.3
 
 // bonuses for ngrams that contain nouns and/or adjectives.
 #define NOUN_BONUS 0.01
@@ -47,6 +71,10 @@ private:
     Sentiment sentiment;
 
 public:
+    static const float sim_min_values[];
+    static const float rep_min_values[];
+    static const float read_min_values[];
+
     NgramEntry(std::vector<std::string>, Worker*);
     NgramEntry(NgramEntry*);
     ~NgramEntry();
