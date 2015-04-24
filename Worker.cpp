@@ -241,11 +241,6 @@ void Worker::generateCandidate() {
                     if (ngrams[i]->computeSimilarity(new_ngram) > SIGMA_SIM) {
                         similar_ngrams.push_back(this->ngrams[i]);
                         this->ngrams.erase(this->ngrams.begin() + i);
-//                         if (this->ngrams[i]->getReadability() >
-//                                 curr_ngram->getReadability()) {
-//                             this->ngrams.erase(this->ngrams.begin() + i);
-//                             this->ngrams.push_back(curr_ngram);
-//                         }
                     }
                 }
 
@@ -258,10 +253,6 @@ void Worker::generateCandidate() {
                     // Add the newly created (n+1)-gram to the deque
                     this->ngrams.push_back(new_ngram);
                     this->vect_best_ngrams.push_back(new_ngram);
-//                     this->best_ngrams.push(new_ngram);
-//                     if (this->best_ngrams.size() > MAX_BEST_NGRAMS) {
-//                         this->best_ngrams.pop();
-//                     }
                     this->printNgrams(log);
                 } else {
                     // If new_ngram is similar to more than just one ngram,
@@ -515,11 +506,6 @@ void Worker::printBestNgrams(ostream &fout) {
     this->replaceWithBestPermutation(NULL, PROCESS);
 
     // Interogate CoreNLP for sentiment information for the candidate ngrams.
-    // TODO: uncomment the following two lines. The parameter of getSentiment
-    // should be a fraction of this->vect_best_ngrams:
-    // [this->vect_best_ngrams.begin(), this->vect_best_ngrams.begin+CEVA]
-    // CEVA should be chosen heuristically s.t. we can select ~MAX_BEST_NGRAMS
-    // that are either Positive or Negative.
     std::vector<NgramEntry*> arg_ngrams;
     if (this->vect_best_ngrams.size() < MAX_CANDIDATES) {
         arg_ngrams = this->vect_best_ngrams;
@@ -530,6 +516,10 @@ void Worker::printBestNgrams(ostream &fout) {
     InterogateCoreNLP::getSentiment<NgramEntry*, std::vector>(arg_ngrams);
     //InterogateCoreNLP::finalizeSentiment();
 
+    /*
+     * XXX: Noticed that some useful ngrams are tagged as NEUTRAL, so I decided
+     * to comment out these lines for now. If they will prove necessary, they
+     * can always be uncommented.
     // Erase the ngrams that are not conveying a sentiment.
     for (auto it = this->vect_best_ngrams.begin();
             it != this->vect_best_ngrams.end();) {
@@ -539,6 +529,7 @@ void Worker::printBestNgrams(ostream &fout) {
             ++it;
         }
     }
+    */
 
     // Refine the ngrams (basically, trim the redundant words at the beginning
     // and at the end of a ngram).
@@ -546,9 +537,30 @@ void Worker::printBestNgrams(ostream &fout) {
         this->vect_best_ngrams[i]->refineNgram();
     }
 
+    // It is possible that after all these changes, some ngrams became similar
+    // with others. We should check for that.
+    std::vector<NgramEntry*> candidates =
+        std::vector<NgramEntry*>(this->vect_best_ngrams.begin(),
+                                 this->vect_best_ngrams.begin() + count);
+    for (auto it = candidates.begin(); it != candidates.end();) {
+        bool is_unique = true;
+        unsigned int i = it - candidates.begin();
+        for (unsigned int j = 0; j < i; j++) {
+            if (candidates[i]->computeSimilarity(candidates[j]) > SIGMA_SIM) {
+                is_unique = false;
+                break;
+            }
+        }
+        if (is_unique) {
+            ++it;
+        } else {
+            it = candidates.erase(it);
+        }
+    }
+
     // Print the best ngrams.
-    for (unsigned int i = 0; i < count; i++) {
-        fout << *(this->vect_best_ngrams[i]) << std::endl;
+    for (unsigned int i = 0; i < candidates.size(); i++) {
+        fout << *(candidates[i]) << std::endl;
     }
     fout << std::endl;
 }

@@ -23,6 +23,9 @@ class Worker;
 #define SIGMA_READ_7 0.000000001
 
 // Thresholds used to erase ngrams that are similar to other ngrams.
+#define SIGMA_SIM_0 1
+#define SIGMA_SIM_1 1
+#define SIGMA_SIM_2 1
 #define SIGMA_SIM_3 0.5
 #define SIGMA_SIM_4 0.33
 #define SIGMA_SIM_5 0.43
@@ -30,9 +33,7 @@ class Worker;
 #define SIGMA_SIM_7 0.4
 #define SIGMA_SIM_8 0.33
 
-
-// Old thresholds for scores.
-// XXX: !!! These are obsolete and SHOULD NOT BE USED !!!
+// Thresholds for scores. Still used for bigrams.
 #define SIGMA_REP 0.075
 #define SIGMA_READ 0.0001
 #define SIGMA_SIM 0.3
