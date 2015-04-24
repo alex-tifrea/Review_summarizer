@@ -538,8 +538,25 @@ void Worker::printBestNgrams(ostream &fout) {
     // [this->vect_best_ngrams.begin(), this->vect_best_ngrams.begin+CEVA]
     // CEVA should be chosen heuristically s.t. we can select ~MAX_BEST_NGRAMS
     // that are either Positive or Negative.
-//     InterogateCoreNLP::getSentiment<NgramEntry*, std::vector>(???);
-//     InterogateCoreNLP::finalizeSentiment();
+    std::vector<NgramEntry*> arg_ngrams;
+    if (this->vect_best_ngrams.size() < MAX_CANDIDATES) {
+        arg_ngrams = this->vect_best_ngrams;
+    } else {
+        arg_ngrams = std::vector<NgramEntry*>(this->vect_best_ngrams.begin(),
+            this->vect_best_ngrams.begin()+MAX_CANDIDATES);
+    }
+    InterogateCoreNLP::getSentiment<NgramEntry*, std::vector>(arg_ngrams);
+    //InterogateCoreNLP::finalizeSentiment();
+
+    // Erase the ngrams that are not conveying a sentiment.
+    for (auto it = this->vect_best_ngrams.begin();
+            it != this->vect_best_ngrams.end();) {
+        if ((*it)->getSentiment() == NEUTRAL) {
+            it = this->vect_best_ngrams.erase(it);
+        } else {
+            ++it;
+        }
+    }
 
     // Print the best ngrams.
     for (unsigned int i = 0; i < count; i++) {

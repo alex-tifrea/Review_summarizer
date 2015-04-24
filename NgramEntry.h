@@ -103,8 +103,21 @@ public:
         this->sentiment = s;
     }
 
-    Sentiment getSentiment() {
+    Sentiment getSentiment() const {
         return sentiment;
+    }
+
+    std::string sentimentToString(Sentiment s) const {
+        switch (s) {
+        case VERY_NEGATIVE: return "VERY_NEGATIVE";
+        case VERY_POSITIVE: return "VERY_POSITIVE";
+        case NEGATIVE: return "NEGATIVE";
+        case POSITIVE: return "POSITIVE";
+        case NEUTRAL: return "NEUTRAL";
+        default: return "bai mare";
+        }
+
+        return "bai mare";
     }
 
     // Setter for the readability score;
