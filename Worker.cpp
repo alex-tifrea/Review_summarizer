@@ -526,12 +526,6 @@ void Worker::printBestNgrams(ostream &fout) {
     // once.
     this->replaceWithBestPermutation(NULL, PROCESS);
 
-    // Refine the ngrams (basically, trim the redundant words at the beginning
-    // and at the end of a ngram).
-    for (unsigned int i = 0; i < count; i++) {
-        this->vect_best_ngrams[i]->refineNgram();
-    }
-
     // Interogate CoreNLP for sentiment information for the candidate ngrams.
     // TODO: uncomment the following two lines. The parameter of getSentiment
     // should be a fraction of this->vect_best_ngrams:
@@ -556,6 +550,12 @@ void Worker::printBestNgrams(ostream &fout) {
         } else {
             ++it;
         }
+    }
+
+    // Refine the ngrams (basically, trim the redundant words at the beginning
+    // and at the end of a ngram).
+    for (unsigned int i = 0; i < count; i++) {
+        this->vect_best_ngrams[i]->refineNgram();
     }
 
     // Print the best ngrams.

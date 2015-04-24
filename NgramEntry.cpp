@@ -252,6 +252,8 @@ void NgramEntry::refineNgram() {
 
     for (unsigned int i = 0; i < ngram_pos.size(); i++) {
         if (!POS_t::isToBeRemoved(ngram_pos[i])) {
+            std::cout << "Sunt gata cu rafinatul " << this->ngram[i] <<
+                " " << ngram_pos[i] << std::endl;
             break;
         }
 
@@ -266,6 +268,8 @@ void NgramEntry::refineNgram() {
         while (i >= 0) {
             // XXX: (Maybe) Also replace any adjectives at the end of the ngram
             if (!POS_t::isToBeRemoved(ngram_pos[i])) {
+                std::cout << "Sunt gata cu rafinatul " << this->ngram[i] <<
+                    " " << ngram_pos[i] << std::endl;
                 break;
             }
 
