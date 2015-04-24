@@ -48,6 +48,7 @@ struct POS_t {
     static bool isAdjective(unsigned int pos_code);
     static bool isNoun(unsigned int pos_code);
     static bool isAdverb(unsigned int pos_code);
+    static bool isVerb(unsigned int pos_code);
     static bool isToBeRemoved(unsigned int pos_code);
 };
 #endif // __POS_H__

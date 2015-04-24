@@ -20,6 +20,11 @@ bool POS_t::isAdverb(unsigned int pos_code) {
     return pos_code == RB || pos_code == RBR || pos_code == RBS;
 }
 
+bool POS_t::isVerb(unsigned int pos_code) {
+    return pos_code == VB || pos_code == VBD || pos_code == VBG ||
+           pos_code == VBN || pos_code == VBP || pos_code == VBZ;
+}
+
 bool POS_t::isToBeRemoved(unsigned int pos_code) {
     return pos_code == IN || pos_code == FW || pos_code == UH || pos_code == DT ||
            pos_code == CC || pos_code == PRP || pos_code == WDT || pos_code == PRP$ ||
