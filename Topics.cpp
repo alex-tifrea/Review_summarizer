@@ -12,6 +12,7 @@ using namespace std;
 #define FAIL 0.0f
 #define BUFSIZE 255
 #define TOPICS_NUM 10
+#define MAX_DISTANCE 0.8f
 
 vector<vector<string> > Topics::topics(TOPICS_NUM);
 
@@ -181,6 +182,10 @@ int Topics::getTopic(string ngram)
 
 float Topics::getDistance(const std::string word1, const std::string word2)
 {
+    if(word1.compare(word2) == 0)
+    {
+        return MAX_DISTANCE;
+    }
     char *bestw[N];
     char st[100][max_size];
     float dist, len, bestd[N], vec[max_size];
