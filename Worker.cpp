@@ -499,6 +499,7 @@ void Worker::printBestNgrams(ostream &fout) {
         if (count >= MAX_BEST_NGRAMS) {
             break;
         }
+        Topics::getTopic(this->vect_best_ngrams[i]->getText());
     }
 
     // Interogate Microsoft Ngram for all the permutations of all the ngrams at

@@ -97,6 +97,7 @@ void Topics::Init(string file)
     topics[1].push_back("internet");
     topics[1].push_back("curtains");
     topics[1].push_back("tv");
+    topics[1].push_back("wifi");
     topics[1].push_back("clean");
     topics[1].push_back("dirty");
     topics[1].push_back("dusty");
