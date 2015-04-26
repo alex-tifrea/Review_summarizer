@@ -73,13 +73,81 @@ void Topics::Init(string file)
 
 
     //TODO populate topics
-    topics[0].push_back("tomatoes");
-    topics[0].push_back("carrots");
-    topics[0].push_back("cucumber");
+    //kitchen
+    topics[0].push_back("kitchen");
+    topics[0].push_back("breakfast");
+    topics[0].push_back("dinner");
+    topics[0].push_back("meal");
+    topics[0].push_back("lunch");
+    topics[0].push_back("restaurant");
+    topics[0].push_back("food");
+    topics[0].push_back("coffe");
+    topics[0].push_back("wine");
+    topics[0].push_back("snaks");
+    topics[0].push_back("bar");
+    topics[0].push_back("dish");
     
+    //room
     topics[1].push_back("room");
-    topics[1].push_back("kitchen");
     topics[1].push_back("bedroom");
+    topics[1].push_back("bet");
+    topics[1].push_back("sheets");
+    topics[1].push_back("bathroom");
+    topics[1].push_back("internet");
+    topics[1].push_back("curtains");
+    topics[1].push_back("tv");
+    topics[1].push_back("clean");
+    topics[1].push_back("dirty");
+    topics[1].push_back("dusty");
+    topics[1].push_back("spacious");
+    topics[1].push_back("small");
+    topics[1].push_back("design");
+    topics[1].push_back("confortable");
+    topics[1].push_back("shower");
+
+    //staff
+    topics[2].push_back("staff");
+    topics[2].push_back("service");
+    topics[2].push_back("roomservice");
+    topics[2].push_back("helpful");
+    topics[2].push_back("friendly");
+
+    //noise
+    topics[3].push_back("noise");
+    topics[3].push_back("noisey");
+    topics[3].push_back("quite");
+    topics[3].push_back("disturbing");
+    topics[3].push_back("street");
+    topics[3].push_back("road");
+    topics[3].push_back("wake");
+
+    //price
+    topics[4].push_back("price");
+    topics[4].push_back("money");
+    topics[4].push_back("reasonable");
+    topics[4].push_back("expensive");
+    topics[4].push_back("value");
+    topics[4].push_back("moderate");
+    topics[4].push_back("pricey");
+
+    //location
+    topics[5].push_back("city");
+    topics[5].push_back("center");
+    topics[5].push_back("walk");
+    topics[5].push_back("minutes");
+    topics[5].push_back("subway");
+    topics[5].push_back("underground");
+    topics[5].push_back("metro");
+    topics[5].push_back("bus");
+    topics[5].push_back("old");
+    topics[5].push_back("station");
+    topics[5].push_back("airport");
+    topics[5].push_back("location");
+    topics[5].push_back("town");
+    topics[5].push_back("close");
+    topics[5].push_back("away");
+    topics[5].push_back("far");
+    topics[5].push_back("distance");
 }
 
 void Topics::Finalize()
