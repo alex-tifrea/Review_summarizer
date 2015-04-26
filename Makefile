@@ -1,8 +1,8 @@
 CC = g++
 CFLAGS=-Wall -g -lm -Wno-unused-result -std=c++11 -O3
-SRC = InterogateNGRAM.cpp IO.cpp main.cpp NgramEntry.cpp Worker.cpp InterogateCoreNLP.cpp POS.cpp # Topics.cpp
-HEADERS = InterogateNGRAM.h IO.h NgramEntry.h Worker.h InterogateCoreNLP.h POS.h # Topics.h
-OBJ = InterogateNGRAM.o IO.o main.o NgramEntry.o Worker.o InterogateCoreNLP.o POS.o # Topics.o
+SRC = InterogateNGRAM.cpp IO.cpp main.cpp NgramEntry.cpp Worker.cpp InterogateCoreNLP.cpp POS.cpp Topics.cpp
+HEADERS = InterogateNGRAM.h IO.h NgramEntry.h Worker.h InterogateCoreNLP.h POS.h Topics.h
+OBJ = InterogateNGRAM.o IO.o main.o NgramEntry.o Worker.o InterogateCoreNLP.o POS.o Topics.o
 EXE = main
 NOTIFY=""
 ERROR=""

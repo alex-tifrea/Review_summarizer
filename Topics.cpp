@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <vector>
 #include <string>
 using namespace std;
@@ -28,7 +28,7 @@ void Topics::Init(string file)
     FILE *f;
     char file_name[max_size];
     float len;
-    long long a, b, c, d;
+    long long a, b;// c, d;
     //char ch;
     strcpy(file_name, file.c_str());
     f = fopen(file_name, "rb");
