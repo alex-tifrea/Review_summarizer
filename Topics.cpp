@@ -156,7 +156,7 @@ void Topics::Finalize()
 }
 
 //get the id of the topic
-int Topics::getTopic(string &ngram)
+int Topics::getTopic(string ngram)
 {
     float max_score = 0.0f;
     int max_idx = -1;
@@ -209,9 +209,7 @@ float Topics::getDistance(const std::string word1, const std::string word2)
         for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], st[a])) break;
         if (b == words) b = -1;
         bi[a] = b;
-        printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
         if (b == -1) {
-            printf("Out of dictionary word!\n");
             break;
         }
     }

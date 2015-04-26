@@ -13,6 +13,7 @@
 #include <algorithm>
 
 #include "NgramEntry.h"
+#include "Topics.h"
 #include "IO.h"
 #include "InterogateCoreNLP.h"
 #include "InterogateNGRAM.h"

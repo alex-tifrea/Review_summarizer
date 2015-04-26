@@ -21,7 +21,7 @@ public:
     static void Finalize();
 
     //get the id of the topic
-    static int getTopic(std::string &);
+    static int getTopic(std::string );
 
 public: //for testing purposes
 //private:
