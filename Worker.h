@@ -104,6 +104,9 @@ class Worker {
         // Reads the input and writes back the output.
         IO *io;
 
+        //vector with the name of each topic
+        static const char *topicVect[];
+
     public:
         Worker(IO*);
         ~Worker();

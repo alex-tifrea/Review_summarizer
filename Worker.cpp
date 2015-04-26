@@ -1,6 +1,8 @@
 #include "Worker.h"
 #include <math.h>
 
+const char *Worker::topicVect[] = {"food", "room", "staff", "noise", "price", "location"};
+
 Worker::Worker(IO *_io) {
     this->io = new IO(_io);
     log.open("log.file", std::ofstream::out);
@@ -472,11 +474,6 @@ void Worker::printNgrams(ostream &fout) {
 }
 
 void Worker::printBestNgrams(ostream &fout) {
-//     fout << this->best_ngrams.size() << " ";
-//     while (this->best_ngrams.size() != 0) {
-//         fout << *(this->best_ngrams.top()) << " ";
-//         this->best_ngrams.pop();
-//     }
 
     NgramEntry::DereferenceGreaterComparator comp;
     fout << "\nBest n-grams are: " << this->vect_best_ngrams.size() << "\n";
@@ -563,8 +560,11 @@ void Worker::printBestNgrams(ostream &fout) {
     std::string bin_file = "vectors.bin";
     Topics::Init(bin_file);
     for (unsigned int i = 0; i < candidates.size(); i++) {
-        fout << *(candidates[i]) << Topics::getTopic(candidates[i]->getText())
-            << std::endl;
+        int topicNumber = Topics::getTopic(candidates[i]->getText());
+        if (topicNumber >= 0)
+        {
+            fout << *(candidates[i]) << topicVect[topicNumber] << std::endl;
+        }
     }
     fout << std::endl;
 }
