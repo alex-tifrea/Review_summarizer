@@ -36,7 +36,7 @@
 // selected based on their scores and bonuses.
 #define MAX_BIGRAM_NUMBER 2000
 
-#define NGRAM_COUNT_LIMIT 5
+#define NGRAM_COUNT_LIMIT 0
 
 // Used to compute representativeness
 #define WINDOW_SIZE 10
@@ -128,7 +128,7 @@ class Worker {
         void generateInteractiveLoop();
 
         // Computes the representativeness of this ngram
-        float computeRepresentativeness(NgramEntry*);
+        double computeRepresentativeness(NgramEntry*);
 
         // This functions computes the readability scores for all the permutations
         // formed with the ngram's words and replaces the current ngram with the one

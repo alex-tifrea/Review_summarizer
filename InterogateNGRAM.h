@@ -15,13 +15,13 @@ class InterogateNGRAM
 {
 public:
     //receives one ngram as an array of words
-    static float getJointProbability(std::vector<std::string> &);
+    static double getJointProbability(std::vector<std::string> &);
     //receives one ngram as a string of words
-    static float getJointProbability(std::string);
+    static double getJointProbability(std::string);
 
     //receives multiple ngrams as an array of
     //strings (each with multiple words)
-    static std::vector<float> getJointProbabilities(std::vector<std::string> &);
+    static std::vector<double> getJointProbabilities(std::vector<std::string> &);
 
     static void Init();
     static void Finalize();

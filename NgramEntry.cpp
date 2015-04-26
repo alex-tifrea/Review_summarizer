@@ -4,15 +4,15 @@
 #include <vector>
 #include "POS.h"
 
-const float NgramEntry::sim_min_values[] = {SIGMA_SIM_3,SIGMA_SIM_4,
+const double NgramEntry::sim_min_values[] = {SIGMA_SIM_3,SIGMA_SIM_4,
                                             SIGMA_SIM_5,SIGMA_SIM_6,
                                             SIGMA_SIM_7,SIGMA_SIM_8};
 
-const float NgramEntry::rep_min_values[] = {SIGMA_REP_3,SIGMA_REP_4,
+const double NgramEntry::rep_min_values[] = {SIGMA_REP_3,SIGMA_REP_4,
                                             SIGMA_REP_5,SIGMA_REP_6,
                                             SIGMA_REP_7};
 
-const float NgramEntry::read_min_values[] = {SIGMA_READ_3,SIGMA_READ_4,
+const double NgramEntry::read_min_values[] = {SIGMA_READ_3,SIGMA_READ_4,
                                              SIGMA_READ_5,SIGMA_READ_6,
                                              SIGMA_READ_7};
 
@@ -93,7 +93,7 @@ NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram) {
 
 // Pass the readability of the new ngram as a parameter, to be set before
 // evaluating the scores of the ngram.
-NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, float readability) {
+NgramEntry* NgramEntry::mergeNgrams(NgramEntry *bigram, double readability) {
     std::vector<std::string> bigram_text = bigram->getNgram();
 
     // Compare the last word of the n-gram with the first word of the bigram.
@@ -211,7 +211,7 @@ void NgramEntry::computeSentimentBonuses() {
 }
 
 // Use Jaccard distance to compute the similarity
-float NgramEntry::computeSimilarity(NgramEntry *ne) {
+double NgramEntry::computeSimilarity(NgramEntry *ne) {
     std::vector<std::string> ne_text = ne->getNgram();
     unsigned int intersection_count = 0;
     // It's ok to use for's because NgramEntry.ngram.size() is MAX_NGRAM_LENGTH
@@ -226,9 +226,9 @@ float NgramEntry::computeSimilarity(NgramEntry *ne) {
 
     // the distance between the two ngrams is:
     // d = |intersection(A, B)| / |union(A, B)|, where |N| = card(N)
-    float dist = 1; // if both ngrams have 0 words, then the distance is 1
+    double dist = 1; // if both ngrams have 0 words, then the distance is 1
     if (ne_text.size() + this->ngram.size() != 0) {
-        dist = (float) intersection_count / (ne_text.size() +
+        dist = (double) intersection_count / (ne_text.size() +
                                              this->ngram.size() -
                                              intersection_count);
     }
@@ -308,11 +308,11 @@ void NgramEntry::setText(std::string _text) {
     this->text = _text;
 }
 
-void NgramEntry::setReadability(float _read) {
+void NgramEntry::setReadability(double _read) {
     this->readability = _read;
 }
 
-std::pair<float, float> NgramEntry::getScore()
+std::pair<double, double> NgramEntry::getScore()
 {
     return std::make_pair(this->readability, this->representativeness);
 }

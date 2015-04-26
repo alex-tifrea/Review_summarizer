@@ -50,7 +50,7 @@ void Worker::init() {
 
 // Comparator used to get trim this->bigrams;
 bool desc_comp(NgramEntry *a, NgramEntry *b) {
-    float res = a->getReadability() - b->getReadability();
+    double res = a->getReadability() - b->getReadability();
     // The representativeness score is more important, so give it a more
     // significant weight (x 10).
     res = res + 10 * (a->getRepresentativeness() - b->getRepresentativeness());
@@ -121,7 +121,7 @@ void Worker::initBigrams() {
 
     // We call getJointProbabilities for all the bigrams at once.
     std::cout << "Aici fac REQUEST cu lungimea " << allBigrams.size() << std::endl;
-    std::vector<float> allReadabilities =
+    std::vector<double> allReadabilities =
         InterogateNGRAM::getJointProbabilities(allBigrams);
     allBigrams.clear();
 
@@ -129,7 +129,7 @@ void Worker::initBigrams() {
     {
         // Set the readability score.
         newBigrams[i]->setReadability(allReadabilities[i]);
-        pair<float, float> read_rep = newBigrams[i]->getScore();
+        pair<double, double> read_rep = newBigrams[i]->getScore();
         // Check the readability and the representativeness score.
         if (read_rep.first >= SIGMA_READ && read_rep.second >= SIGMA_REP)
         {
@@ -170,7 +170,7 @@ void Worker::generateCandidate() {
     // bigram that starts with the last word of n (this test is done by
     // NgramEntry::mergeNgrams); merge the two and push the newly created
     // (n+1)-gram at the and of the queue.
-    float minimum_rep;
+    double minimum_rep;
     int current_ngram_size;
     if (this->ngrams.size() > 0)
     {
@@ -211,13 +211,15 @@ void Worker::generateCandidate() {
         return;
     }
 
-    std::vector<float> allReadabilities =
+    std::vector<double> allReadabilities =
         InterogateNGRAM::getJointProbabilities(newNgrams);
 
     int current_poz = 0;
     int count = 0;
-    float mean_rep = 0, mean_read = 0;
+    double mean_rep = 0, mean_read = 0;
     int new_ngrams_start = loop_size - 1;
+    std::cout << "incerc sa creez ingrame de dim " << new_ngrams_start << std::endl;
+    int count_sim = 0;
     for (int k = 0; k < loop_size; k++, current_poz++)
     {
         NgramEntry *curr_ngram = ngrams.front();
@@ -235,6 +237,8 @@ void Worker::generateCandidate() {
             NgramEntry *new_ngram =
                 curr_ngram->mergeNgrams(iter->second, allReadabilities[i]);
 
+            if (new_ngram != NULL)
+                count_sim++;
             if (new_ngram != NULL && new_ngram->getRepresentativeness() > minimum_rep) {
                 // Check if the newly created ngram is similar to any of the
                 // other ngrams
@@ -283,9 +287,11 @@ void Worker::generateCandidate() {
         }
         new_ngrams_start--;
     }
+    std::cout << "am " << count_sim << "ngrame care sunt similare cu altele si "
+        << loop_size - count_sim << "care nu sunt" << std::endl;
 
-    cout << "mean rep value " << (float)(mean_rep / (float)count) << endl;
-    cout << "read value " << (float)(mean_read / (float)count) << endl;
+    cout << "mean rep value " << (double)(mean_rep / (double)count) << endl;
+    cout << "read value " << (double)(mean_read / (double)count) << endl;
     cout << "there are " << ngrams.size() << " ngrams of size "
         << current_ngram_size << endl;
 }
@@ -306,16 +312,16 @@ void Worker::generateLoop() {
     }
 }
 
-float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
-    float srep = 0;
+double Worker::computeRepresentativeness(NgramEntry *current_ngram) {
+    double srep = 0;
     vector<string> ngram = current_ngram->getNgram();
     for (unsigned int i = 0; i < ngram.size()-1; i++)
     {
-        float pmi_local = 0;
+        double pmi_local = 0;
         char end_words[] = ".!?;";
         vector <WordPosition> current_word_pos = wordPos[ngram[i]];
-        vector <float> mutual_p(ngram.size()-i-1, 0);
-        vector <float> mutual_c(ngram.size()-i-1, 0);
+        vector <double> mutual_p(ngram.size()-i-1, 0);
+        vector <double> mutual_c(ngram.size()-i-1, 0);
         for (unsigned int j = 0; j < current_word_pos.size(); j++)
         {
             bool over_WindowSize = false;
@@ -388,11 +394,11 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
         for (unsigned int k = i+1; k < ngram.size(); k++)
         {
             // It might also require the multiplication with sentences_count
-            //pmi_local += (float)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
-            //            (float)((float)wordPos[ngram[k]].size() *
-            //                (float)wordPos[ngram[i]].size());
-            float aux_pmi = (float)(mutual_p[k-i-1] * mutual_c[k-i-1] *
-                    total_sentences_nr) / (float)(wordPos[ngram[k]].size() *
+            //pmi_local += (double)(mutual_p[k-i-1] * mutual_c[k-i-1]) /
+            //            (double)((double)wordPos[ngram[k]].size() *
+            //                (double)wordPos[ngram[i]].size());
+            double aux_pmi = (double)(mutual_p[k-i-1] * mutual_c[k-i-1] *
+                    total_sentences_nr) / (double)(wordPos[ngram[k]].size() *
                         wordPos[ngram[i]].size());
             if (aux_pmi == 0 || ngram[i].compare(ngram[k]) == 0)
                 return LOW_REP;
@@ -402,7 +408,7 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
             return LOW_REP;
         srep += (pmi_local) / (2 * WINDOW_SIZE);
     }
-    return (float)(srep / ngram.size());
+    return (double)(srep / ngram.size());
 }
 
 
@@ -416,7 +422,7 @@ float Worker::computeRepresentativeness(NgramEntry *current_ngram) {
 void Worker::replaceWithBestPermutation(NgramEntry *ne, int mode) {
     static std::vector<std::string> permutations_text;
     static std::vector<std::vector<std::string> > permutations_ngram;
-    static std::vector<float> permutations_read;
+    static std::vector<double> permutations_read;
     static std::vector<NgramEntry*> results;
 
     if (mode == GATHER) {

@@ -20,7 +20,7 @@ using namespace std;
 FILE* InterogateNGRAM::resultPipe;
 FILE* InterogateNGRAM::requestPipe;
 
-float InterogateNGRAM::getJointProbability(std::vector<std::string> &phrase)
+double InterogateNGRAM::getJointProbability(std::vector<std::string> &phrase)
 {
     std::string strPhrase = "";
     for(unsigned int i = 0; i < phrase.size() - 1; i++)
@@ -32,7 +32,7 @@ float InterogateNGRAM::getJointProbability(std::vector<std::string> &phrase)
     return InterogateNGRAM::getJointProbability(strPhrase);
 }
 
-float InterogateNGRAM::getJointProbability(std::string phrase)
+double InterogateNGRAM::getJointProbability(std::string phrase)
 {
     //trimit request
     phrase += "\n";
@@ -44,13 +44,13 @@ float InterogateNGRAM::getJointProbability(std::string phrase)
     fgets(buffer, 20, resultPipe);
     //puts(buffer);
 
-    float result = atof(buffer);
+    double result = atof(buffer);
     return result;
 }
 
-std::vector<float> InterogateNGRAM::getJointProbabilities(std::vector<std::string> &phrases)
+std::vector<double> InterogateNGRAM::getJointProbabilities(std::vector<std::string> &phrases)
 {
-    std::vector<float> result;
+    std::vector<double> result;
     char buffer[100];
 
     /* Protocol:

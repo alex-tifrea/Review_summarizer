@@ -66,15 +66,15 @@ class NgramEntry {
 private:
     std::vector<std::string> ngram;
     std::string text;
-    float readability, representativeness,
+    double readability, representativeness,
           pos_bonus, sentiment_bonus;
     Worker *worker;
     Sentiment sentiment;
 
 public:
-    static const float sim_min_values[];
-    static const float rep_min_values[];
-    static const float read_min_values[];
+    static const double sim_min_values[];
+    static const double rep_min_values[];
+    static const double read_min_values[];
 
     NgramEntry(std::vector<std::string>, Worker*);
     NgramEntry(NgramEntry*);
@@ -102,7 +102,7 @@ public:
 
     // Returns the merged NgramEntry
     NgramEntry* mergeNgrams(NgramEntry*);
-    NgramEntry* mergeNgrams(NgramEntry*, float);
+    NgramEntry* mergeNgrams(NgramEntry*, double);
 
     // Computes the readability score.
     void computeReadability();
@@ -119,14 +119,14 @@ public:
 
     // Computes similarity between the two given ngrams using the Jaccard
     // distance
-    float computeSimilarity(NgramEntry*);
+    double computeSimilarity(NgramEntry*);
 
     // This function is called at the end in order to rephrase the ngram so that
     // we get the best readability score for it.
     void refineNgram();
 
     // Returns the readability and representativeness score.
-    std::pair<float, float> getScore();
+    std::pair<double, double> getScore();
 
     void setSentiment(Sentiment s) {
         this->sentiment = s;
@@ -150,33 +150,33 @@ public:
     }
 
     // Setter for the readability score;
-    void setReadability(float);
+    void setReadability(double);
 
-    float getReadability() const {
+    double getReadability() const {
         return readability;
     }
 
-    float getRepresentativeness() const {
+    double getRepresentativeness() const {
         return representativeness;
     }
 
-    void setRepresentativeness(float rep_value){
+    void setRepresentativeness(double rep_value){
         representativeness = rep_value;
     }
 
-    float getPOSBonus() const {
+    double getPOSBonus() const {
         return this->pos_bonus;
     }
 
-    void setPOSBonus(float _pos_bonus) {
+    void setPOSBonus(double _pos_bonus) {
         this->pos_bonus = _pos_bonus;
     }
 
-    float getSentimentBonus() {
+    double getSentimentBonus() {
         return this->sentiment_bonus;
     }
 
-    void setSentimentBonus(float _sentiment_bonus) {
+    void setSentimentBonus(double _sentiment_bonus) {
         this->sentiment_bonus = _sentiment_bonus;
     }
 
@@ -200,17 +200,17 @@ public:
     operator<<(std::ostream&, const NgramEntry&) override;
 
     bool operator>(const NgramEntry& ne) const {
-        float lhs = this->readability + this->representativeness +
+        double lhs = this->readability + this->representativeness +
                     this->pos_bonus + this->sentiment_bonus;
-        float rhs = ne.readability + ne.representativeness +
+        double rhs = ne.readability + ne.representativeness +
                     ne.pos_bonus + ne.sentiment_bonus;
         return lhs > rhs;
     }
 
     bool operator<(const NgramEntry& ne) const {
-        float lhs = this->readability + this->representativeness +
+        double lhs = this->readability + this->representativeness +
                     this->pos_bonus + this->sentiment_bonus;
-        float rhs = ne.readability + ne.representativeness +
+        double rhs = ne.readability + ne.representativeness +
                     ne.pos_bonus + ne.sentiment_bonus;
         return lhs < rhs;
     }
