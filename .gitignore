@@ -13,3 +13,4 @@ Papers
 !.gitignore
 input_example
 log.file
+*.bin
