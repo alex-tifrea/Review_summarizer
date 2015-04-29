@@ -7,12 +7,14 @@
 #include <stdlib.h>
 #include <vector>
 #include <string>
+#include <utility>
 using namespace std;
 
 #define FAIL 0.0f
 #define BUFSIZE 255
 #define TOPICS_NUM 10
 #define MAX_DISTANCE 0.8f
+#define THRESHOLD 0.1f
 
 vector<vector<string> > Topics::topics(TOPICS_NUM);
 
@@ -158,7 +160,7 @@ void Topics::Finalize()
 }
 
 //get the id of the topic
-int Topics::getTopic(string ngram)
+pair<int, float> Topics::getTopic(string ngram)
 {
     float max_score = 0.0f;
     int max_idx = -1;
@@ -178,7 +180,14 @@ int Topics::getTopic(string ngram)
             max_idx = i;
         }
     }
-    return max_idx;
+    if(max_score < THRESHOLD)
+    {
+        max_idx = -1;
+    }
+    pair<int, float> res;
+    res.first = max_idx;
+    res.second = max_score;
+    return res;
 }
 
 float Topics::getDistance(const std::string word1, const std::string word2)
