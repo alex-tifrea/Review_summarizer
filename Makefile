@@ -20,7 +20,7 @@ endif
 build: $(SRC) $(EXE)
 
 $(EXE): $(OBJ)
-	$(CC) $(OBJ) -o $(EXE)
+	$(CC) -m32 $(OBJ) -o $(EXE)
 
 %.o: %.cpp $(HEADERS)
 	$(CC) $(CFLAGS) -c $<
