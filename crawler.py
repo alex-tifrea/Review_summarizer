@@ -15,6 +15,7 @@ import xml.dom.minidom
 # TODO: when given the --roomtip flag, get the roomtip advice too
 
 enable_roomtip = False
+count_review_page = 10
 
 # @args the div that contains a review
 # extracts information about the given review
@@ -131,6 +132,8 @@ def process_review(review_info, output_file, count, city, hotel_name):
 # extracts the reviews for the given hotel and calls process_review to create
 # the coresponding xml file
 def process_hotel(url, count_reviews, city, hotel_name):
+    print url
+    global count_review_page
     page = requests.get("http://www.tripadvisor.com"+url)
     tree = html.fromstring(page.text)
 
@@ -161,9 +164,15 @@ def process_hotel(url, count_reviews, city, hotel_name):
     nextPage = tree.xpath('//*[contains(concat(" ", \
             normalize-space(@class), " "), " sprite-pageNext ")]')
     if (len(nextPage) == 0): # am ajuns la ultima pagina
-        return
+        if count_review_page == 10:
+            new_url = url.split("-Reviews")
+            nextPageURL = new_url[0] + "-Reviews" + "-or10" + new_url[1][0:len(new_url[1])-1] + "#REVIEWS"
+            count_review_page += 10
+        else:
+            new_url = url.split("-or" + str(count_review_page - 10))
+            nextPageURL = new_url[0] + "-or" + str(count_review_page) + new_url[1]
+            count_review_page += 10
 
-    nextPageURL = nextPage[0].xpath('attribute::href')[0]
     process_hotel(nextPageURL, count_reviews, city, hotel_name)
 
 
