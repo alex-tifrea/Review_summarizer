@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 import unicodedata
 import requests
 import argparse
