@@ -502,7 +502,6 @@ void Worker::printBestNgrams(ostream &fout) {
         if (count >= MAX_BEST_NGRAMS) {
             break;
         }
-        Topics::getTopic(this->vect_best_ngrams[i]->getText());
     }
 
     // Interogate Microsoft Ngram for all the permutations of all the ngrams at
@@ -566,13 +565,20 @@ void Worker::printBestNgrams(ostream &fout) {
     std::string bin_file = "vectors.bin";
     Topics::Init(bin_file);
     for (unsigned int i = 0; i < candidates.size(); i++) {
-        int topicNumber = Topics::getTopic(candidates[i]->getText());
-        if (topicNumber >= 0)
+        pair<int, float> topicNumber = Topics::getTopic(candidates[i]->getText());
+        string topic;
+        if (topicNumber.first >= 0)
         {
-            fout << *(candidates[i]) << topicVect[topicNumber] << std::endl;
+            topic = topicVect[topicNumber.first];
         }
+        else
+        {
+            topic = "none";
+        }
+        fout << *(candidates[i]) << topic << " " << topicNumber.second << std::endl;
     }
     fout << std::endl;
+    Topics::Finalize();
 }
 
 WordInfo Worker::getWordInfo(std::string word) {
