@@ -22,7 +22,7 @@
 #define MAX_BEST_NGRAMS 50
 // The number of candidates considered when requesting sentiment information
 // from CoreNLP in order to identify the best ngrams.
-#define MAX_CANDIDATES 1000
+#define MAX_CANDIDATES 1500
 
 // Number of words that we use to create bigrams (we select them based on their
 // occurence frequency in the reviews)
@@ -34,7 +34,7 @@
 
 // Number of bigrams that we use to create (n+1)grams from ngrams. They are
 // selected based on their scores and bonuses.
-#define MAX_BIGRAM_NUMBER 2000
+#define MAX_BIGRAM_NUMBER 5000
 
 #define NGRAM_COUNT_LIMIT 0
 

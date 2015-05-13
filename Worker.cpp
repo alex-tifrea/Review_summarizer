@@ -562,9 +562,11 @@ void Worker::printBestNgrams(ostream &fout) {
     }
 
     // Print the best ngrams.
+    /*
     std::string bin_file = "vectors.bin";
-    Topics::Init(bin_file);
+    Topics::Init(bin_file);*/
     for (unsigned int i = 0; i < candidates.size(); i++) {
+        /*
         pair<int, float> topicNumber = Topics::getTopic(candidates[i]->getText());
         string topic;
         if (topicNumber.first >= 0)
@@ -574,8 +576,8 @@ void Worker::printBestNgrams(ostream &fout) {
         else
         {
             topic = "none";
-        }
-        fout << *(candidates[i]) << topic << " " << topicNumber.second << std::endl;
+        }*/
+        fout << *(candidates[i]) << std::endl;
     }
     fout << std::endl;
     Topics::Finalize();
