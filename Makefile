@@ -8,14 +8,8 @@ NOTIFY=""
 ERROR=""
 
 UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Linux)
-	NOTIFY=true
-	ERROR=true
-endif
-ifeq ($(UNAME_S),Darwin)
-	NOTIFY=say "Boss, I am done"
-	ERROR=say "Error Error Error"
-endif
+NOTIFY=say "Boss, I'm done"
+ERROR=say "Error Error Error"
 
 build: $(SRC) $(EXE)
 
